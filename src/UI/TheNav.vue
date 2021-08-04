@@ -1,0 +1,265 @@
+<template>
+  <div>
+    <div v-if="show" class="aside__backdrop" @click="close"></div>
+    <transition name="nav">
+      <aside class="aside" v-if="show">
+        <div class="aside__content">
+          <header class="aside__header">
+            <BaseContainer>
+              <h2 class="aside__greeting">Добро пожаловать, {{ username }}</h2>
+            </BaseContainer>
+          </header>
+          <div class="aside__body">
+            <BaseContainer>
+              <div class="aside__close" @click="close">
+                <span class="_icon-close"></span>
+              </div>
+              <nav class="aside__nav nav">
+                <ul class="nav__list">
+                  <li class="nav__item">
+                    <router-link tag="a" class="nav__link" to="/groups">
+                      Группы дел
+                      <span class="nav__link-icon _icon-groups"></span>
+                    </router-link>
+                  </li>
+                  <li class="nav__item">
+                    <router-link tag="a" class="nav__link" to="/tasks">
+                      Все дела
+                      <span class="nav__link-icon _icon-tasks"></span>
+                    </router-link>
+                  </li>
+                </ul>
+              </nav>
+            </BaseContainer>
+          </div>
+        </div>
+      </aside>
+    </transition>
+  </div>
+</template>
+
+<script>
+export default {
+  emits: ['close-nav'],
+
+  props: {
+    show: {
+      type: Boolean,
+      required: true
+    }
+  },
+
+  data() {
+    return {
+      username: 'prostoleo',
+      isShown: true
+    };
+  },
+
+  methods: {
+    close() {
+      // this.isShown = false;
+      console.log('close');
+
+      this.$emit('close-nav');
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+// @use '../scss/main.scss';
+@use '../scss/utilities/index.scss';
+
+.nav-enter-from {
+  transform: translateX(-120%);
+  opacity: 0;
+}
+.nav-enter-active,
+.nav-leave-active {
+  transition: all 250ms ease-in-out;
+}
+
+.nav-enter-to,
+.nav-leave-from {
+  opacity: 1;
+  transform: translateX(0%);
+}
+
+.nav-leave-to {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+/* .aside.show {
+  transform: translateX(0%);
+  transition: all 2000ms ease-out;
+} */
+
+.aside {
+  background: $accent;
+  color: $text-main;
+
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  width: 100%;
+  height: 100%;
+
+  max-width: 400px;
+
+  z-index: 50;
+  // transform: translateX(-150%);
+  // transition: all 2000ms ease-out;
+
+  /* &.show {
+    transform: translateX(0%);
+    transition: all 2000ms ease-out;
+  } */
+
+  //! потом вернуть
+  // min-height: 100vh;
+
+  // .aside__backdrop
+
+  &__backdrop {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    width: 100vw;
+    height: 100vh;
+    /* width: 100%;
+    height: 100%; */
+
+    background: $overlay;
+
+    z-index: -10;
+  }
+  // .aside__content
+
+  &__content {
+    z-index: 1000;
+  }
+
+  // .aside__greeting
+
+  &__greeting {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  // .aside__header
+
+  &__header {
+    padding: 1.5em 0;
+    border-bottom: 1px solid $text-main;
+    z-index: 1;
+  }
+
+  // .aside__body
+
+  &__body {
+    position: relative;
+
+    z-index: 1;
+    padding: 1.5em 0;
+  }
+
+  // .aside__close
+
+  &__close {
+    position: absolute;
+    top: 1.5em;
+    right: 1.5em;
+
+    cursor: pointer;
+
+    & > span {
+      font-size: 2.5rem;
+      font-weight: bolder;
+    }
+  }
+
+  // .aside__nav
+
+  &__nav {
+  }
+}
+
+.nav {
+  // .nav__list
+
+  &__list {
+    list-style: none;
+  }
+
+  // .nav__item
+
+  &__item {
+  }
+
+  // .nav__link
+
+  &__link {
+    text-decoration: none;
+
+    display: inline-flex;
+    align-items: center;
+    padding: 1em 0;
+
+    color: $text-main;
+
+    font-size: 1.6rem;
+    position: relative;
+
+    & > span {
+      margin-left: 1.5em;
+      font-size: 2.5rem;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0px;
+      left: 0em;
+      right: 0em;
+
+      width: 100%;
+      height: 2px;
+
+      background: $text-main;
+
+      transform: scaleX(0.1);
+      opacity: 0;
+      transition: all 150ms ease-in-out;
+
+      /* &.router-link-active {
+        font-weight: bold;
+
+        transform: scaleX(1);
+        opacity: 1;
+        transition: all 150ms ease-in-out;
+      } */
+    }
+
+    &.router-link-active {
+      font-weight: bold;
+      transition: all 150ms ease-in-out;
+
+      &::before {
+        transform: scaleX(1);
+        opacity: 1;
+        transition: all 150ms ease-in-out;
+      }
+    }
+  }
+
+  // .nav__link-icon
+
+  &__link-icon {
+  }
+}
+</style>
