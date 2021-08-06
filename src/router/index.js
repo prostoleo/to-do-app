@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Groups from '../views/Groups.vue';
 import Tasks from '../views/Tasks.vue';
+import NotFound from '../views/NotFound.vue';
 
 const routes = [
   {
@@ -16,6 +17,10 @@ const routes = [
     path: '/tasks',
     name: 'Tasks',
     component: Tasks
+  },
+  {
+    path: '/:pathMath(.*)',
+    component: NotFound
   }
   /* {
     path: '/about',

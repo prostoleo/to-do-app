@@ -12,7 +12,7 @@
           <div class="aside__body">
             <BaseContainer>
               <div class="aside__close" @click="close">
-                <span class="_icon-close"></span>
+                <button class="_icon-close"></button>
               </div>
               <nav class="aside__nav nav">
                 <ul class="nav__list">
@@ -57,12 +57,20 @@ export default {
   },
 
   methods: {
-    close() {
+    close($event) {
       // this.isShown = false;
+      console.log($event.target);
       console.log('close');
 
       this.$emit('close-nav');
     }
+    /* closeOverlay($event) {
+      // this.isShown = false;
+      console.log($event.target);
+      console.log('closeOverlay');
+
+      this.$emit('close-nav');
+    } */
   }
 };
 </script>
@@ -96,6 +104,22 @@ export default {
   transition: all 2000ms ease-out;
 } */
 
+.aside__backdrop {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  width: 100vw;
+  height: 100vh;
+  /* width: 100%;
+    height: 100%; */
+
+  background: $overlay;
+
+  z-index: 1;
+}
+
 .aside {
   background: $accent;
   color: $text-main;
@@ -124,7 +148,7 @@ export default {
 
   // .aside__backdrop
 
-  &__backdrop {
+  /* &__backdrop {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -132,13 +156,13 @@ export default {
     bottom: 0px;
     width: 100vw;
     height: 100vh;
-    /* width: 100%;
-    height: 100%; */
+    // width: 100%;
+    // height: 100%;
 
     background: $overlay;
 
     z-index: -10;
-  }
+  } */
   // .aside__content
 
   &__content {
@@ -177,9 +201,12 @@ export default {
 
     cursor: pointer;
 
-    & > span {
+    & > button {
       font-size: 2.5rem;
-      font-weight: bolder;
+      font-weight: 600;
+
+      color: $text-main;
+      background-color: $accent;
     }
   }
 
@@ -194,6 +221,7 @@ export default {
 
   &__list {
     list-style: none;
+    padding-top: 2em;
   }
 
   // .nav__item
@@ -234,7 +262,8 @@ export default {
 
       transform: scaleX(0.1);
       opacity: 0;
-      transition: all 150ms ease-in-out;
+      transition: all 250ms ease-in-out;
+      transform-origin: left center;
 
       /* &.router-link-active {
         font-weight: bold;

@@ -3,9 +3,7 @@
     <!-- <TheNav></TheNav> -->
     <main class="main-tasks">
       <BaseContainer>
-        <div class="main-groups__menu">
-          <span class="main-groups__menu-icon _icon-menu" @click="openNav"></span>
-        </div>
+        <BaseMenuBurger class="main-groups__menu" @click="openNav"></BaseMenuBurger>
         <h2 class="main-groups__title">Все дела</h2>
         <h3 class="main-tasks__subtitle"></h3>
       </BaseContainer>

@@ -1,0 +1,9 @@
+@use '../abstract/index' as *;
+
+* {
+  font-family: 'Fira Sans', sans-serif;
+}
+
+button:focus {
+  outline-color: $accent-2;
+}
