@@ -44,7 +44,11 @@
       "comma-dangle": "off",
       "linebreak-style": "off",
       "no-tabs": "off",
-      "no-console": "off"
+      "no-console": "off",
+      "no-restricted-imports": "off",
+      "import/extensions": [
+        0
+      ]
     }
   },
   "browserslist": [

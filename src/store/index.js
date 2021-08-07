@@ -1,9 +1,30 @@
 import { createStore } from 'vuex';
 
+import GroupsModule from './groups/index.js';
+import TasksModule from './tasks/index.js';
+
 export default createStore({
-  modules: {},
-  state: {},
-  getters: {},
-  mutations: {},
-  actions: {}
+  strict: true,
+  modules: {
+    groups: GroupsModule,
+    tasks: TasksModule
+  },
+  state: {
+    currentGroupId: null
+  },
+  getters: {
+    groupId(state) {
+      return state.currentGroupId;
+    }
+  },
+  mutations: {
+    setGroupId(state, data) {
+      state.count = data.groupId;
+    }
+  },
+  actions: {
+    changeGroupId(context, data) {
+      context.commit('setGroupId', data);
+    }
+  }
 });

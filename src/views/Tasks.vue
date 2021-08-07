@@ -5,7 +5,7 @@
       <BaseContainer>
         <BaseMenuBurger class="main-groups__menu" @click="openNav"></BaseMenuBurger>
         <h2 class="main-groups__title">Все дела</h2>
-        <h3 class="main-tasks__subtitle"></h3>
+        <h3 class="main-tasks__subtitle">Средняя важность - 5.1</h3>
       </BaseContainer>
     </main>
   </div>

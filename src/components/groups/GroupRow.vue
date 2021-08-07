@@ -7,9 +7,12 @@
 
   </router-link> -->
   <li class="groups-info__item" v-else>
+    <!-- // todo - добавить :to с динамическим id (computed - toId)  -->
     <router-link class="groups-info__link" :to="`/groups/${toId}`">
       <slot name="body"></slot>
     </router-link>
+    <button class="icon-edit _icon-edit"></button>
+    <button class="icon _icon-close"></button>
   </li>
 </template>
 
@@ -21,6 +24,7 @@ export default {
       required: false,
       default: false
     },
+    // todo - потом раскомментить
     id: {
       type: String,
       required: false
@@ -39,6 +43,36 @@ export default {
 <style lang="scss" scoped>
 li {
   list-style: none;
+  position: relative;
+
+  padding-right: 3.5rem;
+
+  button {
+    position: absolute;
+    top: 54%;
+    right: -0.5em;
+    transform: translate(-50%, -50%);
+
+    font-size: 2.4rem;
+    color: $scale-10;
+    opacity: 0.5;
+
+    &.icon-edit {
+      right: 1em;
+      color: $text-main;
+
+      &:hover,
+      &:focus {
+        opacity: 1;
+        color: $accent;
+      }
+    }
+
+    &:hover,
+    &:focus {
+      opacity: 1;
+    }
+  }
 
   a {
     display: grid;
@@ -65,5 +99,6 @@ header {
   gap: 0 0.5em;
 
   padding: 1em 0em;
+  padding-right: 3.5rem;
 }
 </style>

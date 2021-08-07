@@ -9,12 +9,28 @@
           <div class="main-groups__filter filters">
             <div class="filters__sort-wrapper">
               <button class="filters__sort">
-                Сортировка
-                <span class="icon _icon-shevron"></span>
+                <span @click="toggleSortFilterForm($event)" id="sort-btn">
+                  Сортировка
+                  <span class="icon _icon-shevron"></span>
+                </span>
+                <BaseSortFilterForm
+                  :is-groups="true"
+                  :is-sort="true"
+                  :sort-open="isSortFormOpen"
+                  ref="sort-form"
+                ></BaseSortFilterForm>
               </button>
               <button class="filters__sort">
-                Фильтрация
-                <span class="icon _icon-shevron"></span>
+                <span @click="toggleSortFilterForm($event)" id="filter-btn">
+                  Фильтрация
+                  <span class="icon _icon-shevron"></span>
+                </span>
+                <BaseSortFilterForm
+                  :is-groups="true"
+                  :is-sort="false"
+                  :filter-open="isFilterFormOpen"
+                  ref="filter-form"
+                ></BaseSortFilterForm>
               </button>
             </div>
             <div class="filters__search">
@@ -22,9 +38,10 @@
             </div>
           </div>
           <div class="main-groups__add add">
-            <div class="add__input-wrapper">
+            <form class="add__input-wrapper">
               <BaseInputLabel :label="`Название новой группы`"></BaseInputLabel>
-            </div>
+              <BaseButton :mode="'outline'">Новая группа +</BaseButton>
+            </form>
           </div>
 
           <section class="groups-info">
@@ -49,7 +66,31 @@
               </GroupRow>
 
               <ul class="groups-info__list">
-                <GroupRow :id="id" class="groups-info__item">
+                <GroupRow
+                  class="groups-info__item"
+                  v-for="group in allGroups"
+                  :key="group.groupId"
+                  :id="group.groupId"
+                >
+                  <template #body>
+                    <div>
+                      <span class="groups-info__col">
+                        {{ group.title }}
+                      </span>
+                    </div>
+                    <div>
+                      <span class="groups-info__col">
+                        {{ group.dateOfAddition }}
+                      </span>
+                    </div>
+                    <div>
+                      <span class="groups-info__col">
+                        {{ group.avgImportance }}
+                      </span>
+                    </div>
+                  </template>
+                </GroupRow>
+                <!-- <GroupRow class="groups-info__item">
                   <template #body>
                     <div>
                       <span class="groups-info__col">
@@ -67,26 +108,8 @@
                       </span>
                     </div>
                   </template>
-                </GroupRow>
-                <GroupRow class="groups-info__item" :id="id">
-                  <template #body>
-                    <div>
-                      <span class="groups-info__col">
-                        Тренировка
-                      </span>
-                    </div>
-                    <div>
-                      <span class="groups-info__col">
-                        04.07.2021 - 22:22
-                      </span>
-                    </div>
-                    <div>
-                      <span class="groups-info__col">
-                        6,2
-                      </span>
-                    </div>
-                  </template>
-                </GroupRow>
+                </GroupRow> -->
+
                 <!-- <li class="groups-info__item">
                   <router-link class="groups-info__link" to="/groups/1">
                     <span class="groups-info__col">
@@ -137,10 +160,53 @@ export default {
   },
   emits: ['open-nav'],
 
+  data() {
+    return {
+      //* для открытия форм
+      isSortFormOpen: false,
+      isFilterFormOpen: false
+    };
+  },
+
+  computed: {
+    allGroups() {
+      console.log(this.$store);
+      console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
+      return this.$store.getters['groups/groups'];
+    }
+  },
+
   methods: {
     openNav() {
       this.$emit('open-nav');
+    },
+
+    // todo метод открытия закрытия форм
+
+    toggleSortFilterForm(event) {
+      // console.log(event.target.id);
+      // console.log(event.target.id.includes('sort'));
+
+      if (event.target.id.includes('sort')) {
+        this.isSortFormOpen = !this.isSortFormOpen;
+
+        return;
+      }
+
+      if (event.target.id.includes('filter')) {
+        this.isFilterFormOpen = !this.isFilterFormOpen;
+
+        // eslint-disable-next-line no-useless-return
+        return;
+      }
     }
+
+    /* toggleSortForm() {
+      // console.log($event.target);
+    },
+    toggleFilterForm() {
+      // console.log($event.target);
+    } */
   }
 };
 </script>
@@ -199,7 +265,7 @@ export default {
 .filters {
   max-width: 600px;
 
-  @include mq(med) {
+  @include mq(sm) {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -217,8 +283,6 @@ export default {
   // .filters__sort
 
   &__sort {
-    padding: 0.5em;
-
     font-size: 1.4rem;
     font-weight: 400;
 
@@ -228,7 +292,16 @@ export default {
     border: 1px solid transparent;
     background: transparent;
 
+    position: relative;
+
     & > span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 0.5em;
+    }
+
+    & span.icon {
       margin-left: 0.5em;
     }
 
@@ -246,7 +319,7 @@ export default {
   &__search {
     margin-top: 2.5em;
 
-    @include mq(med) {
+    @include mq(sm) {
       margin-top: 0 !important;
     }
   }
@@ -256,6 +329,7 @@ export default {
 
   padding-bottom: 3.5em;
   position: relative;
+  max-width: 600px;
 
   &::before {
     content: '';
@@ -277,6 +351,26 @@ export default {
 
   &__input-wrapper {
     position: relative;
+    width: 100%;
+
+    @include mq(sm) {
+      display: flex;
+      align-items: center;
+    }
+
+    & > div {
+      margin-bottom: 1rem;
+
+      @include mq(sm) {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    & > button {
+      @include mq(sm) {
+        margin-left: 1.5rem;
+      }
+    }
   }
 
   // .add__label
@@ -371,12 +465,6 @@ export default {
   }
 
   // .groups-info__col
-
-  &__col {
-  }
-}
-.grops-info {
-  // .grops-info__col
 
   &__col {
   }
