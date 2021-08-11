@@ -1,44 +1,47 @@
 <template>
-  <div>
-    <div v-if="show" class="aside__backdrop" @click="close"></div>
-    <transition name="nav">
-      <aside class="aside" v-if="show">
-        <div class="aside__content">
-          <header class="aside__header">
-            <BaseContainer>
-              <h2 class="aside__greeting">Добро пожаловать, {{ username }}</h2>
-            </BaseContainer>
-          </header>
-          <div class="aside__body">
-            <BaseContainer>
-              <div class="aside__close" @click="close">
-                <button class="_icon-close"></button>
-              </div>
-              <nav class="aside__nav nav">
-                <ul class="nav__list">
-                  <li class="nav__item">
-                    <router-link tag="a" class="nav__link" to="/groups">
-                      Группы дел
-                      <span class="nav__link-icon _icon-groups"></span>
-                    </router-link>
-                  </li>
-                  <li class="nav__item">
-                    <router-link tag="a" class="nav__link" to="/tasks">
-                      Все дела
-                      <span class="nav__link-icon _icon-tasks"></span>
-                    </router-link>
-                  </li>
-                </ul>
-              </nav>
-            </BaseContainer>
-          </div>
+  <div class="the-nav" :class="{ show: show }">
+    <div class="aside__backdrop" @click="close"></div>
+
+    <aside class="aside">
+      <div class="aside__content">
+        <header class="aside__header">
+          <BaseContainer>
+            <h2 class="aside__greeting">Добро пожаловать, {{ username }}</h2>
+          </BaseContainer>
+        </header>
+        <div class="aside__body">
+          <BaseContainer>
+            <div class="aside__close" @click="close">
+              <button class="_icon-close"></button>
+            </div>
+            <nav class="aside__nav nav">
+              <ul class="nav__list">
+                <li class="nav__item">
+                  <router-link tag="a" class="nav__link " to="/groups">
+                    Группы дел
+                    <span class="nav__link-icon _icon-groups"></span>
+                  </router-link>
+                </li>
+                <li class="nav__item">
+                  <router-link tag="a" class="nav__link" to="/tasks">
+                    Все дела
+                    <span class="nav__link-icon _icon-tasks"></span>
+                  </router-link>
+                </li>
+              </ul>
+            </nav>
+          </BaseContainer>
         </div>
-      </aside>
-    </transition>
+      </div>
+    </aside>
   </div>
 </template>
 
 <script>
+/* <!-- v-if="show" -->
+    <!-- <transition name="nav"> -->
+    <!-- v-if="show || innerWidthMore" -->
+    <!-- </transition> --> */
 export default {
   emits: ['close-nav'],
 
@@ -52,8 +55,17 @@ export default {
   data() {
     return {
       username: 'prostoleo',
-      isShown: true
+      isShown: false
     };
+  },
+
+  computed: {
+    innerWidthMore() {
+      if (window.innerWidth >= 900) {
+        return true;
+      }
+      return false;
+    }
   },
 
   methods: {
@@ -62,7 +74,9 @@ export default {
       console.log($event.target);
       console.log('close');
 
-      this.$emit('close-nav');
+      if (window.innerWidth < 900) {
+        this.$emit('close-nav');
+      }
     }
     /* closeOverlay($event) {
       // this.isShown = false;
@@ -79,30 +93,38 @@ export default {
 // @use '../scss/main.scss';
 @use '../scss/utilities/index.scss';
 
-.nav-enter-from {
-  transform: translateX(-120%);
+.the-nav {
+  // display: none;
   opacity: 0;
-}
-.nav-enter-active,
-.nav-leave-active {
-  transition: all 250ms ease-in-out;
-}
+  visibility: hidden;
+  pointer-events: none;
 
-.nav-enter-to,
-.nav-leave-from {
-  opacity: 1;
-  transform: translateX(0%);
-}
+  position: absolute;
 
-.nav-leave-to {
-  transform: translateX(120%);
-  opacity: 0;
-}
+  & .aside {
+    transform: translateX(-120%) !important;
+    transition: all 250ms ease-in-out !important;
+  }
 
-/* .aside.show {
-  transform: translateX(0%);
-  transition: all 2000ms ease-out;
-} */
+  &.show {
+    // display: block !important;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: unset;
+  }
+
+  &.show .aside {
+    transform: translateX(0%) !important;
+    transition: all 250ms ease-in-out !important;
+  }
+
+  @include mq(lg) {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: unset;
+  }
+}
 
 .aside__backdrop {
   position: fixed;
@@ -118,6 +140,11 @@ export default {
   background: $overlay;
 
   z-index: 1;
+
+  @include mq(lg) {
+    position: relative !important;
+    display: none !important;
+  }
 }
 
 .aside {
@@ -135,6 +162,15 @@ export default {
   max-width: 400px;
 
   z-index: 50;
+
+  transform: translateX(-120%);
+  transition: all 250ms ease-in-out;
+
+  @include mq(lg) {
+    position: relative !important;
+    transform: translateX(0%);
+    min-height: 100vh;
+  }
   // transform: translateX(-150%);
   // transition: all 2000ms ease-out;
 
@@ -200,6 +236,10 @@ export default {
     right: 1.5em;
 
     cursor: pointer;
+
+    @include mq(lg) {
+      display: none !important;
+    }
 
     & > button {
       font-size: 2.5rem;
@@ -283,6 +323,12 @@ export default {
         opacity: 1;
         transition: all 150ms ease-in-out;
       }
+    }
+
+    &:hover::before {
+      transform: scaleX(1);
+      opacity: 1;
+      transition: all 150ms ease-in-out;
     }
   }
 

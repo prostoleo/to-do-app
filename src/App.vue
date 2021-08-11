@@ -1,5 +1,5 @@
 <template>
-  <TheNav :show="navIsOpen" @close-nav="closeNav"></TheNav>
+  <TheNav :show="navIsOpened" @close-nav="closeNav"></TheNav>
   <router-view v-slot="slotProps" @open-nav="openNav">
     <transition name="route" mode="out-in">
       <component :is="slotProps.Component"></component>
@@ -19,9 +19,25 @@ export default {
 
   computed: {
     navIsOpened() {
+      if (window.innerWidth >= 900) {
+        console.log('window.innerWidth: ', window.innerWidth);
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.navIsOpen = true;
+        return this.navIsOpen;
+      }
+
       return this.navIsOpen;
     }
   },
+
+  /* watch: {
+    navIsOpen() {
+      if (window.innerWidth >= 900) {
+        console.log('window.innerWidt: ', window.innerWidt);
+        this.navIsOpen = true;
+      }
+    }
+  }, */
 
   methods: {
     openNav() {
@@ -42,14 +58,42 @@ export default {
 //* импортиурем иконочный шрифт
 @import url('font-icon/iconsfont.css');
 
-#app {
+body {
   font-family: 'Fira Sans', sans-serif;
-  // -webkit-font-smoothing: antialiased;
-  // -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  min-height: 100vh;
+  max-width: 1500px;
+
+  @include mq(lg) {
+    display: flex;
+    align-items: stretch;
+
+    & > *:first-of-type {
+      flex: 1 1 25%;
+    }
+
+    & > *:last-of-type {
+      flex: 1 1 70%;
+    }
+  }
+}
+
+router-view > * {
+  @include mq(lg) {
+    padding-top: 4rem;
+  }
 }
 
 .the-nav {
   height: 100vh;
+
+  @include mq(lg) {
+    height: 100% !important;
+  }
 }
 
 .route-enter-from {

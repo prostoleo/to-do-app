@@ -19,7 +19,7 @@ export default createStore({
   },
   mutations: {
     setGroupId(state, data) {
-      state.count = data.groupId;
+      state.currentGroupId = data.groupId;
     }
   },
   actions: {

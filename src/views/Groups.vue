@@ -6,8 +6,8 @@
         <div class="main-groups__content">
           <BaseMenuBurger class="main-groups__menu" @click="openNav"> </BaseMenuBurger>
           <h2 class="main-groups__title">Группы дел</h2>
-          <div class="main-groups__filter filters">
-            <div class="filters__sort-wrapper">
+          <div class="main-groups__filter">
+            <!-- <div class="filters__sort-wrapper">
               <button class="filters__sort">
                 <span @click="toggleSortFilterForm($event)" id="sort-btn">
                   Сортировка
@@ -32,7 +32,8 @@
                   ref="filter-form"
                 ></BaseSortFilterForm>
               </button>
-            </div>
+            </div> -->
+            <BaseSortFilter></BaseSortFilter>
             <div class="filters__search">
               <BaseInputLabel :label="`Поиск по названию`"></BaseInputLabel>
             </div>
@@ -51,22 +52,22 @@
                 <span class="grops-info__col">Дата добавления</span>
                 <span class="grops-info__col">Средняя важность</span>
               </header> -->
-              <GroupRow isHeader class="groups-info__header">
+              <BaseGroupRow isHeader class="groups-info__header">
                 <template #header>
                   <div>
-                    <span class="grops-info__col">Название</span>
+                    <span class="groups-info__col">Название</span>
                   </div>
                   <div>
-                    <span class="grops-info__col">Дата добавления</span>
+                    <span class="groups-info__col">Дата добавления</span>
                   </div>
                   <div>
-                    <span class="grops-info__col">Средняя важность</span>
+                    <span class="groups-info__col">Средняя важность</span>
                   </div>
                 </template>
-              </GroupRow>
+              </BaseGroupRow>
 
               <ul class="groups-info__list">
-                <GroupRow
+                <BaseGroupRow
                   class="groups-info__item"
                   v-for="group in allGroups"
                   :key="group.groupId"
@@ -84,12 +85,15 @@
                       </span>
                     </div>
                     <div>
-                      <span class="groups-info__col">
-                        {{ group.avgImportance }}
+                      <span
+                        class="groups-info__col"
+                        :class="'bg-scale-' + +Math.round(group.avgImportance)"
+                      >
+                        <b>{{ group.avgImportance }}</b>
                       </span>
                     </div>
                   </template>
-                </GroupRow>
+                </BaseGroupRow>
                 <!-- <GroupRow class="groups-info__item">
                   <template #body>
                     <div>
@@ -146,25 +150,21 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue';
-import '@/scss/main.scss';
-
 //* импорт компонентов
-import GroupRow from '@/components/groups/GroupRow.vue';
+// import BaseGroupRow from '@/base/BaseGroupRow.vue';
 
 export default {
   name: 'Groups',
-  components: {
+  /* components: {
     GroupRow
-  },
+  }, */
   emits: ['open-nav'],
 
   data() {
     return {
       //* для открытия форм
-      isSortFormOpen: false,
-      isFilterFormOpen: false
+      /* isSortFormOpen: false,
+      isFilterFormOpen: false */
     };
   },
 
@@ -174,16 +174,22 @@ export default {
       console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
       return this.$store.getters['groups/groups'];
     }
+
+    /* bgClassColor() {
+      return
+    } */
   },
 
   methods: {
     openNav() {
-      this.$emit('open-nav');
-    },
+      if (window.innerWidth < 900) {
+        this.$emit('open-nav');
+      }
+    }
 
     // todo метод открытия закрытия форм
 
-    toggleSortFilterForm(event) {
+    /* toggleSortFilterForm(event) {
       // console.log(event.target.id);
       // console.log(event.target.id.includes('sort'));
 
@@ -199,7 +205,7 @@ export default {
         // eslint-disable-next-line no-useless-return
         return;
       }
-    }
+    } */
 
     /* toggleSortForm() {
       // console.log($event.target);
@@ -216,6 +222,9 @@ export default {
 
 .groups {
   min-height: 100vh;
+  @include mq(lg) {
+    padding-top: 10rem;
+  }
 }
 .main-groups {
   // .main-groups__content
@@ -226,6 +235,9 @@ export default {
   // .main-groups__menu
 
   &__menu {
+    @include mq(lg) {
+      display: none !important;
+    }
   }
 
   // .main-groups__menu-icon
@@ -252,6 +264,14 @@ export default {
   // .main-groups__filter
 
   &__filter {
+    max-width: 600px;
+    margin-bottom: 2.5em;
+
+    @include mq(med) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   }
 
   // .main-groups__add
@@ -263,7 +283,7 @@ export default {
   }
 }
 .filters {
-  max-width: 600px;
+  /* max-width: 600px;
 
   @include mq(sm) {
     display: flex;
@@ -271,11 +291,11 @@ export default {
     justify-content: space-between;
   }
 
-  margin-bottom: 2.5em;
+  margin-bottom: 2.5em; */
 
   // .filters__sort-wrapper
 
-  &__sort-wrapper {
+  /* &__sort-wrapper {
     display: flex;
     align-items: center;
   }
@@ -312,7 +332,7 @@ export default {
     &:hover {
       border: 1px solid $accent-2;
     }
-  }
+  } */
 
   // .filters__search
 
@@ -329,7 +349,7 @@ export default {
 
   padding-bottom: 3.5em;
   position: relative;
-  max-width: 600px;
+  // max-width: 600px;
 
   &::before {
     content: '';
@@ -409,64 +429,6 @@ export default {
   }
 }
 .groups-info {
-  // .groups-info__wrapper
-
-  &__wrapper {
-  }
-
-  // .groups-info__header
-
-  &__header {
-    & div {
-      justify-self: center;
-      align-self: center;
-      // padding: 0.75em;
-    }
-
-    & span {
-      font-size: 1.4rem;
-      font-weight: 600;
-
-      color: $text-main;
-
-      // padding: 0.75em;
-    }
-  }
-
-  // .groups-info__list
-
-  &__list {
-  }
-
-  // .groups-info__item
-
-  &__item {
-    & div {
-      justify-self: center;
-      align-self: center;
-    }
-
-    & span {
-      width: 100%;
-      display: block;
-
-      font-size: 1.4rem;
-      font-weight: 400;
-
-      color: $text-main;
-
-      // padding: 0.75em;
-    }
-  }
-
-  // .groups-info__link
-
-  &__link {
-  }
-
-  // .groups-info__col
-
-  &__col {
-  }
+  @extend %tpl-table-content;
 }
 </style>

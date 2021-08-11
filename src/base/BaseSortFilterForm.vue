@@ -136,7 +136,7 @@ export default {
 
   methods: {
     changeSort(event) {
-      console.log('event.target: ', event.target);
+      // console.log('event.target: ', event.target);
 
       const targetId = event.target.id;
       const form = event.target.closest('.sort');

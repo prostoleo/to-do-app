@@ -7,3 +7,13 @@
 button:focus {
   outline-color: $accent-2;
 }
+
+body.lock {
+  overflow-y: hidden !important;
+}
+
+html {
+  @include mq(xlg) {
+    font-size: 12px !important;
+  }
+}

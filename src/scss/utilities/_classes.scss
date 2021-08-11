@@ -1,5 +1,11 @@
 @use '../abstract/index' as *;
 
+div[class*='bg-scale-'],
+span[class*='bg-scale-'] {
+  padding: 0.25em;
+  font-weight: bold;
+}
+
 .bg-scale-10 {
   background: $scale-10;
 }
