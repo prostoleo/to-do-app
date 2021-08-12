@@ -2,19 +2,25 @@
   <div :class="{ active: classActive }">
     <input
       :type="type"
-      id="input"
+      :id="name ? `input-${name}` : `input-${type}`"
       :min="min"
       :max="max"
-      @input="inputEvent"
+      @input="inputEvent($event)"
+      @focus="inputEvent($event)"
       @blur="blurEvent"
       ref="input"
+      :required="required"
+      v-model="data"
     />
     <label for="input">{{ label }}</label>
+    <p v-if="error?.isError">{{ error?.message }}</p>
   </div>
 </template>
 
 <script>
 export default {
+  emits: ['update-input'],
+
   props: {
     /* key: {
       type: String,
@@ -33,6 +39,11 @@ export default {
       default: 'search',
       required: false
     },
+    required: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
     min: {
       type: Number,
       default: null,
@@ -42,23 +53,65 @@ export default {
       type: Number,
       default: null,
       required: false
+    },
+    name: {
+      required: false,
+      default: null
+    },
+    dataProp: {
+      required: false,
+      default: null
+    },
+    error: {
+      type: Object,
+      default: null
     }
   },
 
   data() {
     return {
-      classActive: false
+      classActive: false,
+      data: null
     };
   },
 
+  watch: {
+    dataProp() {
+      this.data = this.dataProp;
+    }
+    /* data() {
+      this.$emit('update-input', {
+        data: this.data,
+        id: this.$refs.input.id
+      });
+    } */
+  },
+
+  created() {
+    console.log('this.$props.error: ', this.$props.error);
+  },
+
   methods: {
-    inputEvent() {
+    inputEvent(event) {
+      console.log('event: ', event);
+
       const { value } = this.$refs.input;
 
       if (value.trim()) {
         this.classActive = true;
       }
+
+      if (event.type === 'input') this.emitEvent();
     },
+
+    emitEvent() {
+      // * emit event
+      this.$emit('update-input', {
+        data: this.data,
+        id: this.$refs.input.id
+      });
+    },
+
     blurEvent() {
       const { value } = this.$refs.input;
 
@@ -134,6 +187,17 @@ div {
     // padding: 0.5em 1em;
     padding: 1em;
     width: 100%;
+
+    &:focus {
+      font-weight: 600;
+    }
+
+    &:focus + label {
+      font-size: 1.2rem;
+      transform: translateX(1.25em) translateY(-0.1em);
+      font-weight: 400;
+      transition: all 150ms ease-in-out;
+    }
   }
 
   label {
@@ -161,6 +225,13 @@ div {
 
   &.active input {
     font-weight: 600;
+  }
+
+  p {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 0.25em;
+    color: $scale-10;
   }
 }
 </style>

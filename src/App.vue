@@ -64,6 +64,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.lock {
+  overflow-y: hidden !important;
+}
+
 #app {
   min-height: 100vh;
   max-width: 1500px;

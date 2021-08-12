@@ -71,9 +71,21 @@ export default {
     }
   },
 
+  data() {
+    return {
+      lock: this.lockBody
+    };
+  },
+
+  created() {
+    if (this.lock) document.querySelector('body').classList.add('lock');
+  },
+
   methods: {
     closeDialog() {
       this.$emit('close-dialog');
+      document.querySelector('body').classList.remove('lock');
+      this.lock = false;
     },
 
     BeforeEnterDialogAnimation(element) {

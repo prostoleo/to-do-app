@@ -23,27 +23,12 @@
               >
 
               <BaseDialog
+                :lock-body="true"
                 :title="'Добавить новое дело'"
                 :show="dialogIsOpen"
                 @close-dialog="closeDialog"
               >
-                <form class="form">
-                  <BaseInputLabel :label="'Название'" :type="'text'"></BaseInputLabel>
-                  <BaseInputLabel :label="'Дата окончания'" :type="'text'"></BaseInputLabel>
-                  <BaseInputLabel
-                    :label="'Важность (от 1 до 10 баллов)'"
-                    :type="'number'"
-                    :min="1"
-                    :max="10"
-                  ></BaseInputLabel>
-                  <!-- <div class="form__row">
-                    <label for=""></label>
-
-                  </div> -->
-                  <BaseButton :mode="'flat'">
-                    Добавить дело!
-                  </BaseButton>
-                </form>
+                <AddTaskForm :group-id="currentGroup.groupId"></AddTaskForm>
               </BaseDialog>
             </form>
           </div>
@@ -109,8 +94,14 @@
 </template>
 
 <script>
+import AddTaskForm from '../components/tasks/AddTaskForm.vue';
+
 export default {
   name: 'GroupId',
+
+  components: {
+    AddTaskForm
+  },
 
   props: {
     id: {
@@ -197,23 +188,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-form.form {
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  width: 80%;
-
-  & > * {
-    margin-top: 2.25em;
-  }
-
-  & button {
-    align-self: center;
-    margin-top: 2.75em !important;
-  }
-}
-
 .main-groupId {
   @include mq(lg) {
     padding-top: 10rem;
