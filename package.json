@@ -49,7 +49,8 @@
       "no-restricted-imports": "off",
       "import/extensions": [
         0
-      ]
+      ],
+      "operator-linebreak": "off"
     }
   },
   "browserslist": [

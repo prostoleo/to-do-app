@@ -1,5 +1,11 @@
 <template>
-  <button v-if="!link" :class="mode" :type="type" :style="styleInlineFlex">
+  <button
+    v-if="!link"
+    :class="{ flat: mode === 'flat', outline: mode === 'outline', disabled: disabledVal }"
+    :type="type"
+    :style="styleInlineFlex"
+    :disabled="!!disabledVal"
+  >
     <slot></slot>
   </button>
   <router-link v-else :to="path" :class="mode">
@@ -34,6 +40,11 @@ export default {
       type: String,
       required: false,
       default: 'submit'
+    },
+    disabledVal: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 
@@ -87,6 +98,19 @@ button.flat {
   &:focus {
     outline: 1px solid $accent-2;
     outline-offset: 0.25em;
+  }
+}
+
+button.disabled {
+  background: rgb(200, 197, 197);
+  cursor: not-allowed;
+  border: none;
+
+  &:hover,
+  &:focus {
+    outline: none;
+    border: none;
+    opacity: 0.75;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 export default {
   addTask(state, data) {
-    state.push(data);
+    state.tasks.unshift(data);
   }
 };

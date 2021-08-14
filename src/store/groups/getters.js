@@ -3,6 +3,17 @@ export default {
     return store.groups;
   },
 
+  groupNamesAndIds(store) {
+    const groupNamesAndIds = store.groups.map((group) => ({
+      id: group.groupId,
+      title: group.title
+    }));
+    console.log('groupNamesAndIds: ', groupNamesAndIds);
+    // console.log('groupNames: ', groupNames);
+
+    return groupNamesAndIds;
+  },
+
   findGroupOnId(state, _, _2, rootGetters) {
     const id = rootGetters.groupId;
     console.log('id: ', id);

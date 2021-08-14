@@ -35,12 +35,12 @@
             </div> -->
             <BaseSortFilter></BaseSortFilter>
             <div class="filters__search">
-              <BaseInputLabel :label="`Поиск по названию`"></BaseInputLabel>
+              <BaseInputLabel :label="`Поиск по названию`" :floating="true"></BaseInputLabel>
             </div>
           </div>
           <div class="main-groups__add add">
             <form class="add__input-wrapper">
-              <BaseInputLabel :label="`Название новой группы`"></BaseInputLabel>
+              <BaseInputLabel :label="`Название новой группы`" :floating="true"></BaseInputLabel>
               <BaseButton :mode="'outline'">Новая группа +</BaseButton>
             </form>
           </div>
@@ -66,7 +66,7 @@
                 </template>
               </BaseGroupRow>
 
-              <ul class="groups-info__list">
+              <ul class="groups-info__list" v-if="allGroups.length > 0">
                 <BaseGroupRow
                   class="groups-info__item"
                   v-for="group in allGroups"
@@ -81,7 +81,8 @@
                     </div>
                     <div>
                       <span class="groups-info__col">
-                        {{ group.dateOfAddition }}
+                        <!-- {{ group.dateOfAddition }} -->
+                        {{ formatDateLocal(group.dateOfAddition) }}
                       </span>
                     </div>
                     <div>
@@ -141,6 +142,7 @@
                   </router-link>
                 </li> -->
               </ul>
+              <p v-else>У вас еще нет групп дел. Добавьте группу дел</p>
             </div>
           </section>
         </div>
@@ -152,6 +154,9 @@
 <script>
 //* импорт компонентов
 // import BaseGroupRow from '@/base/BaseGroupRow.vue';
+
+//* форматирование даты
+import formatDate from '../helpers/formatDate.js';
 
 export default {
   name: 'Groups',
@@ -185,6 +190,11 @@ export default {
       if (window.innerWidth < 900) {
         this.$emit('open-nav');
       }
+    },
+
+    //* форматирование даты
+    formatDateLocal(date) {
+      return formatDate(date);
     }
 
     // todo метод открытия закрытия форм

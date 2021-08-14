@@ -6,18 +6,29 @@
         <div class="main-tasks__content">
           <BaseMenuBurger class="main-tasks__menu" @click="openNav"> </BaseMenuBurger>
           <h2 class="main-tasks__title">Все ваши дела</h2>
-          <h3 class="main-tasks__subtitle">Средняя важность - 5.1</h3>
+          <h3 class="main-tasks__subtitle">
+            Средняя важность - {{ avgImportanceOfSelectedTasks }}
+          </h3>
           <div class="main-tasks__filter filters">
             <BaseSortFilter class="filters__row"></BaseSortFilter>
             <div class="filters__search">
-              <BaseInputLabel :label="`Поиск по названию`"></BaseInputLabel>
+              <BaseInputLabel :label="`Поиск по названию`" :floating="true"></BaseInputLabel>
             </div>
           </div>
           <div class="main-tasks__add add">
-            <form class="add__input-wrapper">
-              <BaseInputLabel :label="`Название нового дела`"></BaseInputLabel>
-              <BaseButton :mode="'outline'">Новое дело +</BaseButton>
-            </form>
+            <div class="add__input-wrapper">
+              <BaseButton :mode="'outline'" @click="openDialog">Новое дело +</BaseButton>
+              <BaseDialog
+                :lock-body="true"
+                :title="'Добавить новое дело'"
+                :show="dialogIsOpen"
+                @close-dialog="closeDialog"
+              >
+                <AddTaskForm @submit-form="submitForm"></AddTaskForm>
+
+                <BaseSpinner v-if="addTaskIsLoading"></BaseSpinner>
+              </BaseDialog>
+            </div>
           </div>
 
           <section class="groups-info">
@@ -40,7 +51,7 @@
                 </template>
               </BaseGroupRow>
 
-              <ul class="groups-info__list">
+              <ul class="groups-info__list" v-if="selectedTasks.length > 0">
                 <BaseGroupRow
                   class="groups-info__item"
                   v-for="task in selectedTasks"
@@ -61,7 +72,8 @@
 
                     <div>
                       <span class="groups-info__col">
-                        {{ task.dateOfEnding }}
+                        <!-- {{ task.dateOfEnding }} -->
+                        {{ formatDateLocal(task.dateOfEnding) }}
                       </span>
                     </div>
                     <div>
@@ -72,6 +84,7 @@
                   </template>
                 </BaseGroupRow>
               </ul>
+              <p v-else>У вас нет ни одного дела. Добавьте дел.</p>
             </div>
           </section>
         </div>
@@ -81,8 +94,18 @@
 </template>
 
 <script>
+//* форматирование даты
+import formatDate from '../helpers/formatDate.js';
+
+// todo импортируем addTaskForm
+import AddTaskForm from '../components/tasks/AddTaskForm.vue';
+
 export default {
   name: 'Tasks',
+
+  components: {
+    AddTaskForm
+  },
 
   props: {
     id: {
@@ -94,12 +117,21 @@ export default {
   data() {
     return {
       // currentGroup: null
+      avgImportance: null,
+      dialogIsOpen: false
     };
   },
 
   computed: {
     selectedTasks() {
       return this.$store.getters['tasks/selectedTasks'];
+    },
+
+    avgImportanceOfSelectedTasks() {
+      return this.selectedTasks.reduce(
+        (acc, task, _, { length }) => acc + task.importance / length,
+        0
+      );
     }
   },
 
@@ -108,6 +140,22 @@ export default {
   methods: {
     openNav() {
       this.$emit('open-nav');
+    },
+
+    openDialog() {
+      this.dialogIsOpen = true;
+    },
+
+    closeDialog() {
+      this.dialogIsOpen = false;
+    },
+
+    formatDateLocal(date) {
+      return formatDate(date);
+    },
+
+    submitForm(data) {
+      this.$store.dispatch('tasks/addTask', data);
     }
   }
 };
@@ -173,6 +221,8 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
+
+      margin-bottom: 2.5em !important;
     }
   }
 
@@ -196,6 +246,10 @@ export default {
 
   &__search {
     margin-bottom: 2.5em;
+
+    @include mq(med) {
+      margin-bottom: 0 !important;
+    }
   }
 }
 
@@ -238,12 +292,6 @@ export default {
 
       @include mq(sm) {
         margin-bottom: 0 !important;
-      }
-    }
-
-    & > button {
-      @include mq(sm) {
-        margin-left: 1.5rem;
       }
     }
   }

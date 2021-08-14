@@ -10,6 +10,7 @@ import BaseSortFilterForm from './base/BaseSortFilterForm.vue';
 import BaseGroupRow from './base/BaseGroupRow.vue';
 import BaseSortFilter from './base/BaseSortFilter.vue';
 import BaseDialog from './base/BaseDialog.vue';
+import BaseSpinner from './base/BaseSpinner.vue';
 
 import App from './App.vue';
 import router from './router';
@@ -26,6 +27,7 @@ app.component('BaseSortFilterForm', BaseSortFilterForm);
 app.component('BaseGroupRow', BaseGroupRow);
 app.component('BaseSortFilter', BaseSortFilter);
 app.component('BaseDialog', BaseDialog);
+app.component('BaseSpinner', BaseSpinner);
 
 app.use(store);
 app.use(router);

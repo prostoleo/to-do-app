@@ -12,12 +12,11 @@
           <div class="main-groupId__filter filters">
             <BaseSortFilter class="filters__row"></BaseSortFilter>
             <div class="filters__search">
-              <BaseInputLabel :label="`Поиск по названию`"></BaseInputLabel>
+              <BaseInputLabel :label="`Поиск по названию`" :floating="true"></BaseInputLabel>
             </div>
           </div>
           <div class="main-groupId__add add">
-            <form class="add__input-wrapper">
-              <BaseInputLabel :label="`Название нового дела`"></BaseInputLabel>
+            <div class="add__input-wrapper">
               <BaseButton :mode="'outline'" @click="openDialog" type="button"
                 >Новое дело +</BaseButton
               >
@@ -28,9 +27,14 @@
                 :show="dialogIsOpen"
                 @close-dialog="closeDialog"
               >
-                <AddTaskForm :group-id="currentGroup.groupId"></AddTaskForm>
+                <AddTaskForm
+                  :group-id="currentGroup.groupId"
+                  @submit-form="submitForm"
+                ></AddTaskForm>
+
+                <BaseSpinner v-if="addTaskIsLoading"></BaseSpinner>
               </BaseDialog>
-            </form>
+            </div>
           </div>
 
           <section class="groups-info">
@@ -53,7 +57,7 @@
                 </template>
               </BaseGroupRow>
 
-              <ul class="groups-info__list">
+              <ul class="groups-info__list" v-if="selectedTasks.length > 0">
                 <BaseGroupRow
                   class="groups-info__item"
                   v-for="task in selectedTasks"
@@ -74,7 +78,8 @@
 
                     <div>
                       <span class="groups-info__col">
-                        {{ task.dateOfEnding }}
+                        <!-- {{ task.dateOfEnding }} -->
+                        {{ formatDateLocal(task.dateOfEnding) }}
                       </span>
                     </div>
                     <div>
@@ -85,6 +90,7 @@
                   </template>
                 </BaseGroupRow>
               </ul>
+              <p v-else>У вас еще нет дел в этой группе. Добавьте дел.</p>
             </div>
           </section>
         </div>
@@ -95,6 +101,9 @@
 
 <script>
 import AddTaskForm from '../components/tasks/AddTaskForm.vue';
+
+//* форматирование даты
+import formatDate from '../helpers/formatDate.js';
 
 export default {
   name: 'GroupId',
@@ -113,7 +122,8 @@ export default {
   data() {
     return {
       currentGroup: null,
-      dialogIsOpen: false
+      dialogIsOpen: false,
+      addTaskIsLoading: false
     };
   },
 
@@ -182,6 +192,16 @@ export default {
     },
     closeDialog() {
       this.dialogIsOpen = false;
+    },
+
+    //* отправляем форму
+    submitForm(data) {
+      this.$store.dispatch('tasks/addTask', data);
+    },
+
+    //* форматируем дату
+    formatDateLocal(date) {
+      return formatDate(date);
     }
   }
 };
@@ -319,12 +339,6 @@ export default {
 
       @include mq(sm) {
         margin-bottom: 0 !important;
-      }
-    }
-
-    & > button {
-      @include mq(sm) {
-        margin-left: 1.5rem;
       }
     }
   }
