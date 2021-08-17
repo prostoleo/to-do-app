@@ -1,4 +1,3 @@
-/* eslint-disable operator-linebreak */
 <template>
   <form @submit.prevent="submitForm" ref="form">
     <BaseInputLabel
@@ -10,6 +9,7 @@
       :floating="true"
       @update-input="updateData"
       @validate-input="validateData"
+      required
     ></BaseInputLabel>
     <!-- <BaseInputLabel
       v-if="isGroupNeeded"
@@ -40,10 +40,10 @@
       :error="dateOfEndingError"
       @update-input="updateData"
       @validate-input="validateData"
+      required
     >
     </BaseInputLabel>
 
-    <!-- required -->
     <BaseInputLabel
       :label="'Время окончания'"
       :type="'time'"
@@ -51,6 +51,7 @@
       :error="timeOfEndingError"
       @update-input="updateData"
       @validate-input="validateData"
+      required
     >
     </BaseInputLabel>
     <!-- required -->
@@ -64,6 +65,7 @@
       :error="importanceError"
       @update-input="updateData"
       @validate-input="validateData"
+      required
     ></BaseInputLabel>
     <BaseButton :mode="'flat'" :disabled-val="totalError">
       Добавить дело!
@@ -91,9 +93,9 @@ export default {
   data() {
     return {
       totalError: true,
-      taskId: null,
-      taskIdError: false,
-      title: null,
+      // taskId: null,
+      // taskIdError: false,
+      /* title: null,
       titleIsError: false,
 
       groupTitle: null,
@@ -106,38 +108,69 @@ export default {
       timeOfEndingIsError: false,
 
       importance: null,
-      importanceIsError: false
+      importanceIsError: false */
+
+      title: {
+        value: null,
+        isError: false,
+        touched: false
+      },
+      groupTitle: {
+        value: null,
+        isError: false,
+        touched: false
+      },
+      dateOfEnding: {
+        value: null,
+        isError: false,
+        touched: false
+      },
+      timeOfEnding: {
+        value: null,
+        isError: false,
+        touched: false
+      },
+      importance: {
+        value: null,
+        isError: false,
+        touched: false
+      }
     };
   },
 
   computed: {
     titleError() {
       return {
-        isError: this.titleIsError,
+        // isError: this.titleIsError,
+        isError: this.title.isError,
         message: 'Пожалуйста, введите не пустую строку '
       };
     },
     groupTitleError() {
       return {
-        isError: this.groupTitleIsError,
+        // isError: this.groupTitleIsError,
+        isError: this.groupTitle.isError,
         message: 'Пожалуйста, введите название уже существующей группы дел'
       };
     },
     dateOfEndingError() {
       return {
-        isError: this.dateOfEndingIsError,
+        // isError: this.dateOfEndingIsError,
+        isError: this.dateOfEnding.isError,
         message: 'Дата окончания дела должна быть позже нынешнего времени'
       };
     },
     timeOfEndingError() {
       return {
-        isError: this.timeOfEndingIsError,
+        // isError: this.timeOfEndingIsError,
+        isError: this.timeOfEnding.isError,
         message: 'Введите, пожалуйста время окончания дела'
       };
     },
     importanceError() {
       return {
-        isError: this.importanceIsError,
+        // isError: this.importanceIsError,
+        isError: this.importance.isError,
         message:
           'Введите, пожалуйста, важность дела в баллах от 1 (наименее важное) до 10 (наиболее важное)'
       };
@@ -191,19 +224,32 @@ export default {
       switch (refOfTarget) {
         case 'input-title':
           // case 'input-text':
-          this.title = data.data;
+          // this.title = data.data;
+
+          this.title.touched = true;
+          this.title.value = data.data;
+
           break;
         case 'input-dateOfEnding':
         case 'input-date':
-          this.dateOfEnding = data.data;
+          // this.dateOfEnding = data.data;
+
+          this.dateOfEnding.touched = true;
+          this.dateOfEnding.value = data.data;
           break;
         case 'input-timeOfEnding':
         case 'input-time':
-          this.timeOfEnding = data.data;
+          // this.timeOfEnding = data.data;
+
+          this.timeOfEnding.touched = true;
+          this.timeOfEnding.value = data.data;
           break;
         case 'input-importance':
         case 'input-number':
-          this.importance = data.data;
+          // this.importance = data.data;
+
+          this.importance.touched = true;
+          this.importance.value = data.data;
           break;
         default:
           break;
@@ -218,40 +264,67 @@ export default {
       switch (refOfTarget) {
         case 'input-title':
           // case 'input-text':
-          if (!this.title) {
+          /* if (!this.title) {
             this.titleIsError = true;
             this.totalError = true;
           } else {
             this.titleIsError = false;
+          } */
+
+          if (!this.title.value) {
+            this.title.isError = true;
+            this.totalError = true;
+          } else {
+            this.title.isError = false;
           }
           break;
         case 'select':
           // case 'input-text':
-          if (!this.groupTitle) {
+          /* if (!this.groupTitle) {
             this.groupTitleIsError = true;
             this.totalError = true;
           } else {
             this.groupTitleIsError = false;
+          } */
+          if (!this.groupTitle.value) {
+            this.groupTitle.isError = true;
+            this.totalError = true;
+          } else {
+            this.groupTitle.isError = false;
           }
           break;
         case 'input-dateOfEnding':
           // case 'input-date':
-          if (!this.dateOfEnding || Date.parse(this.dateOfEnding) <= Date.now()) {
+          /* if (!this.dateOfEnding || Date.parse(this.dateOfEnding) <= Date.now()) {
             this.dateOfEndingIsError = true;
             this.totalError = true;
           } else {
             this.dateOfEndingIsError = false;
+          } */
+
+          if (!this.dateOfEnding.value || Date.parse(this.dateOfEnding.value) <= Date.now()) {
+            this.dateOfEnding.isError = true;
+            this.totalError = true;
+          } else {
+            this.dateOfEnding.isError = false;
           }
           break;
         case 'input-timeOfEnding':
-          if (!this.timeOfEnding) {
+          /* if (!this.timeOfEnding) {
             this.timeOfEndingIsError = true;
           } else {
             this.timeOfEndingIsError = false;
+          } */
+
+          if (!this.timeOfEnding.value) {
+            this.timeOfEnding.isError = true;
+            this.totalError = true;
+          } else {
+            this.timeOfEnding.isError = false;
           }
           break;
         case 'input-importance':
-          if (
+          /* if (
             // eslint-disable-next-line operator-linebreak
             !this.importance ||
             typeof +this.importance !== 'number' ||
@@ -262,6 +335,18 @@ export default {
             this.totalError = true;
           } else {
             this.importanceIsError = false;
+          } */
+
+          if (
+            !this.importance.value ||
+            typeof +this.importance.value !== 'number' ||
+            this.importance.value < 1 ||
+            this.importance.value > 10
+          ) {
+            this.importance.isError = true;
+            this.totalError = true;
+          } else {
+            this.importance.isError = false;
           }
           break;
         default:
@@ -272,20 +357,59 @@ export default {
     },
 
     tryRemoveTotalError() {
+      console.log('this.totalError: ', this.totalError);
+      /* if (
+        (this.isGroupNeeded &&
+          this.titleIsError === false &&
+          this.groupTitleIsError === false &&
+          this.dateOfEndingIsError === false &&
+          this.timeOfEndingIsError === false &&
+          this.importanceIsError === false) ||
+        (!this.isGroupNeeded &&
+          this.titleIsError === false &&
+          this.dateOfEndingIsError === false &&
+          this.timeOfEndingIsError === false &&
+          this.importanceIsError === false)
+      ) {
+        this.totalError = false;
+      } */
+
       if (
-        this.totalError === false &&
-        this.titleIsError === false &&
-        this.groupTitleIsError === false &&
-        this.dateOfEndingIsError === false &&
-        this.timeOfEndingIsError === false &&
-        this.importanceIsError === false
+        (this.isGroupNeeded &&
+          this.title.isError === false &&
+          this.title.touched === true &&
+          this.groupTitle.isError === false &&
+          this.groupTitle.touched === true &&
+          this.dateOfEnding.isError === false &&
+          this.dateOfEnding.touched === true &&
+          this.timeOfEnding.isError === false &&
+          this.timeOfEnding.touched === true &&
+          this.importance.isError === false &&
+          this.importance.touched === true) ||
+        (!this.isGroupNeeded &&
+          this.title.isError === false &&
+          this.title.touched === true &&
+          this.dateOfEnding.isError === false &&
+          this.dateOfEnding.touched === true &&
+          this.timeOfEnding.isError === false &&
+          this.timeOfEnding.touched === true &&
+          this.importance.isError === false &&
+          this.importance.touched === true)
       ) {
         this.totalError = false;
       }
+      console.log('this.totalError: ', this.totalError);
     },
 
     //* возвращаемся к начальным значением ошибок - false
     resetErrors() {
+      /* this.totalError = false;
+      this.titleIsError = false;
+      this.groupTitleIsError = false;
+      this.dateOfEndingIsError = false;
+      this.timeOfEndingIsError = false;
+      this.importanceIsError = false; */
+
       this.totalError = false;
       this.titleIsError = false;
       this.groupTitleIsError = false;
@@ -296,10 +420,17 @@ export default {
 
     //* для selectInput
     selectValue() {
-      this.groupTitle = this.$refs.select.value;
+      /* this.groupTitle = this.$refs.select.value;
 
       this.validateDate({
         data: this.groupTitle,
+        id: this.$refs.select.id
+      }); */
+
+      this.groupTitle.value = this.$refs.select.value;
+
+      this.validateDate({
+        data: this.groupTitle.value,
         id: this.$refs.select.id
       });
     },
@@ -369,13 +500,25 @@ export default {
       // console.log('this.groupTitle: ', this.groupTitle);
 
       // todo формируем данные для добавления
-      const dataToSubmit = {
+      /* const dataToSubmit = {
         groupId: this.groupId ? this.groupId : this.groupIdOfActiveGroupTitle,
         taskId: +Date.now(),
         title: this.title,
         dateOfAddition: +Date.now(),
         dateOfEnding: this.totalMiliSeconds(Date.parse(this.dateOfEnding), this.timeOfEnding),
         importance: +this.importance
+      }; */
+
+      const dataToSubmit = {
+        groupId: this.groupId ? this.groupId : this.groupIdOfActiveGroupTitle,
+        taskId: +Date.now(),
+        title: this.title.value,
+        dateOfAddition: +Date.now(),
+        dateOfEnding: this.totalMiliSeconds(
+          Date.parse(this.dateOfEnding.value),
+          this.timeOfEnding.value
+        ),
+        importance: +this.importance.value
       };
 
       console.log('dataToSubmit: ', dataToSubmit);

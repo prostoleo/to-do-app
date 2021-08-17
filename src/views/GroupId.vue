@@ -11,9 +11,7 @@
           </h3>
           <div class="main-groupId__filter filters">
             <BaseSortFilter class="filters__row"></BaseSortFilter>
-            <div class="filters__search">
-              <BaseInputLabel :label="`Поиск по названию`" :floating="true"></BaseInputLabel>
-            </div>
+            <BaseSearch @update-search="updateSearch"></BaseSearch>
           </div>
           <div class="main-groupId__add add">
             <div class="add__input-wrapper">
@@ -38,7 +36,7 @@
           </div>
 
           <section class="groups-info">
-            <div class="groups-info__wrapper">
+            <div class="groups-info__wrapper" v-if="selectedTasks.length > 0">
               <BaseGroupRow isHeader class="groups-info__header" :row-not-link="true">
                 <template #header>
                   <div>
@@ -57,11 +55,12 @@
                 </template>
               </BaseGroupRow>
 
-              <ul class="groups-info__list" v-if="selectedTasks.length > 0">
+              <ul class="groups-info__list">
                 <BaseGroupRow
                   class="groups-info__item"
                   v-for="task in selectedTasks"
                   :key="task.taskId"
+                  :task-id="task.taskId"
                   :row-not-link="true"
                 >
                   <template #body>
@@ -90,8 +89,10 @@
                   </template>
                 </BaseGroupRow>
               </ul>
-              <p v-else>У вас еще нет дел в этой группе. Добавьте дел.</p>
             </div>
+            <p v-else-if="selectedTasks.length === 0" class="groups-info__zero-tasks">
+              У вас еще нет групп дел. Добавьте группу дел
+            </p>
           </section>
         </div>
       </BaseContainer>
@@ -104,6 +105,7 @@ import AddTaskForm from '../components/tasks/AddTaskForm.vue';
 
 //* форматирование даты
 import formatDate from '../helpers/formatDate.js';
+import formatAvgImportance from '../helpers/formatAvgImportance.js';
 
 export default {
   name: 'GroupId',
@@ -123,15 +125,26 @@ export default {
     return {
       currentGroup: null,
       dialogIsOpen: false,
-      addTaskIsLoading: false
+      addTaskIsLoading: false,
+      query: null
     };
   },
 
   computed: {
     //* выбираем slected tasks в соответствии с текущим id
     selectedTasks() {
-      console.log(this.$store.getters);
-      return this.$store.getters['tasks/tasksOnGroupId'];
+      // console.log(this.$store.getters);
+      // return this.$store.getters['tasks/tasksOnGroupId'];
+
+      /* console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
+      return this.$store.getters['groups/groups']; */
+
+      const tasksOnGroupId = this.$store.getters['tasks/tasksOnGroupId'];
+
+      return this.$store.getters['tasks/selectedTasks']({
+        tasksOnGroupId,
+        query: this.query
+      });
     },
 
     currentGroupComp() {
@@ -149,10 +162,7 @@ export default {
     },
 
     avgImportanceOfSelectedTasks() {
-      return this.selectedTasks.reduce(
-        (acc, task, _, { length }) => acc + task.importance / length,
-        0
-      );
+      return formatAvgImportance(this.selectedTasks);
     },
 
     /* styleOfImportance() {
@@ -181,6 +191,11 @@ export default {
   },
 
   methods: {
+    updateSearch(data) {
+      console.log('data: ', data);
+      this.query = data.data;
+    },
+
     openNav() {
       this.$emit('open-nav');
       /* if (window.innerWidth < 900) {
@@ -346,5 +361,13 @@ export default {
 
 .groups-info {
   @extend %tpl-table-content;
+
+  &__zero-tasks {
+    font-size: 1.6rem;
+    font-weight: 500;
+
+    padding: 1em 0;
+    color: $text-main;
+  }
 }
 </style>

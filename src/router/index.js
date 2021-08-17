@@ -26,8 +26,9 @@ const routes = [
     component: Tasks
   },
   {
-    path: '/:pathMath(.*)',
-    component: NotFound
+    path: '/:notFound(.*)',
+    component: NotFound,
+    name: 'Not-Found'
   }
 ];
 

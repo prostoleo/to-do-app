@@ -11,7 +11,7 @@
       @blur="blurEvent"
       ref="input"
       :required="required"
-      v-model="data"
+      v-model.trim="data"
       :class="{ active: classActive }"
     />
     <label v-if="floating" for="input" class="floating">{{ label }}</label>
@@ -72,6 +72,11 @@ export default {
     error: {
       type: Object,
       default: null
+    },
+    clear: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 
@@ -92,6 +97,12 @@ export default {
         id: this.$refs.input.id
       });
     } */
+    clear(newValue) {
+      if (newValue === true) {
+        this.data = null;
+        this.$refs.input.value = '';
+      }
+    }
   },
 
   created() {
@@ -250,7 +261,7 @@ div {
     transition: all 150ms ease-in-out;
 
     pointer-events: none;
-    z-index: 20;
+    z-index: 5;
   }
 
   /* &.active label {

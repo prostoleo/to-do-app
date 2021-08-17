@@ -2,15 +2,16 @@ import { createApp } from 'vue';
 
 import TheNaV from './UI/TheNav.vue';
 
-import BaseContainer from './base/BaseContainer.vue';
-import BaseInputLabel from './base/BaseInputLabel.vue';
-import BaseMenuBurger from './base/BaseMenuBurger.vue';
-import BaseButton from './base/BaseButton.vue';
-import BaseSortFilterForm from './base/BaseSortFilterForm.vue';
-import BaseGroupRow from './base/BaseGroupRow.vue';
-import BaseSortFilter from './base/BaseSortFilter.vue';
-import BaseDialog from './base/BaseDialog.vue';
-import BaseSpinner from './base/BaseSpinner.vue';
+import BaseContainer from './components/base/BaseContainer.vue';
+import BaseInputLabel from './components/base/BaseInputLabel.vue';
+import BaseMenuBurger from './components/base/BaseMenuBurger.vue';
+import BaseButton from './components/base/BaseButton.vue';
+import BaseSortFilterForm from './components/base/BaseSortFilterForm.vue';
+import BaseGroupRow from './components/base/BaseGroupRow.vue';
+import BaseSortFilter from './components/base/BaseSortFilter.vue';
+import BaseDialog from './components/base/BaseDialog.vue';
+import BaseSpinner from './components/base/BaseSpinner.vue';
+import BaseSearch from './components/base/BaseSearch.vue';
 
 import App from './App.vue';
 import router from './router';
@@ -28,6 +29,7 @@ app.component('BaseGroupRow', BaseGroupRow);
 app.component('BaseSortFilter', BaseSortFilter);
 app.component('BaseDialog', BaseDialog);
 app.component('BaseSpinner', BaseSpinner);
+app.component('BaseSearch', BaseSearch);
 
 app.use(store);
 app.use(router);

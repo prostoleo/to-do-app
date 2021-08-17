@@ -18,6 +18,12 @@
   </div>
 </template>
 
+<script>
+export default {
+  name: 'Not-Found'
+};
+</script>
+
 <style lang="scss" scoped>
 div {
   display: grid;

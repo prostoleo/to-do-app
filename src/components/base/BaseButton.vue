@@ -1,10 +1,10 @@
 <template>
   <button
     v-if="!link"
-    :class="{ flat: mode === 'flat', outline: mode === 'outline', disabled: disabledVal }"
+    :class="{ flat: mode === 'flat', outline: mode === 'outline', disabled: disabledClass }"
     :type="type"
     :style="styleInlineFlex"
-    :disabled="!!disabledVal"
+    :disabled="disabledVal"
   >
     <slot></slot>
   </button>
@@ -48,12 +48,20 @@ export default {
     }
   },
 
+  watch: {
+    disabledVal() {}
+  },
+
   computed: {
     /* linkComputed() {
       return
     } */
     styleInlineFlex() {
       return this.inlineFlex ? 'display: inline-flex !important' : null;
+    },
+
+    disabledClass() {
+      return this.disabledVal === true ? 'disabled' : '';
     }
   }
 };
@@ -72,6 +80,7 @@ button.outline {
   transition: all 250ms ease-in-out;
 
   border-radius: 2.5em;
+  cursor: pointer;
 
   &:hover,
   &:focus {
@@ -84,7 +93,7 @@ button.flat {
   display: inline-block;
 
   padding: 0.5em 1em;
-
+  cursor: pointer;
   font-size: 1.4rem;
   font-weight: 600;
   border: 1px solid $accent;

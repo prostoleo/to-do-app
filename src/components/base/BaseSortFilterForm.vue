@@ -197,6 +197,8 @@ export default {
     align-items: center;
     justify-content: space-between;
 
+    cursor: pointer;
+
     span.icon {
       font-size: 1.6rem;
       // margin-left: 1.5rem;

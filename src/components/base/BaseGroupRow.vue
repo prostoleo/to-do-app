@@ -8,7 +8,7 @@
 
   </router-link> -->
   <!-- :class="{ row_4: row4 }" -->
-  <li class="groups-info__item" v-else>
+  <li class="groups-info__item" v-else ref="li" :data-group-id="groupId" :data-task-id="taskId">
     <!-- // todo - добавить :to с динамическим id (computed - toId)  -->
     <router-link class="groups-info__link" :to="`/groups/${toId}`" v-if="!rowNotLink">
       <slot name="body"></slot>
@@ -17,7 +17,7 @@
       <slot name="body"></slot>
     </div>
     <button class="icon-edit _icon-edit"></button>
-    <button class="icon _icon-close"></button>
+    <button class="icon _icon-close" @click="deleteGroupOrTask"></button>
   </li>
 </template>
 
@@ -35,6 +35,16 @@ export default {
       required: false
     },
 
+    groupId: {
+      type: String,
+      required: false
+    },
+
+    taskId: {
+      type: String,
+      required: false
+    },
+
     rowNotLink: {
       type: Boolean,
       required: false,
@@ -46,6 +56,36 @@ export default {
     //* вычисляем id
     toId() {
       return `${this.id}`;
+    }
+  },
+
+  methods: {
+    // todo удаляем группы или задание в зависимости от того rowNotLink
+    deleteGroupOrTask() {
+      //* если не линк - значит находимся в task и удаляем task - иначе удаляем group
+      if (this.rowNotLink) {
+        const { taskId } = this.$refs.li.dataset;
+
+        console.log('taskId: ', taskId);
+        console.log('typeof taskId: ', typeof taskId);
+
+        this.$store.dispatch('tasks/deleteTask', {
+          taskId
+        });
+      } else {
+        const { groupId } = this.$refs.li.dataset;
+
+        console.log('groupId: ', groupId);
+        console.log('typeof groupId: ', typeof groupId);
+
+        this.$store.dispatch('groups/deleteGroup', {
+          groupId
+        });
+
+        this.$store.dispatch('tasks/deleteTasksOnGroupId', {
+          groupId
+        });
+      }
     }
   }
 };

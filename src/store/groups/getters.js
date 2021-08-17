@@ -1,10 +1,31 @@
 export default {
-  groups(store) {
-    return store.groups;
+  groups(state) {
+    return state.groups;
   },
 
-  groupNamesAndIds(store) {
-    const groupNamesAndIds = store.groups.map((group) => ({
+  selectedGroups: (state) => (data) => {
+    let selectedGroups = null;
+
+    const query = data?.query ?? null;
+    console.log('query: ', query);
+
+    if (query) {
+      selectedGroups = state.groups
+        .slice()
+        .filter((g) => g.title.toLowerCase().includes(query.toLowerCase()));
+
+      console.log('selectedGroups: ', selectedGroups);
+      return selectedGroups;
+    }
+
+    selectedGroups = state.groups;
+
+    console.log('selectedGroups: ', selectedGroups);
+    return selectedGroups;
+  },
+
+  groupNamesAndIds(state) {
+    const groupNamesAndIds = state.groups.map((group) => ({
       id: group.groupId,
       title: group.title
     }));
@@ -22,7 +43,7 @@ export default {
     return state.groups.find((group) => group.groupId === id);
   }
 
-  /* groupOnId(store, getters, rootState, rootGetters) {
+  /* groupOnId(state, getters, rootState, rootGetters) {
     const groupdId = rootGetters.groupId;
 
     return store.g;

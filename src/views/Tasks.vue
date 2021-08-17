@@ -11,9 +11,7 @@
           </h3>
           <div class="main-tasks__filter filters">
             <BaseSortFilter class="filters__row"></BaseSortFilter>
-            <div class="filters__search">
-              <BaseInputLabel :label="`Поиск по названию`" :floating="true"></BaseInputLabel>
-            </div>
+            <BaseSearch @update-search="updateSearch"></BaseSearch>
           </div>
           <div class="main-tasks__add add">
             <div class="add__input-wrapper">
@@ -32,7 +30,7 @@
           </div>
 
           <section class="groups-info">
-            <div class="groups-info__wrapper">
+            <div class="groups-info__wrapper" v-if="selectedTasks.length > 0">
               <BaseGroupRow isHeader class="groups-info__header" :row-group-id="true">
                 <template #header>
                   <div>
@@ -51,12 +49,13 @@
                 </template>
               </BaseGroupRow>
 
-              <ul class="groups-info__list" v-if="selectedTasks.length > 0">
+              <ul class="groups-info__list">
                 <BaseGroupRow
                   class="groups-info__item"
                   v-for="task in selectedTasks"
                   :key="task.taskId"
-                  :row-group-id="true"
+                  :task-id="task.taskId"
+                  :row-not-link="true"
                 >
                   <template #body>
                     <div>
@@ -84,8 +83,8 @@
                   </template>
                 </BaseGroupRow>
               </ul>
-              <p v-else>У вас нет ни одного дела. Добавьте дел.</p>
             </div>
+            <p v-else class="groups-info__zero-tasks">У вас нет ни одного дела. Добавьте дел.</p>
           </section>
         </div>
       </BaseContainer>
@@ -96,6 +95,7 @@
 <script>
 //* форматирование даты
 import formatDate from '../helpers/formatDate.js';
+import formatAvgImportance from '../helpers/formatAvgImportance.js';
 
 // todo импортируем addTaskForm
 import AddTaskForm from '../components/tasks/AddTaskForm.vue';
@@ -118,26 +118,31 @@ export default {
     return {
       // currentGroup: null
       avgImportance: null,
-      dialogIsOpen: false
+      dialogIsOpen: false,
+      query: null
     };
   },
 
   computed: {
     selectedTasks() {
-      return this.$store.getters['tasks/selectedTasks'];
+      return this.$store.getters['tasks/selectedTasks']({
+        query: this.query
+      });
     },
 
     avgImportanceOfSelectedTasks() {
-      return this.selectedTasks.reduce(
-        (acc, task, _, { length }) => acc + task.importance / length,
-        0
-      );
+      return formatAvgImportance(this.selectedTasks);
     }
   },
 
   created() {},
 
   methods: {
+    updateSearch(data) {
+      console.log('data: ', data);
+      this.query = data.data;
+    },
+
     openNav() {
       this.$emit('open-nav');
     },
@@ -299,5 +304,13 @@ export default {
 
 .groups-info {
   @extend %tpl-table-content;
+
+  &__zero-tasks {
+    font-size: 1.6rem;
+    font-weight: 500;
+
+    padding: 1em 0;
+    color: $text-main;
+  }
 }
 </style>

@@ -7,51 +7,25 @@
           <BaseMenuBurger class="main-groups__menu" @click="openNav"> </BaseMenuBurger>
           <h2 class="main-groups__title">Группы дел</h2>
           <div class="main-groups__filter">
-            <!-- <div class="filters__sort-wrapper">
-              <button class="filters__sort">
-                <span @click="toggleSortFilterForm($event)" id="sort-btn">
-                  Сортировка
-                  <span class="icon _icon-shevron"></span>
-                </span>
-                <BaseSortFilterForm
-                  :is-groups="true"
-                  :is-sort="true"
-                  :sort-open="isSortFormOpen"
-                  ref="sort-form"
-                ></BaseSortFilterForm>
-              </button>
-              <button class="filters__sort">
-                <span @click="toggleSortFilterForm($event)" id="filter-btn">
-                  Фильтрация
-                  <span class="icon _icon-shevron"></span>
-                </span>
-                <BaseSortFilterForm
-                  :is-groups="true"
-                  :is-sort="false"
-                  :filter-open="isFilterFormOpen"
-                  ref="filter-form"
-                ></BaseSortFilterForm>
-              </button>
-            </div> -->
             <BaseSortFilter></BaseSortFilter>
-            <div class="filters__search">
-              <BaseInputLabel :label="`Поиск по названию`" :floating="true"></BaseInputLabel>
-            </div>
+            <BaseSearch @update-search="updateSearch"></BaseSearch>
           </div>
           <div class="main-groups__add add">
-            <form class="add__input-wrapper">
-              <BaseInputLabel :label="`Название новой группы`" :floating="true"></BaseInputLabel>
+            <form class="add__input-wrapper" @submit.prevent="submitAddGroup($event)">
+              <BaseInputLabel
+                :label="`Название новой группы`"
+                :floating="true"
+                :name="'add-group'"
+                :required="true"
+                :clear="clearInputAdd"
+                @update-input="changeAddedGroup"
+              ></BaseInputLabel>
               <BaseButton :mode="'outline'">Новая группа +</BaseButton>
             </form>
           </div>
 
           <section class="groups-info">
-            <div class="groups-info__wrapper">
-              <!-- <header class="groups-info__header">
-                <span class="grops-info__col">Название</span>
-                <span class="grops-info__col">Дата добавления</span>
-                <span class="grops-info__col">Средняя важность</span>
-              </header> -->
+            <div class="groups-info__wrapper" v-if="selectedGroups.length > 0">
               <BaseGroupRow isHeader class="groups-info__header">
                 <template #header>
                   <div>
@@ -66,12 +40,13 @@
                 </template>
               </BaseGroupRow>
 
-              <ul class="groups-info__list" v-if="allGroups.length > 0">
+              <ul class="groups-info__list">
                 <BaseGroupRow
                   class="groups-info__item"
-                  v-for="group in allGroups"
+                  v-for="group in selectedGroups"
                   :key="group.groupId"
                   :id="group.groupId"
+                  :group-id="group.group"
                 >
                   <template #body>
                     <div>
@@ -95,55 +70,11 @@
                     </div>
                   </template>
                 </BaseGroupRow>
-                <!-- <GroupRow class="groups-info__item">
-                  <template #body>
-                    <div>
-                      <span class="groups-info__col">
-                        Дом
-                      </span>
-                    </div>
-                    <div>
-                      <span class="groups-info__col">
-                        03.07.2021 - 11:11
-                      </span>
-                    </div>
-                    <div>
-                      <span class="groups-info__col">
-                        6,8
-                      </span>
-                    </div>
-                  </template>
-                </GroupRow> -->
-
-                <!-- <li class="groups-info__item">
-                  <router-link class="groups-info__link" to="/groups/1">
-                    <span class="groups-info__col">
-                      Дом
-                    </span>
-                    <span class="groups-info__col">
-                      03.07.2021 - 11:11
-                    </span>
-                    <span class="groups-info__col">
-                      6,8
-                    </span>
-                  </router-link>
-                </li> -->
-                <!-- <li class="groups-info__item">
-                  <router-link class="groups-info__link" to="/groups/2">
-                    <span class="groups-info__col">
-                      Тренировка
-                    </span>
-                    <span class="groups-info__col">
-                      03.07.2021 - 22:22
-                    </span>
-                    <span class="groups-info__col">
-                      6,2
-                    </span>
-                  </router-link>
-                </li> -->
               </ul>
-              <p v-else>У вас еще нет групп дел. Добавьте группу дел</p>
             </div>
+            <p v-else-if="selectedGroups.length === 0" class="groups-info__zero-tasks">
+              У вас еще нет групп дел. Добавьте группу дел
+            </p>
           </section>
         </div>
       </BaseContainer>
@@ -170,14 +101,22 @@ export default {
       //* для открытия форм
       /* isSortFormOpen: false,
       isFilterFormOpen: false */
+      addedGroup: null,
+      addInputData: null,
+      query: null,
+      clearInputAdd: false
     };
   },
 
   computed: {
-    allGroups() {
+    selectedGroups() {
       console.log(this.$store);
-      console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
-      return this.$store.getters['groups/groups'];
+      /* console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
+      return this.$store.getters['groups/groups']; */
+
+      return this.$store.getters['groups/selectedGroups']({
+        query: this.query
+      });
     }
 
     /* bgClassColor() {
@@ -186,6 +125,12 @@ export default {
   },
 
   methods: {
+    // todo обновляем поиск
+    updateSearch(data) {
+      console.log('data: ', data);
+      this.query = data.data;
+    },
+
     openNav() {
       if (window.innerWidth < 900) {
         this.$emit('open-nav');
@@ -195,34 +140,33 @@ export default {
     //* форматирование даты
     formatDateLocal(date) {
       return formatDate(date);
-    }
-
-    // todo метод открытия закрытия форм
-
-    /* toggleSortFilterForm(event) {
-      // console.log(event.target.id);
-      // console.log(event.target.id.includes('sort'));
-
-      if (event.target.id.includes('sort')) {
-        this.isSortFormOpen = !this.isSortFormOpen;
-
-        return;
-      }
-
-      if (event.target.id.includes('filter')) {
-        this.isFilterFormOpen = !this.isFilterFormOpen;
-
-        // eslint-disable-next-line no-useless-return
-        return;
-      }
-    } */
-
-    /* toggleSortForm() {
-      // console.log($event.target);
     },
-    toggleFilterForm() {
-      // console.log($event.target);
-    } */
+
+    // todo добавление группы
+    submitAddGroup() {
+      console.log('this.addedGroup: ', this.addedGroup);
+      if (!this.addedGroup) return;
+
+      this.$store.dispatch('groups/addGroup', {
+        groupId: parseInt(Date.now(), 16)
+          .toString()
+          .slice(-4),
+        title: this.addedGroup,
+        dateOfAddition: new Date(Date.now()).toISOString()
+      });
+
+      /* const input = event.target.querySelector('input');
+
+      input.value = '';
+      input.unfocus(); */
+      this.clearInputAdd = true;
+    },
+
+    // todo добавление группы
+    changeAddedGroup(data) {
+      this.addInputData = data;
+      this.addedGroup = data.data;
+    }
   }
 };
 </script>
@@ -440,5 +384,13 @@ export default {
 }
 .groups-info {
   @extend %tpl-table-content;
+
+  &__zero-tasks {
+    font-size: 1.6rem;
+    font-weight: 500;
+
+    padding: 1em 0;
+    color: $text-main;
+  }
 }
 </style>
