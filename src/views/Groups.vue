@@ -72,9 +72,10 @@
                 </BaseGroupRow>
               </ul>
             </div>
-            <p v-else-if="selectedGroups.length === 0" class="groups-info__zero-tasks">
-              У вас еще нет групп дел. Добавьте группу дел
+            <p v-else-if="selectedTasks.length === 0 && query" class="groups-info__zero-tasks">
+              По запросу {{ query }} ничего не найдено😞. Попробуйте изменить запрос
             </p>
+            <p v-else class="groups-info__zero-tasks">У вас нет ни одного дела. Добавьте дел.</p>
           </section>
         </div>
       </BaseContainer>

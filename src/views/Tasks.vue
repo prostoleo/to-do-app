@@ -87,6 +87,9 @@
                 </BaseGroupRow>
               </ul>
             </div>
+            <p v-else-if="selectedTasks.length === 0 && query" class="groups-info__zero-tasks">
+              По запросу {{ query }} ничего не найдено😞. Попробуйте изменить запрос
+            </p>
             <p v-else class="groups-info__zero-tasks">У вас нет ни одного дела. Добавьте дел.</p>
           </section>
         </div>
@@ -153,10 +156,12 @@ export default {
     selectedTasks() {
       //* проверка на truthy value
       const truthy = this.truthySort;
+      console.log('truthy: ', truthy);
 
       const selectedTasks = this.$store.getters['tasks/selectedTasks']({
         query: this.query
       });
+      console.log('selectedTasks: ', selectedTasks);
 
       if (!truthy) {
         return selectedTasks;
@@ -166,8 +171,9 @@ export default {
 
       //* используем отдельную функцию
       const sortedTasks = sortGroupsTasks(selectedTasks, key, true);
+      console.log('sortedTasks: ', sortedTasks);
 
-      return sortedTasks;
+      return sortedTasks.slice();
     },
 
     avgImportanceOfSelectedTasks() {

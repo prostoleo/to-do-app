@@ -37,7 +37,7 @@ export default {
         importance: 4
       },
       {
-        taskId: '111',
+        taskId: '1111',
         groupId: '2',
         title: 'Поплавать в бассейне',
         // dateOfAddition: '09.07.2021 - 22:33',
@@ -47,7 +47,7 @@ export default {
         importance: 6
       },
       {
-        taskId: '222',
+        taskId: '2222',
         groupId: '2',
         title: 'Побегать на дорожке',
         // dateOfAddition: '11.07.2021 - 14:14',
