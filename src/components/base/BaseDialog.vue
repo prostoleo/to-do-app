@@ -77,9 +77,8 @@ export default {
     };
   },
 
-  created() {
-    if (this.lock) document.querySelector('body').classList.add('lock');
-  },
+  /* created() {
+  }, */
 
   methods: {
     closeDialog() {
@@ -89,6 +88,7 @@ export default {
     },
 
     BeforeEnterDialogAnimation(element) {
+      if (this.lock) document.querySelector('body').classList.add('lock');
       /* const backdropEl = document.querySelector('.dialog_backdrop');
       console.log('backdropEl: ', backdropEl); */
 

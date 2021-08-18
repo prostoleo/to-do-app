@@ -8,6 +8,7 @@ export default {
   },
 
   // todo геттер для выбора заданий по параметрам
+  // eslint-disable-next-line consistent-return
   selectedTasks: (state) => (data) => {
     const tasksOnGroupId = data?.tasksOnGroupId ?? null;
     const query = data?.query ?? null;

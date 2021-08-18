@@ -7,10 +7,11 @@
           <span class="icon _icon-shevron"></span>
         </button>
         <BaseSortFilterForm
-          :is-groups="true"
+          :is-groups="isGroups"
           :is-sort="true"
           :sort-open="isSortFormOpen"
           ref="sort-form"
+          @change-sort="changeSort"
         ></BaseSortFilterForm>
       </div>
       <div class="filters__sort">
@@ -31,12 +32,20 @@
 
 <script>
 export default {
+  emits: ['change-sort-info'],
+
   data() {
     return {
       //* для открытия форм
       isSortFormOpen: false,
       isFilterFormOpen: false
     };
+  },
+
+  computed: {
+    isGroups() {
+      return this.$route.name === 'Groups';
+    }
   },
 
   methods: {
@@ -56,6 +65,10 @@ export default {
         // eslint-disable-next-line no-useless-return
         return;
       }
+    },
+
+    changeSort(data) {
+      this.$emit('change-sort-info', data);
     }
   }
 };

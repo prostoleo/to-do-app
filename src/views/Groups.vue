@@ -7,7 +7,7 @@
           <BaseMenuBurger class="main-groups__menu" @click="openNav"> </BaseMenuBurger>
           <h2 class="main-groups__title">Группы дел</h2>
           <div class="main-groups__filter">
-            <BaseSortFilter></BaseSortFilter>
+            <BaseSortFilter @change-sort-info="changeSortInfo"></BaseSortFilter>
             <BaseSearch @update-search="updateSearch"></BaseSearch>
           </div>
           <div class="main-groups__add add">
@@ -89,6 +89,11 @@
 //* форматирование даты
 import formatDate from '../helpers/formatDate.js';
 
+//* для сортировки
+import sortGroupsTasks from '../helpers/sort/sortGroupsTasks.js';
+import changeSortInfo from '../helpers/sort/changeSortInfo.js';
+import resetSortInfo from '../helpers/sort/resetSortInfo.js';
+
 export default {
   name: 'Groups',
   /* components: {
@@ -104,19 +109,49 @@ export default {
       addedGroup: null,
       addInputData: null,
       query: null,
-      clearInputAdd: false
+      clearInputAdd: false,
+      groupsToDisplay: null,
+      sortInfo: {
+        downName: false,
+        upName: false,
+        downDateAddition: false,
+        upDateAddition: false,
+        downImportance: false,
+        upImportance: false
+      }
     };
   },
 
   computed: {
+    truthySort() {
+      const truthy = Object.entries(this.sortInfo).find((entry) => entry[1] === true);
+
+      console.log('truthy: ', truthy);
+
+      return truthy;
+    },
+
     selectedGroups() {
       console.log(this.$store);
       /* console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
       return this.$store.getters['groups/groups']; */
+      //* проверка на truthy value
+      const truthy = this.truthySort;
 
-      return this.$store.getters['groups/selectedGroups']({
+      const selectedOnQuery = this.$store.getters['groups/selectedGroups']({
         query: this.query
       });
+
+      if (!truthy) {
+        return selectedOnQuery;
+      }
+
+      const [key] = truthy;
+
+      //* используем отдельную функцию
+      const sorted = sortGroupsTasks(selectedOnQuery, key);
+
+      return sorted;
     }
 
     /* bgClassColor() {
@@ -125,9 +160,27 @@ export default {
   },
 
   methods: {
+    // todo метод для возращения sortInfo в первоначальное положение
+    resetSortInfo() {
+      this.sortInfo = resetSortInfo();
+    },
+
+    // todo метод для изменения sortInfo
+    changeSortInfo(data) {
+      this.resetSortInfo();
+
+      // console.log('data: ', data);
+      const { id } = data;
+
+      // console.log('id: ', id);
+
+      //* применяем миксин для измениения sortInfo
+      this.sortInfo = changeSortInfo(id, this.sortInfo);
+    },
+
     // todo обновляем поиск
     updateSearch(data) {
-      console.log('data: ', data);
+      // console.log('data: ', data);
       this.query = data.data;
     },
 

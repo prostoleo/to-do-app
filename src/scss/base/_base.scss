@@ -8,6 +8,10 @@ button:focus {
   outline-color: $accent-2;
 }
 
+body {
+  padding: 1rem 0 !important;
+}
+
 body.lock {
   overflow-y: hidden !important;
 }

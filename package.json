@@ -47,6 +47,12 @@
       "no-tabs": "off",
       "no-console": "off",
       "no-restricted-imports": "off",
+      "no-unused-vars": [
+        "error",
+        {
+          "varsIngnorePattern": "[^_]"
+        }
+      ],
       "import/extensions": [
         0
       ],

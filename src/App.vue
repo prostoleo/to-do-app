@@ -62,6 +62,7 @@ body {
   font-family: 'Fira Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-y: visible !important;
 }
 
 body.lock {

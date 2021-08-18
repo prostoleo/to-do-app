@@ -10,7 +10,10 @@
             Средняя важность - {{ avgImportanceOfSelectedTasks }}
           </h3>
           <div class="main-groupId__filter filters">
-            <BaseSortFilter class="filters__row"></BaseSortFilter>
+            <BaseSortFilter
+              class="filters__row"
+              @change-sort-info="changeSortInfo"
+            ></BaseSortFilter>
             <BaseSearch @update-search="updateSearch"></BaseSearch>
           </div>
           <div class="main-groupId__add add">
@@ -107,6 +110,10 @@ import AddTaskForm from '../components/tasks/AddTaskForm.vue';
 import formatDate from '../helpers/formatDate.js';
 import formatAvgImportance from '../helpers/formatAvgImportance.js';
 
+import sortGroupsTasks from '../helpers/sort/sortGroupsTasks.js';
+import changeSortInfo from '../helpers/sort/changeSortInfo.js';
+import resetSortInfo from '../helpers/sort/resetSortInfo.js';
+
 export default {
   name: 'GroupId',
 
@@ -126,18 +133,62 @@ export default {
       currentGroup: null,
       dialogIsOpen: false,
       addTaskIsLoading: false,
-      query: null
+      query: null,
+
+      sortInfo: {
+        downName: false,
+        upName: false,
+        downDateAddition: false,
+        upDateAddition: false,
+        downDateEnding: false,
+        upDateEnding: false,
+        downImportance: false,
+        upImportance: false
+      }
     };
   },
 
   computed: {
-    //* выбираем slected tasks в соответствии с текущим id
+    truthySort() {
+      const truthy = Object.entries(this.sortInfo).find((entry) => entry[1] === true);
+
+      console.log('truthy: ', truthy);
+
+      return truthy;
+    },
+
     selectedTasks() {
+      /* console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
+      return this.$store.getters['groups/groups']; */
+      //* проверка на truthy value
+      const truthy = this.truthySort;
+
+      const tasksOnGroupId = this.$store.getters['tasks/tasksOnGroupId'];
+
+      const selectedTasks = this.$store.getters['tasks/selectedTasks']({
+        tasksOnGroupId,
+        query: this.query
+      });
+
+      if (!truthy) {
+        return selectedTasks;
+      }
+
+      const [key] = truthy;
+
+      //* используем отдельную функцию
+      const sortedTasks = sortGroupsTasks(selectedTasks, key, true);
+
+      return sortedTasks;
+    },
+
+    //* выбираем slected tasks в соответствии с текущим id
+    /* selectedTasks() {
       // console.log(this.$store.getters);
       // return this.$store.getters['tasks/tasksOnGroupId'];
 
-      /* console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
-      return this.$store.getters['groups/groups']; */
+      // console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
+      // return this.$store.getters['groups/groups'];
 
       const tasksOnGroupId = this.$store.getters['tasks/tasksOnGroupId'];
 
@@ -145,7 +196,7 @@ export default {
         tasksOnGroupId,
         query: this.query
       });
-    },
+    }, */
 
     currentGroupComp() {
       console.log('this.$store.getters: ', this.$store.getters);
@@ -191,6 +242,24 @@ export default {
   },
 
   methods: {
+    // todo метод для возращения sortInfo в первоначальное положение
+    resetSortInfo() {
+      this.sortInfo = resetSortInfo(true);
+    },
+
+    // todo метод для изменения sortInfo
+    changeSortInfo(data) {
+      this.resetSortInfo();
+
+      // console.log('data: ', data);
+      const { id } = data;
+
+      // console.log('id: ', id);
+
+      //* применяем миксин для измениения sortInfo
+      this.sortInfo = changeSortInfo(id, this.sortInfo, true);
+    },
+
     updateSearch(data) {
       console.log('data: ', data);
       this.query = data.data;

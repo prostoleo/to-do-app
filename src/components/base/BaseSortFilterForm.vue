@@ -20,16 +20,30 @@
       </label>
     </div>
     <div class="sort__row">
-      <input type="checkbox" name="" id="sort-checkbox-down_date" />
-      <label class="sort__text" for="sort-checkbox-down_date">
-        <span>По дате</span>
+      <input type="checkbox" name="" id="sort-checkbox-down_date-addition" />
+      <label class="sort__text" for="sort-checkbox-down_date-addition">
+        <span>По дате добавления</span>
         <span class=" icon _icon-arrow" id="sort-checkbox"></span>
       </label>
     </div>
     <div class="sort__row">
-      <input type="checkbox" name="" id="sort-checkbox-up_date" />
-      <label class="sort__text" for="sort-checkbox-up_date">
-        <span>По дате</span>
+      <input type="checkbox" name="" id="sort-checkbox-up_date-addition" />
+      <label class="sort__text" for="sort-checkbox-up_date-addition">
+        <span>По дате добавления</span>
+        <span class=" icon _icon-arrow" id="sort-checkbox"></span>
+      </label>
+    </div>
+    <div class="sort__row" v-if="!isGroups">
+      <input type="checkbox" name="" id="sort-checkbox-down_date-ending" />
+      <label class="sort__text" for="sort-checkbox-down_date-ending">
+        <span>По дате окончания</span>
+        <span class=" icon _icon-arrow" id="sort-checkbox"></span>
+      </label>
+    </div>
+    <div class="sort__row" v-if="!isGroups">
+      <input type="checkbox" name="" id="sort-checkbox-up_date-ending" />
+      <label class="sort__text" for="sort-checkbox-up_date-ending">
+        <span>По дате окончания</span>
         <span class=" icon _icon-arrow" id="sort-checkbox"></span>
       </label>
     </div>
@@ -47,7 +61,7 @@
         <span class=" icon _icon-arrow" id="sort-checkbox"></span>
       </label>
     </div>
-    <div class="sort__row" v-if="!isGroups">
+    <!-- <div class="sort__row" v-if="!isGroups">
       <input type="checkbox" name="" id="sort-checkbox-down_imp" />
       <label class="sort__text" for="sort-checkbox-down_imp">
         <span>По окончанию</span>
@@ -60,34 +74,38 @@
         <span>По окончанию</span>
         <span class=" icon _icon-arrow" id="sort-checkbox"></span>
       </label>
-    </div>
+    </div> -->
   </form>
 
   <form class="opened__filter filter" v-else :class="{ open: filterOpen }">
     <div class="filter__row">
       <div class="filter__inputs">
-        <input type="text" id="filter-checkbox-date--from" class="filter-checkbox-date" />
-        <input type="text" id="filter-checkbox-date--to" class="filter-checkbox-date" />
+        <input type="date" id="filter-checkbox-date-ending--from" class="filter-checkbox-date" />
+        <input type="date" id="filter-checkbox-date-ending--to" class="filter-checkbox-date" />
       </div>
 
       <label class="filter__text" for="filter-checkbox-date">
-        По дате (от и до)
+        По дате окончания (от и до)
       </label>
     </div>
 
     <div class="filter__row">
       <div class="filter__inputs">
         <input
-          type="text"
+          type="number"
           id="filter-checkbox-imp--from"
           class="filter-checkbox-date"
           placeholder="1"
+          min="1"
+          max="10"
         />
         <input
-          type="text"
+          type="number"
           id="filter-checkbox-imp--to"
           class="filter-checkbox-date"
           placeholder="10"
+          min="1"
+          max="10"
         />
       </div>
 
@@ -115,6 +133,8 @@
 
 <script>
 export default {
+  emits: ['change-sort'],
+
   props: {
     isGroups: {
       type: Boolean,
@@ -135,10 +155,12 @@ export default {
   },
 
   methods: {
+    // todo метод для изменения сортировки
     changeSort(event) {
       // console.log('event.target: ', event.target);
 
       const targetId = event.target.id;
+      console.log('targetId: ', targetId);
       const form = event.target.closest('.sort');
 
       const inputs = form.querySelectorAll('input');
@@ -150,6 +172,11 @@ export default {
 
       const curInput = form.querySelector(`#${targetId}`);
       curInput.checked = true;
+
+      //* эмитим нужное событие
+      this.$emit('change-sort', {
+        id: targetId
+      });
     }
   }
 };
@@ -243,6 +270,12 @@ export default {
       border: 1px solid $input-main;
 
       padding: 0.4em 0.8em;
+
+      &:focus,
+      &:focus-within {
+        outline: 2px solid $accent-2;
+        outline-offset: 0.25em;
+      }
     }
   }
   // .filter__text
