@@ -41,5 +41,14 @@ export default {
 
     selectedTasks = state.tasks;
     return selectedTasks;
-  }
+  },
+
+  lengthOfSelectedTasksOnGroupId: (state) => (id) => state.tasks
+    .filter((t) => t.groupId === id).length,
+
+  calcAvgImportanceOnReceivedGroupId: (state) => (id) => state.tasks
+    .filter((t) => t.groupId === id)
+    .reduce((acc, t, _, arr) => acc + t.importance / arr.length, 0)
+  // state.tasks.filter((t) => t.groupId === id)
+
 };

@@ -3,8 +3,10 @@ export default {
     state.tasks.unshift(data);
   },
 
-  deleteTask(state, index) {
-    state.tasks.splice(index, 1);
+  deleteTask(state, task) {
+    // state.tasks.splice(index, 1);
+
+    state.tasks = state.tasks.filter((t) => t.taskId !== task.taskId);
   },
 
   deleteTasksOnGroupId(state, groupId) {

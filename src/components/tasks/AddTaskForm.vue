@@ -201,6 +201,8 @@ export default {
 
   methods: {
     totalMiliSeconds(date, time) {
+      console.log('date: ', date);
+      console.log('typeof date: ', typeof date);
       const msTime = time
         .split(':')
         .map((item) => +item)
@@ -212,8 +214,10 @@ export default {
           //* если минуты то приводим к милли секундам так
           return acc + timePart * 60 * 1000;
         }, 0);
+      console.log('msTime: ', msTime);
+      console.log('typeof msTime: ', typeof msTime);
 
-      return date + msTime;
+      return new Date(date).getTime() + msTime;
     },
 
     updateData(data) {
@@ -514,10 +518,11 @@ export default {
         taskId: +Date.now(),
         title: this.title.value,
         dateOfAddition: +Date.now(),
-        dateOfEnding: this.totalMiliSeconds(
+        /* dateOfEnding: this.totalMiliSeconds(
           Date.parse(this.dateOfEnding.value),
           this.timeOfEnding.value
-        ),
+        ), */
+        dateOfEnding: new Date(`${this.dateOfEnding.value}T${this.timeOfEnding.value}`).getTime(),
         importance: +this.importance.value
       };
 

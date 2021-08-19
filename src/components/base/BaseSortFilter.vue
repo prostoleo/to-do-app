@@ -24,6 +24,7 @@
           :is-sort="false"
           :filter-open="isFilterFormOpen"
           ref="filter-form"
+          @change-filter="changeFilter"
         ></BaseSortFilterForm>
       </div>
     </div>
@@ -32,7 +33,7 @@
 
 <script>
 export default {
-  emits: ['change-sort-info'],
+  emits: ['change-sort-info', 'change-filter-info'],
 
   data() {
     return {
@@ -69,6 +70,10 @@ export default {
 
     changeSort(data) {
       this.$emit('change-sort-info', data);
+    },
+
+    changeFilter(data) {
+      this.$emit('change-filter-info', data);
     }
   }
 };

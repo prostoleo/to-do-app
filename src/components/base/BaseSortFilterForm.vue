@@ -77,11 +77,16 @@
     </div> -->
   </form>
 
-  <form class="opened__filter filter" v-else :class="{ open: filterOpen }">
+  <form
+    class="opened__filter filter"
+    v-else
+    :class="{ open: filterOpen }"
+    @change="changeFilter($event)"
+  >
     <div class="filter__row">
       <div class="filter__inputs">
-        <input type="date" id="filter-checkbox-date-ending--from" class="filter-checkbox-date" />
-        <input type="date" id="filter-checkbox-date-ending--to" class="filter-checkbox-date" />
+        <input type="date" id="filter-date-ending--from" class="filter-checkbox-date" />
+        <input type="date" id="filter-date-ending--to" class="filter-checkbox-date" />
       </div>
 
       <label class="filter__text" for="filter-checkbox-date">
@@ -93,7 +98,7 @@
       <div class="filter__inputs">
         <input
           type="number"
-          id="filter-checkbox-imp--from"
+          id="filter-imp--from"
           class="filter-checkbox-date"
           placeholder="1"
           min="1"
@@ -101,7 +106,7 @@
         />
         <input
           type="number"
-          id="filter-checkbox-imp--to"
+          id="filter-imp--to"
           class="filter-checkbox-date"
           placeholder="10"
           min="1"
@@ -114,26 +119,32 @@
       </label>
     </div>
 
-    <div class="filter__row" v-if="!isGroups">
+    <!-- <div class="filter__row" v-if="!isGroups">
       <div class="filter__inputs">
         <input
           type="text"
-          id="filter-checkbox-date-until--from"
+          id="filter-checkbox-date-ending--from"
           class="filter-checkbox-date-until"
         />
-        <input type="text" id="filter-checkbox-date-until--to" class="filter-checkbox-date-until" />
+        <input
+          type="text"
+          id="filter-checkbox-date-ending--to"
+          class="filter-checkbox-date-until"
+        />
       </div>
 
       <label class="filter__text" for="filter-checkbox-date">
         По дате окончания (от и до)
       </label>
-    </div>
+    </div> -->
   </form>
 </template>
 
 <script>
+import formatIdToProp from '../../helpers/filter/formatIdToProp.js';
+
 export default {
-  emits: ['change-sort'],
+  emits: ['change-sort', 'change-filter'],
 
   props: {
     isGroups: {
@@ -177,6 +188,31 @@ export default {
       this.$emit('change-sort', {
         id: targetId
       });
+    },
+
+    changeFilter(event) {
+      const targetId = event.target.id;
+      console.log('targetId: ', targetId);
+
+      const form = event.target.closest('form');
+      const inputs = form.querySelectorAll('input');
+
+      const formData = {};
+
+      inputs.forEach((input) => {
+        console.log('input: ', input);
+        const { id } = input;
+
+        // todo превращает id в prop
+        const propName = formatIdToProp(id);
+
+        if (input.value) {
+          formData[propName] = input.value;
+        }
+      });
+      console.log('formData: ', formData);
+
+      this.$emit('change-filter', formData);
     }
   }
 };

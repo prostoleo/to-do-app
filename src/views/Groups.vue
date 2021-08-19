@@ -7,7 +7,10 @@
           <BaseMenuBurger class="main-groups__menu" @click="openNav"> </BaseMenuBurger>
           <h2 class="main-groups__title">Группы дел</h2>
           <div class="main-groups__filter">
-            <BaseSortFilter @change-sort-info="changeSortInfo"></BaseSortFilter>
+            <BaseSortFilter
+              @change-sort-info="changeSortInfo"
+              @change-filter-info="changeFilterInfo"
+            ></BaseSortFilter>
             <BaseSearch @update-search="updateSearch"></BaseSearch>
           </div>
           <div class="main-groups__add add">
@@ -119,7 +122,8 @@ export default {
         upDateAddition: false,
         downImportance: false,
         upImportance: false
-      }
+      },
+      filterInfo: null
     };
   },
 
@@ -136,21 +140,22 @@ export default {
       console.log(this.$store);
       /* console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
       return this.$store.getters['groups/groups']; */
-      //* проверка на truthy value
+      //* проверка на truthy value у sort
       const truthy = this.truthySort;
 
-      const selectedOnQuery = this.$store.getters['groups/selectedGroups']({
-        query: this.query
+      const selectedOnQueryAndFilters = this.$store.getters['groups/selectedGroups']({
+        query: this.query,
+        filterInfo: this.filterInfo
       });
 
       if (!truthy) {
-        return selectedOnQuery;
+        return selectedOnQueryAndFilters;
       }
 
       const [key] = truthy;
 
       //* используем отдельную функцию
-      const sorted = sortGroupsTasks(selectedOnQuery, key);
+      const sorted = sortGroupsTasks(selectedOnQueryAndFilters, key);
 
       return sorted;
     }
@@ -177,6 +182,12 @@ export default {
 
       //* применяем миксин для измениения sortInfo
       this.sortInfo = changeSortInfo(id, this.sortInfo);
+    },
+    // todo метод для изменения filterInfo
+    changeFilterInfo(data) {
+      console.log('data: ', data);
+
+      this.filterInfo = data;
     },
 
     // todo обновляем поиск

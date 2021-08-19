@@ -5,5 +5,17 @@ export default {
 
   deleteGroup(state, groupId) {
     state.groups = state.groups.filter((g) => g.groupId !== groupId);
+  },
+
+  setNewAvgImportance(state, {
+    groupId, prevAvg, prevLength, newImp, isAddTask
+  }) {
+    const selected = state.groups.slice().find((g) => g.groupId === groupId);
+
+    const newAvg = isAddTask ?
+      ((prevAvg * prevLength) + newImp) / (prevLength + 1) :
+      ((prevAvg * prevLength) - newImp) / (prevLength - 1);
+
+    selected.avgImportance = newAvg;
   }
 };
