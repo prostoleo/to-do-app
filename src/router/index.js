@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Groups from '../views/Groups.vue';
 import GroupId from '../views/GroupId.vue';
+import TaskId from '../views/TaskId.vue';
 import Tasks from '../views/Tasks.vue';
 import NotFound from '../views/NotFound.vue';
 
@@ -24,6 +25,12 @@ const routes = [
     path: '/tasks',
     name: 'Tasks',
     component: Tasks
+  },
+  {
+    path: '/tasks/:taskId',
+    name: 'Task',
+    component: TaskId,
+    props: true
   },
   {
     path: '/:notFound(.*)',

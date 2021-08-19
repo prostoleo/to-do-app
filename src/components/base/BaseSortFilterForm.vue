@@ -83,7 +83,7 @@
     :class="{ open: filterOpen }"
     @change="changeFilter($event)"
   >
-    <div class="filter__row">
+    <div class="filter__row" v-if="!isGroups">
       <div class="filter__inputs">
         <input type="date" id="filter-date-ending--from" class="filter-checkbox-date" />
         <input type="date" id="filter-date-ending--to" class="filter-checkbox-date" />
@@ -91,6 +91,25 @@
 
       <label class="filter__text" for="filter-checkbox-date">
         По дате окончания (от и до)
+      </label>
+    </div>
+
+    <div class="filter__row" >
+      <div class="filter__inputs">
+        <input
+          type="date"
+          id="filter-date-addition--from"
+          class="filter-checkbox-date-until"
+        />
+        <input
+          type="date"
+          id="filter-date-addition--to"
+          class="filter-checkbox-date-until"
+        />
+      </div>
+
+      <label class="filter__text" for="filter-checkbox-date">
+        По дате добавления (от и до)
       </label>
     </div>
 
@@ -119,24 +138,6 @@
       </label>
     </div>
 
-    <!-- <div class="filter__row" v-if="!isGroups">
-      <div class="filter__inputs">
-        <input
-          type="text"
-          id="filter-checkbox-date-ending--from"
-          class="filter-checkbox-date-until"
-        />
-        <input
-          type="text"
-          id="filter-checkbox-date-ending--to"
-          class="filter-checkbox-date-until"
-        />
-      </div>
-
-      <label class="filter__text" for="filter-checkbox-date">
-        По дате окончания (от и до)
-      </label>
-    </div> -->
   </form>
 </template>
 
