@@ -1,3 +1,4 @@
+/* eslint-disable implicit-arrow-linebreak */
 export default {
   tasksOnGroupId(store, _, _2, rootGetters) {
     // eslint-disable-next-line prefer-destructuring
@@ -6,6 +7,8 @@ export default {
 
     return store.tasks.filter((task) => task.groupId === groupId);
   },
+
+  taskOnId: (state) => (id) => state.tasks.find((t) => t.taskId === id),
 
   // todo геттер для выбора заданий по параметрам
   // eslint-disable-next-line consistent-return
@@ -43,12 +46,12 @@ export default {
     return selectedTasks;
   },
 
-  lengthOfSelectedTasksOnGroupId: (state) => (id) => state.tasks
-    .filter((t) => t.groupId === id).length,
+  lengthOfSelectedTasksOnGroupId: (state) => (id) =>
+    state.tasks.filter((t) => t.groupId === id).length,
 
-  calcAvgImportanceOnReceivedGroupId: (state) => (id) => state.tasks
-    .filter((t) => t.groupId === id)
-    .reduce((acc, t, _, arr) => acc + t.importance / arr.length, 0)
+  calcAvgImportanceOnReceivedGroupId: (state) => (id) =>
+    state.tasks
+      .filter((t) => t.groupId === id)
+      .reduce((acc, t, _, arr) => acc + t.importance / arr.length, 0)
   // state.tasks.filter((t) => t.groupId === id)
-
 };

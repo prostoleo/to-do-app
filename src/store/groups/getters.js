@@ -6,6 +6,8 @@ export default {
     return state.groups;
   },
 
+  groupOnId: (state) => (id) => state.groups.find((g) => g.groupId === id),
+
   // eslint-disable-next-line consistent-return
   selectedGroups: (state) => (data) => {
     let selectedGroups = null;

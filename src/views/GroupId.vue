@@ -105,6 +105,12 @@
 </template>
 
 <script>
+//* import store
+import store from '@/store';
+// import route from '@/router';
+// import router from '@/router';
+// import route from 'vue-router';
+
 import AddTaskForm from '../components/tasks/AddTaskForm.vue';
 
 //* форматирование даты
@@ -117,6 +123,14 @@ import resetSortInfo from '../helpers/sort/resetSortInfo.js';
 
 export default {
   name: 'GroupId',
+
+  emits: ['not-found'],
+
+  beforeCreate() {
+    console.log('beforeCreate');
+
+    this.$emit('not-found');
+  },
 
   components: {
     AddTaskForm
@@ -147,6 +161,30 @@ export default {
         upImportance: false
       }
     };
+  },
+
+  beforeRouteEnter(to, _, next) {
+    // ...
+    console.log('to: ', to);
+    const paramId = to.params.id;
+    console.log('paramId: ', paramId);
+    // console.log('route: ', route);
+    // console.log('router: ', router);
+    console.log('store: ', store);
+
+    const groupToLoad = store.getters['groups/groupOnId'](paramId);
+    console.log('groupToLoad: ', groupToLoad);
+
+    if (!groupToLoad) {
+      console.log(' group load not found ');
+      // ! работает
+      // next('/not-found');
+
+      // ! работает - 2 вар
+      next({ path: '/not-found', name: 'NotFound', params: { notFound: 'not-found' } });
+    }
+
+    next();
   },
 
   computed: {
@@ -232,6 +270,23 @@ export default {
 
   created() {
     console.log('this.id: ', this.id);
+    console.log('this.$router: ', this.$router);
+
+    // todo проверяем - есть ли такая группа в введенным id
+
+    /* const paramId = this.$route.params.id;
+
+    const groupToLoad = this.$store.getters['groups/groupOnId'](paramId);
+
+    if (!groupToLoad) {
+      this.$router.replace({
+        path: '/:notFound(.*)',
+        name: 'NotFound',
+        params: { notFound: true }
+      });
+
+      return;
+    } */
 
     //* добавляем groupId в store
     this.$store.dispatch('changeGroupId', { groupId: this.id });
@@ -354,11 +409,11 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-    }
-
-    @include mq(lg) {
       margin-bottom: 2.5em !important;
     }
+
+    /* @include mq(lg) {
+    } */
   }
 
   // .main-groupId__add
@@ -381,7 +436,7 @@ export default {
   &__search {
     margin-bottom: 2.5em;
 
-    @include mq(lg) {
+    @include mq(med) {
       margin-bottom: 0 !important;
     }
   }
@@ -395,19 +450,7 @@ export default {
   // max-width: 600px;
 
   &::before {
-    content: '';
-    position: absolute;
-
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-
-    width: 100%;
-    height: 2px;
-
-    color: $input-main;
-
-    box-shadow: 2px 2px 5px $shadow;
+    @extend %tpl-hr;
   }
 
   // .add__input-wrapper

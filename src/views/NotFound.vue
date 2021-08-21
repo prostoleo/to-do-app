@@ -20,7 +20,18 @@
 
 <script>
 export default {
-  name: 'Not-Found'
+  name: 'Not-Found',
+  emits: ['not-found'],
+
+  beforeCreate() {
+    console.log('beforeCreate');
+
+    this.$emit('not-found', true);
+  },
+
+  created() {
+    console.log(this.$route);
+  }
 };
 </script>
 

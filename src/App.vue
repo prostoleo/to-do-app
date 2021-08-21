@@ -1,6 +1,6 @@
 <template>
-  <TheNav :show="navIsOpened" @close-nav="closeNav"></TheNav>
-  <router-view v-slot="slotProps" @open-nav="openNav">
+  <TheNav :show="navIsOpened" @close-nav="closeNav" v-if="!isNotFound"></TheNav>
+  <router-view v-slot="slotProps" @open-nav="openNav" @not-found="setNotFound">
     <transition name="route" mode="out-in">
       <component :is="slotProps.Component"></component>
     </transition>
@@ -13,11 +13,21 @@ export default {
 
   data() {
     return {
-      navIsOpen: false
+      navIsOpen: false,
+
+      isNotFound: false
     };
   },
 
+  created() {
+    console.log(this.$route);
+  },
+
   computed: {
+    /* isNotFound() {
+      return this.$route.name;
+    }, */
+
     navIsOpened() {
       if (window.innerWidth >= 900) {
         console.log('window.innerWidth: ', window.innerWidth);
@@ -40,6 +50,10 @@ export default {
   }, */
 
   methods: {
+    setNotFound(data = false) {
+      this.isNotFound = data;
+    },
+
     openNav() {
       this.navIsOpen = true;
     },

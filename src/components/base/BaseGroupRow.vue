@@ -10,12 +10,12 @@
   <!-- :class="{ row_4: row4 }" -->
   <li class="groups-info__item" v-else ref="li" :data-group-id="groupId" :data-task-id="taskId">
     <!-- // todo - добавить :to с динамическим id (computed - toId)  -->
-    <router-link class="groups-info__link" :to="`/groups/${toId}`" v-if="!rowNotLink">
+    <router-link class="groups-info__link" :to="`${toId}`">
       <slot name="body"></slot>
     </router-link>
-    <div class="groups-info__link" v-else>
+    <!-- <div class="groups-info__link" v-else>
       <slot name="body"></slot>
-    </div>
+    </div> -->
     <button class="icon-edit _icon-edit"></button>
     <button class="icon _icon-close" @click="deleteGroupOrTask"></button>
   </li>
@@ -55,7 +55,7 @@ export default {
   computed: {
     //* вычисляем id
     toId() {
-      return `${this.id}`;
+      return this.taskId ? `/tasks/${this.taskId}` : `/groups/${this.id}`;
     }
   },
 

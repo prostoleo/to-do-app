@@ -5,6 +5,12 @@
 </template>
 
 <style lang="scss" scoped>
+div {
+  @include mq(lg) {
+    display: none !important;
+  }
+}
+
 button {
   font-size: 3.5rem;
   font-weight: bold;

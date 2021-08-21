@@ -54,6 +54,13 @@
       required
     >
     </BaseInputLabel>
+
+    <div class="input-row">
+      <label for="description">Описание</label>
+      <textarea id="description" @input="updateData" @blur="validateData"></textarea>
+      <small v-if="description.isError">{{ descriptionError }}</small>
+    </div>
+
     <!-- required -->
     <BaseInputLabel
       :label="'Важность (от 1 до 10 баллов)'"
@@ -63,8 +70,8 @@
       ref="input-number"
       :name="'importance'"
       :error="importanceError"
-      @update-input="updateData"
-      @validate-input="validateData"
+      @update-input="updateData(null, $event)"
+      @validate-input="validateData(null, $event)"
       required
     ></BaseInputLabel>
     <BaseButton :mode="'flat'" :disabled-val="totalError">
@@ -130,6 +137,11 @@ export default {
         isError: false,
         touched: false
       },
+      description: {
+        value: null,
+        isError: false,
+        touched: false
+      },
       importance: {
         value: null,
         isError: false,
@@ -165,6 +177,13 @@ export default {
         // isError: this.timeOfEndingIsError,
         isError: this.timeOfEnding.isError,
         message: 'Введите, пожалуйста время окончания дела'
+      };
+    },
+    descriptionError() {
+      return {
+        // isError: this.timeOfEndingIsError,
+        isError: this.description.isError,
+        message: 'Введите, пожалуйста описание дела'
       };
     },
     importanceError() {
@@ -220,8 +239,14 @@ export default {
       return new Date(date).getTime() + msTime;
     },
 
-    updateData(data) {
+    updateData(event, dataReceived) {
+      console.log('event: ', event);
+      const data = dataReceived ?? {
+        id: event.target.id,
+        data: event.target.value
+      };
       console.log('data: ', data);
+
       const refOfTarget = data.id;
       // console.log('refOfTarget: ', refOfTarget);
 
@@ -248,6 +273,12 @@ export default {
           this.timeOfEnding.touched = true;
           this.timeOfEnding.value = data.data;
           break;
+        case 'description':
+          // this.timeOfEnding = data.data;
+
+          this.description.touched = true;
+          this.description.value = data.data;
+          break;
         case 'input-importance':
         case 'input-number':
           // this.importance = data.data;
@@ -260,7 +291,13 @@ export default {
       }
     },
 
-    validateData(data) {
+    validateData(dataReceived, event) {
+      console.log('event: ', event);
+      const data = dataReceived ?? {
+        id: event.target.id,
+        data: event.target.value
+      };
+
       console.log('data: ', data);
       const refOfTarget = data.id;
       // console.log('refOfTarget: ', refOfTarget);
@@ -327,6 +364,14 @@ export default {
             this.timeOfEnding.isError = false;
           }
           break;
+        case 'description':
+          if (!this.description.value) {
+            this.description.isError = true;
+            this.totalError = true;
+          } else {
+            this.description.isError = false;
+          }
+          break;
         case 'input-importance':
           /* if (
             // eslint-disable-next-line operator-linebreak
@@ -388,6 +433,8 @@ export default {
           this.dateOfEnding.touched === true &&
           this.timeOfEnding.isError === false &&
           this.timeOfEnding.touched === true &&
+          this.description.isError === false &&
+          this.description.touched === true &&
           this.importance.isError === false &&
           this.importance.touched === true) ||
         (!this.isGroupNeeded &&
@@ -397,6 +444,8 @@ export default {
           this.dateOfEnding.touched === true &&
           this.timeOfEnding.isError === false &&
           this.timeOfEnding.touched === true &&
+          this.description.isError === false &&
+          this.description.touched === true &&
           this.importance.isError === false &&
           this.importance.touched === true)
       ) {
@@ -419,6 +468,7 @@ export default {
       this.groupTitleIsError = false;
       this.dateOfEndingIsError = false;
       this.timeOfEndingIsError = false;
+      this.descriptionIsError = false;
       this.importanceIsError = false;
     },
 
@@ -523,6 +573,7 @@ export default {
           this.timeOfEnding.value
         ), */
         dateOfEnding: new Date(`${this.dateOfEnding.value}T${this.timeOfEnding.value}`).getTime(),
+        description: this.description.value.trim(),
         importance: +this.importance.value
       };
 
@@ -594,6 +645,19 @@ form {
     font-weight: 500;
     margin-bottom: 0.25em;
     color: $scale-10;
+  }
+
+  textarea {
+    resize: vertical;
+    width: 100%;
+    border-radius: 2.5em;
+    border: 1px solid $input-main;
+
+    padding: 1.5em;
+
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: $input-main;
   }
 }
 </style>
