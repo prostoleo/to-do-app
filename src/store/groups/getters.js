@@ -26,6 +26,7 @@ export default {
     const impFrom = filterInfo?.impFrom ?? null;
     const impTo = filterInfo?.impTo ?? null;
 
+    //* проверяем есть ли хоть truthy значение в объекте
     const hasFilterTruthyValue = filterInfo ? Object.values(filterInfo).some((v) => !!v) : null;
 
     console.log('hasFilterTruthyValue: ', hasFilterTruthyValue);
@@ -38,12 +39,16 @@ export default {
     if (query && hasFilterTruthyValue) {
       selectedGroups = selectOnQuery(state.groups, query);
 
-      selectedGroups = selectOnFilterInfo(selectedGroups, {
-        dateAdditionFrom,
-        dateAdditionTo,
-        impFrom,
-        impTo
-      });
+      selectedGroups = selectOnFilterInfo(
+        selectedGroups,
+        {
+          dateAdditionFrom,
+          dateAdditionTo,
+          impFrom,
+          impTo
+        },
+        true
+      );
 
       console.log('selectedGroups: ', selectedGroups);
       return selectedGroups;

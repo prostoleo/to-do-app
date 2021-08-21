@@ -276,7 +276,7 @@ div {
   } */
 
   small {
-    margin-left: 1.75rem;
+    margin-left: 1.55rem;
     font-size: 1.2rem;
     font-weight: 500;
     margin-bottom: 0.25em;

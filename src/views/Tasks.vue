@@ -13,6 +13,7 @@
             <BaseSortFilter
               class="filters__row"
               @change-sort-info="changeSortInfo"
+              @change-filter-info="changeFilterInfo"
             ></BaseSortFilter>
             <BaseSearch @update-search="updateSearch"></BaseSearch>
           </div>
@@ -148,7 +149,9 @@ export default {
         upDateEnding: false,
         downImportance: false,
         upImportance: false
-      }
+      },
+
+      filterInfo: null
     };
   },
 
@@ -166,8 +169,12 @@ export default {
       const truthy = this.truthySort;
       console.log('truthy: ', truthy);
 
+      const allTasks = this.$store.getters['tasks/tasks'];
+
       const selectedTasks = this.$store.getters['tasks/selectedTasks']({
-        query: this.query
+        allTasks,
+        query: this.query,
+        filterInfo: this.filterInfo
       });
       console.log('selectedTasks: ', selectedTasks);
 
@@ -208,6 +215,12 @@ export default {
 
       //* применяем миксин для измениения sortInfo
       this.sortInfo = changeSortInfo(id, this.sortInfo, true);
+    },
+
+    changeFilterInfo(data) {
+      console.log('data: ', data);
+
+      this.filterInfo = data;
     },
 
     updateSearch(data) {

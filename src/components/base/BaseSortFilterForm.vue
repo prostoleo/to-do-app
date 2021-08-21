@@ -94,18 +94,10 @@
       </label>
     </div>
 
-    <div class="filter__row" >
+    <div class="filter__row" v-if="isGroups">
       <div class="filter__inputs">
-        <input
-          type="date"
-          id="filter-date-addition--from"
-          class="filter-checkbox-date-until"
-        />
-        <input
-          type="date"
-          id="filter-date-addition--to"
-          class="filter-checkbox-date-until"
-        />
+        <input type="date" id="filter-date-addition--from" class="filter-checkbox-date-until" />
+        <input type="date" id="filter-date-addition--to" class="filter-checkbox-date-until" />
       </div>
 
       <label class="filter__text" for="filter-checkbox-date">
@@ -137,7 +129,6 @@
         По важности (от и до)
       </label>
     </div>
-
   </form>
 </template>
 

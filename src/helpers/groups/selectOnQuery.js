@@ -1,5 +1,3 @@
-export default function (groups, query) {
-  return groups
-    .slice()
-    .filter((g) => g.title.toLowerCase().includes(query.toLowerCase()));
+export default function foo(items, query) {
+  return items.slice().filter((item) => item.title.toLowerCase().includes(query.toLowerCase()));
 }

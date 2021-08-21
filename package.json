@@ -51,7 +51,7 @@
       "no-unused-vars": [
         "error",
         {
-          "varsIngnorePattern": "[^_]"
+          "varsIngnorePattern": "[^_*]"
         }
       ],
       "import/extensions": [

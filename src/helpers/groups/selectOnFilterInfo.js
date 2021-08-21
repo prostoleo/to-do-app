@@ -1,46 +1,74 @@
+/* eslint-disable object-curly-newline */
 /* eslint-disable no-param-reassign */
-export default function (groups, {
-  dateAdditionFrom, dateAdditionTo, impFrom, impTo
-}) {
-  console.log('groups: ', groups);
+export default function foo(
+  items,
+  { dateAdditionFrom, dateAdditionTo, dateEndingFrom, dateEndingTo, impFrom, impTo },
+  isGroups = false
+) {
+  console.log('items: ', items);
   console.log({
-    dateAdditionFrom, dateAdditionTo, impFrom, impTo
+    dateAdditionFrom,
+    dateAdditionTo,
+    impFrom,
+    impTo
   });
 
-  let selectedGroups = null;
+  let selectedItems = null;
 
   //* если есть поля impFrom или impTo - то фильтрцем по важности (конверитуря в числа!)
   if (impFrom || impTo) {
     impFrom = impFrom ?? 1;
     impTo = impTo ?? 10;
 
-    selectedGroups = groups.filter(
-      (g) => g.avgImportance >= +impFrom && g.avgImportance <= +impTo
-    );
-    console.log('selectedGroups: ', selectedGroups);
+    selectedItems = isGroups
+      ? items.filter((item) => item.avgImportance >= +impFrom && item.avgImportance <= +impTo)
+      : items.filter((item) => item.importance >= +impFrom && item.importance <= +impTo);
+    console.log('selectedItems: ', selectedItems);
   }
 
   if (dateAdditionFrom && dateAdditionTo) {
-    selectedGroups = groups.filter(
-      (g) => new Date(g.dateOfAddition).getTime() >= new Date(dateAdditionFrom).getTime() &&
-        new Date(g.dateOfAddition) <= new Date(dateAdditionTo).getTime()
+    selectedItems = items.filter(
+      (item) => new Date(item.dateOfAddition).getTime() >= new Date(dateAdditionFrom).getTime() &&
+        new Date(item.dateOfAddition) <= new Date(dateAdditionTo).getTime()
     );
-    console.log('selectedGroups: ', selectedGroups);
+    console.log('selectedItems: ', selectedItems);
   }
 
   if (dateAdditionFrom && !dateAdditionTo) {
-    selectedGroups = groups.filter(
-      (g) => new Date(g.dateOfAddition).getTime() >= new Date(dateAdditionFrom).getTime()
+    selectedItems = items.filter(
+      (item) => new Date(item.dateOfAddition).getTime() >= new Date(dateAdditionFrom).getTime()
     );
-    console.log('selectedGroups: ', selectedGroups);
+    console.log('selectedItems: ', selectedItems);
   }
 
   if (!dateAdditionFrom && dateAdditionTo) {
-    selectedGroups = groups.filter(
-      (g) => new Date(g.dateOfAddition).getTime() <= new Date(dateAdditionTo).getTime()
+    selectedItems = items.filter(
+      (item) => new Date(item.dateOfAddition).getTime() <= new Date(dateAdditionTo).getTime()
     );
-    console.log('selectedGroups: ', selectedGroups);
+    console.log('selectedItems: ', selectedItems);
   }
 
-  return selectedGroups;
+  if (dateEndingFrom && dateEndingTo) {
+    selectedItems = items.filter(
+      (item) => new Date(item.dateOfEnding).getTime() >= new Date(dateEndingFrom).getTime() &&
+        new Date(item.dateOfEnding) <= new Date(dateEndingTo).getTime()
+    );
+    console.log('selectedItems: ', selectedItems);
+  }
+
+  if (dateEndingFrom && !dateEndingTo) {
+    selectedItems = items.filter(
+      (item) => new Date(item.dateOfEnding).getTime() >= new Date(dateEndingFrom).getTime()
+    );
+    console.log('selectedItems: ', selectedItems);
+  }
+
+  if (!dateEndingFrom && dateEndingTo) {
+    selectedItems = items.filter(
+      (item) => new Date(item.dateOfEnding).getTime() <= new Date(dateEndingTo).getTime()
+    );
+    console.log('selectedItems: ', selectedItems);
+  }
+
+  return selectedItems;
 }

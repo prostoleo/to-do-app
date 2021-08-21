@@ -151,7 +151,8 @@ export default {
 
       const selectedOnQueryAndFilters = this.$store.getters['groups/selectedGroups']({
         query: this.query,
-        filterInfo: this.filterInfo
+        filterInfo: this.filterInfo,
+        isGroups: true
       });
 
       if (!truthy) {

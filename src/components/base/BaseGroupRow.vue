@@ -16,7 +16,7 @@
     <!-- <div class="groups-info__link" v-else>
       <slot name="body"></slot>
     </div> -->
-    <button class="icon-edit _icon-edit"></button>
+    <!-- <button class="icon-edit _icon-edit"></button> -->
     <button class="icon _icon-close" @click="deleteGroupOrTask"></button>
   </li>
 </template>

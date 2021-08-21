@@ -20,7 +20,7 @@
           <span class="icon _icon-shevron"></span>
         </button>
         <BaseSortFilterForm
-          :is-groups="true"
+          :is-groups="isGroups"
           :is-sort="false"
           :filter-open="isFilterFormOpen"
           ref="filter-form"
@@ -73,6 +73,7 @@ export default {
     },
 
     changeFilter(data) {
+      console.log('data - BaseSortFilter: ', data);
       this.$emit('change-filter-info', data);
     }
   }

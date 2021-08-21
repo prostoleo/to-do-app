@@ -57,7 +57,11 @@
 
     <div class="input-row">
       <label for="description">Описание</label>
-      <textarea id="description" @input="updateData" @blur="validateData"></textarea>
+      <textarea
+        id="description"
+        @input="updateData(null, $event)"
+        @blur="validateData(null, $event)"
+      ></textarea>
       <small v-if="description.isError">{{ descriptionError }}</small>
     </div>
 
@@ -70,8 +74,8 @@
       ref="input-number"
       :name="'importance'"
       :error="importanceError"
-      @update-input="updateData(null, $event)"
-      @validate-input="validateData(null, $event)"
+      @update-input="updateData"
+      @validate-input="validateData"
       required
     ></BaseInputLabel>
     <BaseButton :mode="'flat'" :disabled-val="totalError">
@@ -180,11 +184,7 @@ export default {
       };
     },
     descriptionError() {
-      return {
-        // isError: this.timeOfEndingIsError,
-        isError: this.description.isError,
-        message: 'Введите, пожалуйста описание дела'
-      };
+      return 'Введите, пожалуйста описание дела';
     },
     importanceError() {
       return {
@@ -239,7 +239,7 @@ export default {
       return new Date(date).getTime() + msTime;
     },
 
-    updateData(event, dataReceived) {
+    updateData(dataReceived, event) {
       console.log('event: ', event);
       const data = dataReceived ?? {
         id: event.target.id,
@@ -565,7 +565,9 @@ export default {
 
       const dataToSubmit = {
         groupId: this.groupId ? this.groupId : this.groupIdOfActiveGroupTitle,
-        taskId: +Date.now(),
+        taskId: Date.now()
+          .toString(16)
+          .slice(-7),
         title: this.title.value,
         dateOfAddition: +Date.now(),
         /* dateOfEnding: this.totalMiliSeconds(
@@ -645,6 +647,8 @@ form {
     font-weight: 500;
     margin-bottom: 0.25em;
     color: $scale-10;
+
+    margin-left: 1.25em;
   }
 
   textarea {
@@ -657,7 +661,7 @@ form {
 
     font-size: 1.4rem;
     font-weight: 400;
-    color: $input-main;
+    color: $text-main;
   }
 }
 </style>

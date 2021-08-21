@@ -13,6 +13,7 @@
             <BaseSortFilter
               class="filters__row"
               @change-sort-info="changeSortInfo"
+              @change-filter-info="changeFilterInfo"
             ></BaseSortFilter>
             <BaseSearch @update-search="updateSearch"></BaseSearch>
           </div>
@@ -127,7 +128,7 @@ export default {
   emits: ['not-found'],
 
   beforeCreate() {
-    console.log('beforeCreate');
+    // console.log('beforeCreate');
 
     this.$emit('not-found');
   },
@@ -159,24 +160,26 @@ export default {
         upDateEnding: false,
         downImportance: false,
         upImportance: false
-      }
+      },
+
+      filterInfo: null
     };
   },
 
   beforeRouteEnter(to, _, next) {
     // ...
-    console.log('to: ', to);
+    // console.log('to: ', to);
     const paramId = to.params.id;
-    console.log('paramId: ', paramId);
+    // console.log('paramId: ', paramId);
     // console.log('route: ', route);
     // console.log('router: ', router);
-    console.log('store: ', store);
+    // console.log('store: ', store);
 
     const groupToLoad = store.getters['groups/groupOnId'](paramId);
-    console.log('groupToLoad: ', groupToLoad);
+    // console.log('groupToLoad: ', groupToLoad);
 
     if (!groupToLoad) {
-      console.log(' group load not found ');
+      // console.log(' group load not found ');
       // ! работает
       // next('/not-found');
 
@@ -206,7 +209,8 @@ export default {
 
       const selectedTasks = this.$store.getters['tasks/selectedTasks']({
         tasksOnGroupId,
-        query: this.query
+        query: this.query,
+        filterInfo: this.filterInfo
       });
       console.log('selectedTasks: ', selectedTasks);
 
@@ -269,8 +273,8 @@ export default {
   },
 
   created() {
-    console.log('this.id: ', this.id);
-    console.log('this.$router: ', this.$router);
+    // console.log('this.id: ', this.id);
+    // console.log('this.$router: ', this.$router);
 
     // todo проверяем - есть ли такая группа в введенным id
 
@@ -292,7 +296,7 @@ export default {
     this.$store.dispatch('changeGroupId', { groupId: this.id });
 
     // todo для получения текущей группы
-    console.log('this.$store: ', this.$store);
+    // console.log('this.$store: ', this.$store);
     const group = this.$store.getters['groups/findGroupOnId'];
     console.log('group: ', group);
 
@@ -316,6 +320,13 @@ export default {
 
       //* применяем миксин для измениения sortInfo
       this.sortInfo = changeSortInfo(id, this.sortInfo, true);
+    },
+
+    // todo change filter info
+    changeFilterInfo(data) {
+      console.log('data: ', data);
+
+      this.filterInfo = data;
     },
 
     updateSearch(data) {

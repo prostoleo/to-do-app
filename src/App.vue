@@ -20,7 +20,7 @@ export default {
   },
 
   created() {
-    console.log(this.$route);
+    // console.log(this.$route);
   },
 
   computed: {
@@ -30,7 +30,7 @@ export default {
 
     navIsOpened() {
       if (window.innerWidth >= 900) {
-        console.log('window.innerWidth: ', window.innerWidth);
+        // console.log('window.innerWidth: ', window.innerWidth);
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.navIsOpen = true;
         return this.navIsOpen;
