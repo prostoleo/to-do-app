@@ -19,6 +19,19 @@
     <!-- <button class="icon-edit _icon-edit"></button> -->
     <button class="icon _icon-close" @click="deleteGroupOrTask"></button>
   </li>
+
+  <BaseDialog :show="isDeleting" :title="`Удаление дела`" @close-dialog="endDeleting" lock>
+    <div v-if="isDeleting">
+      <p>
+        Вы уверены, что хотите удалить дело "{{ currentTask.title }}" ? Отменить это действие будет
+        <b>невозможно</b>.
+      </p>
+      <div class="dialog-controls">
+        <BaseButton class="delete" @click="confirmDelete">Удалить дело</BaseButton>
+        <BaseButton class="deny" @click="endDeleting">Отмена</BaseButton>
+      </div>
+    </div>
+  </BaseDialog>
 </template>
 
 <script>
@@ -52,6 +65,12 @@ export default {
     }
   },
 
+  data() {
+    return {
+      isDeleting: false
+    };
+  },
+
   computed: {
     //* вычисляем id
     toId() {
@@ -63,7 +82,7 @@ export default {
     // todo удаляем группы или задание в зависимости от того rowNotLink
     deleteGroupOrTask() {
       //* если не линк - значит находимся в task и удаляем task - иначе удаляем group
-      if (this.rowNotLink) {
+      if (!this.groupId) {
         const { taskId } = this.$refs.li.dataset;
 
         console.log('taskId: ', taskId);

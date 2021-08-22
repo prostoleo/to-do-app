@@ -8,7 +8,7 @@ export default {
     const newData = {
       ...data,
       dateOfAddition: new Date(data.dateOfAddition).toISOString(),
-      dateOfEnding: new Date(data.dateOfEnding).toString(),
+      dateOfEnding: new Date(data.dateOfEnding).toString()
       // dateOfEnding: data.dateOfEnding
     };
     console.log('newData: ', newData);
@@ -18,7 +18,7 @@ export default {
     context.dispatch('handleChangeAvgImportance', {
       groupId: newData.groupId,
       importance: newData.importance,
-      isAddTask: true,
+      isAddTask: true
     });
 
     context.commit('addTask', newData);
@@ -37,10 +37,16 @@ export default {
     context.dispatch('handleChangeAvgImportance', {
       groupId: task.groupId,
       importance: task.importance,
-      isAddTask: false,
+      isAddTask: false
     });
 
     context.commit('deleteTask', task);
+  },
+
+  updateTask(context, data) {
+    console.log('data: ', data);
+
+    context.commit('updateTask', data);
   },
 
   deleteTasksOnGroupId(context, data) {
@@ -50,19 +56,21 @@ export default {
   },
 
   handleChangeAvgImportance(context, { groupId, importance, isAddTask }) {
-    const prevAvg = context.getters
-      .calcAvgImportanceOnReceivedGroupId(groupId);
+    const prevAvg = context.getters.calcAvgImportanceOnReceivedGroupId(groupId);
     console.log('prevAvg: ', prevAvg);
 
-    const prevLength = context.getters
-      .lengthOfSelectedTasksOnGroupId(groupId);
+    const prevLength = context.getters.lengthOfSelectedTasksOnGroupId(groupId);
 
-    context.commit('groups/setNewAvgImportance', {
-      groupId,
-      prevAvg,
-      prevLength,
-      newImp: importance,
-      isAddTask
-    }, { root: true });
+    context.commit(
+      'groups/setNewAvgImportance',
+      {
+        groupId,
+        prevAvg,
+        prevLength,
+        newImp: importance,
+        isAddTask
+      },
+      { root: true }
+    );
   }
 };

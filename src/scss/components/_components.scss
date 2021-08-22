@@ -40,7 +40,8 @@
 
     // .groups-info__header
 
-    &__header {
+    &__header,
+    header {
       & div {
         justify-self: flex-start;
         // justify-self: center;
@@ -106,7 +107,7 @@
 }
 
 %tpl-hr {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0px;
   left: 0px;

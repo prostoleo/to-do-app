@@ -59,6 +59,7 @@
       <label for="description">Описание</label>
       <textarea
         id="description"
+        maxlength="2048"
         @input="updateData(null, $event)"
         @blur="validateData(null, $event)"
       ></textarea>

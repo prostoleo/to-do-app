@@ -49,7 +49,7 @@
                   v-for="group in selectedGroups"
                   :key="group.groupId"
                   :id="group.groupId"
-                  :group-id="group.group"
+                  :group-id="group.groupId"
                 >
                   <template #body>
                     <div>
@@ -75,7 +75,7 @@
                 </BaseGroupRow>
               </ul>
             </div>
-            <p v-else-if="selectedTasks.length === 0 && query" class="groups-info__zero-tasks">
+            <p v-else-if="selectedGroups.length === 0 && query" class="groups-info__zero-tasks">
               По запросу {{ query }} ничего не найдено😞. Попробуйте изменить запрос
             </p>
             <p v-else class="groups-info__zero-tasks">У вас нет ни одного дела. Добавьте дел.</p>
@@ -444,6 +444,24 @@ export default {
 }
 .groups-info {
   @extend %tpl-table-content;
+
+  header {
+    & div {
+      justify-self: flex-start;
+      // justify-self: center;
+      align-self: center;
+      // padding: 0.75em;
+    }
+
+    & span {
+      font-size: 1.4rem;
+      font-weight: 600;
+
+      color: $text-main;
+
+      // padding: 0.75em;
+    }
+  }
 
   &__zero-tasks {
     font-size: 1.6rem;

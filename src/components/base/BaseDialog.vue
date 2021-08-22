@@ -181,7 +181,7 @@ export default {
 
   position: relative;
 
-  width: min(60rem, 45vw);
+  width: min(60rem, 50vw);
   overflow: hidden;
   border: none;
   z-index: 1000;

@@ -17,46 +17,94 @@
             <div class="taskId-info__content content">
               <div class="content__row">
                 <h3 class="content__row-title">Название</h3>
-                <div class="content__row-title-block">{{ currentTask.title }}</div>
+                <div class="content__row-title-block" :class="{ editable: !!isEditing }">
+                  <p :contenteditable="isEditing" id="title" @blur="validateEdit($event)">
+                    {{ title }}
+                  </p>
+                  <small v-if="editingValidation.title.isError">{{
+                    editingValidation.title.message
+                  }}</small>
+                </div>
               </div>
               <div class="content__row">
                 <h3 class="content__row-title">Дата добавления</h3>
                 <div class="content__row-title-block">
-                  {{ formatDateLocal(currentTask.dateOfAddition) }}
+                  <p>
+                    {{ formatDateLocal(currentTask.dateOfAddition) }}
+                  </p>
                 </div>
               </div>
               <div class="content__row">
                 <h3 class="content__row-title">Дата окончания</h3>
                 <div class="content__row-title-block">
-                  {{ formatDateLocal(currentTask.dateOfEnding) }}
+                  <p>
+                    {{ formatDateLocal(currentTask.dateOfEnding) }}
+                  </p>
                 </div>
               </div>
               <div class="content__row">
                 <h3 class="content__row-title">Важность</h3>
-                <div class="content__row-title-block">
+                <div class="content__row-title-block" :class="{ editable: !!isEditing }">
                   <!-- :class="`bg-scale-10`" -->
-                  <span id="imp">
-                    {{ currentTask.importance }}
-                  </span>
+                  <p id="importance" :contenteditable="isEditing" @blur="validateEdit($event)">
+                    {{ importance }}
+                  </p>
+                  <small v-if="editingValidation.importance.isError">{{
+                    editingValidation.importance.message
+                  }}</small>
                 </div>
               </div>
               <div class="content__row">
                 <h3 class="content__row-title">Описание</h3>
-                <div class="content__row-title-block">
-                  <p>
-                    {{ currentTask.description }}
+                <div class="content__row-title-block" :class="{ editable: !!isEditing }">
+                  <p :contenteditable="isEditing" id="description" @blur="validateEdit($event)">
+                    {{ description }}
                   </p>
+                  <small v-if="editingValidation.description.isError">{{
+                    editingValidation.description.message
+                  }}</small>
                 </div>
               </div>
             </div>
             <div class="taskId-info__controls controls">
-              <BaseButton class="edit">
+              <BaseButton class="edit" v-if="!isEditing" @click="startEditingTask">
                 Редактировать
                 <span class="icon _icon-edit"></span>
               </BaseButton>
-              <BaseButton class="delete">
+              <BaseButton
+                class="save"
+                v-if="isEditing"
+                :disabled="!isEditingValid"
+                type="'button'"
+                @click="updateTask"
+              >
+                Сохранить
+              </BaseButton>
+              <BaseButton class="reverse" v-if="isEditing" @click="denyEditing">
+                Отменить
+                <span class="icon _icon-close"></span>
+              </BaseButton>
+              <BaseButton class="delete" @click="startDeletingTask">
                 Удалить
               </BaseButton>
+
+              <BaseDialog
+                :show="isDeleting"
+                :title="`Удаление дела`"
+                @close-dialog="endDeleting"
+                lock
+              >
+                <div v-if="isDeleting">
+                  <p>
+                    Вы уверены, что хотите удалить дело "{{ currentTask.title }}" ? Отменить это
+                    действие будет <b>невозможно</b>.
+                  </p>
+                  <div class="dialog-controls">
+                    <BaseButton class="delete" @click="confirmDelete">Удалить дело</BaseButton>
+                    <BaseButton class="deny" @click="endDeleting">Отмена</BaseButton>
+                  </div>
+                </div>
+              </BaseDialog>
             </div>
           </section>
         </div>
@@ -76,7 +124,27 @@ export default {
 
   data() {
     return {
-      currentTask: null
+      currentTask: null,
+      isEditing: false,
+      isEditingValid: true,
+      isDeleting: false,
+
+      editingValidation: {
+        title: {
+          isError: false,
+          message: 'Введите, пожалуйста, не пустую строку'
+        },
+        importance: {
+          isError: false,
+          message: 'Важность должна быть не меньше 1 и не больше 10'
+        },
+        description: {
+          isError: false,
+          message: 'Описание должно состоять из не меньше 1 и не больше 2048 символов'
+        }
+      },
+
+      editableFields: ['title', 'importance', 'description']
     };
   },
 
@@ -94,7 +162,136 @@ export default {
     this.currentTask = taskToLoad;
   },
 
+  computed: {
+    title() {
+      return this.currentTask.title;
+    },
+    importance() {
+      return this.currentTask.importance;
+    },
+    description() {
+      return this.currentTask.description;
+    },
+
+    editable() {
+      return this.isEditing;
+    }
+  },
+
   methods: {
+    // todo delete task
+    startDeletingTask() {
+      this.isDeleting = true;
+    },
+
+    endDeleting() {
+      this.isDeleting = false;
+    },
+
+    confirmDelete() {
+      const { taskId } = this.$route.params;
+
+      const { groupId } = this.currentTask;
+
+      console.log({ taskId, groupId });
+
+      this.$store.dispatch('tasks/deleteTask', {
+        taskId
+      });
+
+      this.$router.replace(`/groups/${groupId}`);
+    },
+
+    // todo startEditingTask
+    startEditingTask() {
+      this.isEditing = true;
+    },
+
+    endEditing() {
+      Object.keys(this.editingValidation).forEach(
+        // eslint-disable-next-line no-return-assign
+        (key) => (this.editingValidation[key].isError = false)
+      );
+
+      this.isEditingValid = true;
+
+      this.isEditing = false;
+    },
+
+    validateEdit(event) {
+      console.log('event.target: ', event.target);
+      const { id } = event.target;
+      const val = event.target.textContent.trim();
+
+      switch (id) {
+        case this.editableFields[0]:
+          if (val === '') {
+            this.editingValidation[this.editableFields[0]].isError = true;
+            this.isEditingValid = false;
+          } else {
+            this.editingValidation[this.editableFields[0]].isError = false;
+          }
+          break;
+        case this.editableFields[1]:
+          if (+val < 1 || +val > 10) {
+            this.editingValidation[this.editableFields[1]].isError = true;
+            this.isEditingValid = false;
+          } else {
+            this.editingValidation[this.editableFields[1]].isError = false;
+          }
+          break;
+        case this.editableFields[2]:
+          if (val === '' || val.length > 2048) {
+            this.editingValidation[this.editableFields[2]].isError = true;
+            this.isEditingValid = false;
+          } else {
+            this.editingValidation[this.editableFields[2]].isError = false;
+          }
+          break;
+
+        default:
+          break;
+      }
+
+      const noneErrors = Object.values(this.editingValidation).every(
+        ({ isError }) => isError === false
+      );
+
+      if (noneErrors) this.isEditingValid = true;
+    },
+
+    denyEditing() {
+      this.editableFields.forEach((field) => {
+        console.log('field: ', field);
+        const el = document.getElementById(field);
+        // console.log('el: ', el);
+
+        el.textContent = this.currentTask[field];
+      });
+
+      this.endEditing();
+    },
+
+    updateTask() {
+      console.log('update task!');
+      const taskToUpdate = { ...this.currentTask };
+
+      this.editableFields.forEach((field) => {
+        console.log('field: ', field);
+        const el = document.getElementById(field);
+        // console.log('el: ', el);
+
+        // el.textContent = this.currentTask[field];
+        taskToUpdate[field] = el.textContent;
+      });
+
+      this.endEditing();
+
+      console.log('taskToUpdate: ', taskToUpdate);
+
+      this.$store.dispatch('tasks/updateTask', taskToUpdate);
+    },
+
     openNav() {
       this.$emit('open-nav');
     },
@@ -183,6 +380,9 @@ export default {
 .taskId-info {
   padding: 3.5em 0;
 
+  display: flex;
+  flex-direction: column;
+
   // .taskId-info__content
 
   &__content {
@@ -222,6 +422,9 @@ export default {
     margin-bottom: 1em;
     color: $text-main;
 
+    padding: 0.5em 1em;
+    padding-left: 0em !important;
+
     @include mq(med) {
       flex: 0 0 25%;
       margin-bottom: 0 !important;
@@ -235,6 +438,9 @@ export default {
     font-weight: 400;
     color: $text-main;
 
+    padding: 0.5em 1em;
+    padding-left: 0 !important;
+
     @include mq(med) {
       flex: 0 0 60%;
     }
@@ -242,15 +448,37 @@ export default {
     p {
       max-width: 65ch;
     }
+
+    /* &.editable {
+      outline: 1px solid $accent-2;
+    } */
+    &.editable span,
+    &.editable p {
+      outline: 1px solid $accent-2;
+    }
+
+    small {
+      color: $scale-10;
+    }
   }
 }
 .controls {
-  width: 40%;
+  /* width: 40%;
   min-width: 25rem;
   display: grid;
   grid-template-columns: repeat(2, auto);
 
+  gap: 0 min(50px, 5%); */
+
+  // width: 50vw;
+  // min-width: 25rem;
+  // max-width: 50rem;
+  width: 60%;
+  min-width: 25rem;
+  display: grid;
   gap: 0 min(50px, 5%);
+  grid-auto-flow: column;
+  flex: 0 1 60% !important;
 
   & > * {
     display: inline-flex;
@@ -269,6 +497,65 @@ export default {
       border: 1px solid $scale-10;
       background: $scale-10;
       color: $text-main;
+    }
+  }
+
+  .save {
+    color: $accent-2;
+    border-color: $accent-2;
+
+    &:hover,
+    &:focus {
+      background-color: $accent-2;
+    }
+
+    &[disabled] {
+      filter: grayscale(80%);
+      cursor: not-allowed;
+
+      &:hover,
+      &:focus {
+        filter: grayscale(70%);
+      }
+    }
+  }
+}
+
+.dialog .dialog__body {
+  p {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: $text-main;
+    margin-bottom: 0.75em;
+  }
+
+  .dialog-controls {
+    display: inline-flex;
+    align-self: center;
+
+    button.delete {
+      color: $scale-10;
+      border-color: $scale-10;
+
+      opacity: 0.65;
+
+      margin-right: 1em;
+
+      &:hover,
+      &:focus {
+        opacity: 1;
+        background-color: $scale-10;
+        color: $text-main;
+      }
+    }
+
+    button.deny {
+      opacity: 0.65;
+
+      &:hover,
+      &:focus {
+        opacity: 1;
+      }
     }
   }
 }

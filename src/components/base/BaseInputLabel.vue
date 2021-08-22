@@ -210,6 +210,7 @@ div {
     // padding: 0.5em 1em;
     padding: 1em;
     width: 100%;
+    max-width: 35rem;
 
     &:focus,
     &:focus-within,

@@ -488,6 +488,24 @@ export default {
 .groups-info {
   @extend %tpl-table-content;
 
+  header {
+    & div {
+      justify-self: flex-start;
+      // justify-self: center;
+      align-self: center;
+      // padding: 0.75em;
+    }
+
+    & span {
+      font-size: 1.4rem;
+      font-weight: 600;
+
+      color: $text-main;
+
+      // padding: 0.75em;
+    }
+  }
+
   &__zero-tasks {
     font-size: 1.6rem;
     font-weight: 500;
