@@ -131,18 +131,19 @@
     </div>
 
     <!-- // todo потом доделать -->
-    <!-- <div class="filter__row flat">
+    <div class="filter__row flat">
       <input type="checkbox" id="filter-only--done" />
       <label for="filter-only--done">Только выполненные</label>
     </div>
     <div class="filter__row flat">
       <input type="checkbox" id="filter-only--undone" />
       <label for="filter-only--undone">Только невыполненные</label>
-    </div> -->
+    </div>
   </form>
 </template>
 
 <script>
+/* eslint-disable no-param-reassign */
 import formatIdToProp from '../../helpers/filter/formatIdToProp.js';
 
 export default {
@@ -199,16 +200,33 @@ export default {
       const form = event.target.closest('form');
       const inputs = form.querySelectorAll('input');
 
+      // checkbox
+      const inputsCheckbox = form.querySelectorAll('input[type="checkbox"]');
+      console.log('inputsCheckbox: ', inputsCheckbox);
+
+      const curCheckbox = document.getElementById(targetId);
+      const curCheckboxChecked = curCheckbox.checked;
+      console.log('curCheckboxChecked: ', curCheckboxChecked);
+
+      // eslint-disable-next-line no-return-assign
+      inputsCheckbox.forEach((checkbox) => (checkbox.checked = false));
+
+      if (curCheckboxChecked) curCheckbox.checked = true;
+
+      // =============
+
       const formData = {};
 
       inputs.forEach((input) => {
-        console.log('input: ', input);
+        // console.log('input: ', input);
         const { id } = input;
 
         // todo превращает id в prop
         const propName = formatIdToProp(id);
 
-        if (input.value) {
+        if (input.type === 'checkbox') {
+          formData[propName] = input.checked;
+        } else if (input.value && input.type !== 'checkbox') {
           formData[propName] = input.value;
         }
       });

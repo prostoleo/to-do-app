@@ -10,61 +10,67 @@
 
         <div class="form__row">
           <label for="login">Логин</label>
+          <!-- required -->
           <input
             type="text"
             id="login"
             placeholder="Ваш логин.."
             maxlength="20"
-            required
             @blur="validateInput"
             v-model.trim="inputData.login"
           />
-          <small v-if="isLogging && validation.login.isError && validation.login.touched"
-            >Такого логина не найдено</small
-          >
-          <small v-if="!isLogging && validation.login.isError && validation.login.touched"
-            >Логин должен быть не более 20 символов</small
+          <!-- <small v-if="isLogging && validation.login.isError && validation.login.touched" -->
+          <small v-if="isLogging && login.isError && login.touched">Такого логина не найдено</small>
+          <!-- <small v-if="!isLogging && validation.login.isError && validation.login.touched" -->
+          <small v-if="!isLogging && login.isError && login.touched"
+            >Логин должен быть не менее 1 и не более 20 символов</small
           >
         </div>
 
         <div class="form__row">
           <label for="password">Пароль</label>
-          <input
-            :type="togglePasswordVisibility.password.type"
-            v-model.trim="inputData.password"
-            id="password"
-            placeholder="Ваш пароль.."
-            minlength="7"
-            required
-          />
-          <span class="icon" :class="classPassword" @click="changePasswordVisibility"></span>
-          <small v-if="isLogging && validation.password.isError && validation.password.touched"
+          <!-- required -->
+          <div>
+            <input
+              id="password"
+              placeholder="Ваш пароль.."
+              minlength="7"
+              @blur="validateInput"
+              :type="togglePasswordVisibility.password.type"
+              v-model.trim="inputData.password"
+            />
+            <span class="icon" :class="classPassword" @click="changePasswordVisibility"></span>
+          </div>
+          <!-- <small v-if="isLogging && validation.password.isError && validation.password.touched" -->
+          <small v-if="isLogging && password.isError && password.touched"
             >Указан не верный пароль</small
           >
-          <small v-if="!isLogging && validation.password.isError && validation.password.touched"
+          <!-- <small v-if="!isLogging && validation.password.isError && validation.password.touched" -->
+          <small v-if="!isLogging && password.isError && password.touched"
             >Минимальная длина пароля - 7 символов</small
           >
         </div>
 
         <div class="form__row" v-if="!isLogging">
           <label for="passwordAgain">Повторите пароль</label>
-          <input
-            :type="togglePasswordVisibility.passwordAgain.type"
-            v-model.trim="inputData.passwordAgain"
-            id="passwordAgain"
-            placeholder="Ваш пароль.."
-            minlength="7"
-            required
-          />
-          <span
-            class="icon"
-            :class="classPasswordAgain"
-            @click="changePasswordAgainVisibility"
-          ></span>
-          <small
-            v-if="
-              !isLogging && validation.passwordAgain.isError && validation.passwordAgain.touched
-            "
+          <!-- required -->
+          <div>
+            <input
+              id="passwordAgain"
+              placeholder="Ваш пароль.."
+              minlength="7"
+              v-model.trim="inputData.passwordAgain"
+              :type="togglePasswordVisibility.passwordAgain.type"
+              @blur="validateInput"
+            />
+            <span
+              class="icon"
+              :class="classPasswordAgain"
+              @click="changePasswordAgainVisibility"
+            ></span>
+          </div>
+          <!-- !isLogging && validation.passwordAgain.isError && validation.passwordAgain.touched -->
+          <small v-if="!isLogging && passwordAgain.isError && passwordAgain.touched"
             >Этот пароль не совпадает с раннее введенным !</small
           >
         </div>
@@ -81,6 +87,12 @@
 
 <script>
 export default {
+  emits: ['hide-nav'],
+
+  beforeCreate() {
+    this.$emit('hide-nav', true);
+  },
+
   data() {
     return {
       isLogging: true,
@@ -91,23 +103,23 @@ export default {
         passwordAgain: null
       },
 
-      validation: {
-        login: {
-          // value: null,
-          isError: false,
-          touched: false
-        },
-        password: {
-          // value: null,
-          isError: false,
-          touched: false
-        },
-        passwordAgain: {
-          // value: null,
-          isError: false,
-          touched: false
-        }
+      // validation: {
+      login: {
+        // value: null,
+        isError: false,
+        touched: false
       },
+      password: {
+        // value: null,
+        isError: false,
+        touched: false
+      },
+      passwordAgain: {
+        // value: null,
+        isError: false,
+        touched: false
+      },
+      // },
 
       togglePasswordVisibility: {
         password: {
@@ -177,37 +189,50 @@ export default {
       console.log('id: ', id);
       console.log('value: ', value);
 
-      this.validation[id].touched = true;
-      console.log('this.validation: ', this.validation);
-      console.log('this.validation[id]: ', this.validation[id]);
+      // this.validation[id].touched = true;
+      // console.log('this.validation: ', this.validation);
+      // console.log('this.validation[id]: ', this.validation[id]);
+      this[id].touched = true;
+      console.log('this[id]: ', this[id]);
+
+      const data = this.inputData[id];
 
       switch (id) {
         case 'login':
-          if (value.trim === '' || value.trim.length > 20) {
-            this.validation[id].isError = true;
+          if (!data || data === '' || data.length > 20) {
+            console.log('login пустой');
+            // this.validation.login.isError = true;
+            this[id].isError = true;
           } else {
-            this.validation[id].isError = false;
+            // this.validation.login.isError = false;
+            this[id].isError = false;
           }
-          console.log('login isError: ', this.validation);
-          console.log('login isError: ', this.validation[id].isError);
+          // console.log('login isError: ', this.validation);
+          // console.log('login isError: ', this.validation[id].isError);
+          console.log('this[id]: ', this[id]);
           break;
         case 'password':
-          if (value.trim.length < 7) {
-            this.validation[id].isError = true;
+          if (!data || data.length < 7) {
+            // this.validation[id].isError = true;
+            this[id].isError = true;
           } else {
-            this.validation[id].isError = false;
+            // this.validation[id].isError = false;
+            this[id].isError = false;
           }
-          console.log('password isError: ', this.validation);
-          console.log('password isError: ', this.validation[id].isError);
+          // console.log('password isError: ', this.validation);
+          // console.log('password isError: ', this.validation[id].isError);
+          console.log('this[id]: ', this[id]);
           break;
         case 'passwordAgain':
-          if (value !== this.inputData.password) {
-            this.validation[id].isError = true;
+          if (!data || data !== this.inputData.password) {
+            // this.validation[id].isError = true;
+            this[id].isError = true;
           } else {
-            this.validation[id].isError = false;
+            // this.validation[id].isError = false;
+            this[id].isError = false;
           }
-          console.log('passwordAgain isError: ', this.validation);
-          console.log('passwordAgain isError: ', this.validation[id].isError);
+          // console.log('passwordAgain isError: ', this.validation);
+          // console.log('passwordAgain isError: ', this.validation[id].isError);
           break;
 
         default:
@@ -242,16 +267,16 @@ export default {
 
     flex-direction: column;
 
-    padding-top: 2.5em;
+    padding-top: clamp(2.5rem, 4vw + 1rem, 6.5rem) !important;
   }
 
   // .auth__title
 
   &__title {
-    @include adaptive-value-min-max(font-size, 24px, 42px);
+    @include adaptive-value-min-max(font-size, 24, 64);
     font-weight: 700;
     line-height: 1.1;
-    margin-bottom: 2em;
+    margin-bottom: 1.5em;
 
     text-align: center;
     color: $text-main;
@@ -263,7 +288,7 @@ export default {
       background-image: url('../../src/assets/img/underline.svg');
       background-size: contain;
       background-repeat: no-repeat;
-      background-position: 0px 2.5rem;
+      background-position: 0 50%;
       overflow: visible;
     }
   }
@@ -271,10 +296,11 @@ export default {
   // .auth__message
 
   &__message {
-    @include adaptive-value-min-max(font-size, 14px, 20px);
+    @include adaptive-value-min-max(font-size, 14, 20);
     color: $text-main;
 
     margin-bottom: 2em;
+    text-align: center;
   }
 
   // .auth__form
@@ -286,6 +312,8 @@ export default {
   display: flex;
   flex-direction: column;
   width: 95%;
+  max-width: 50rem;
+
   background: white;
 
   // prettier-ignore
@@ -326,6 +354,10 @@ export default {
       color: $text-main;
     }
 
+    & > div {
+      position: relative;
+    }
+
     input {
       padding: 0.5em 1em;
       font-size: clamp(1.4rem, 1.25vw + 1rem, 2rem);
@@ -335,6 +367,8 @@ export default {
 
       color: $text-main;
       margin-bottom: 0.2em;
+
+      width: 100%;
 
       &:hover,
       &:focus {
@@ -353,7 +387,8 @@ export default {
     span.icon {
       position: absolute;
       right: 1em;
-      top: 59%;
+      top: 50%;
+      transform: translate(0%, -50%);
       font-size: 1.4rem;
       color: $text-main;
 
@@ -361,8 +396,12 @@ export default {
     }
 
     small {
+      // position: absolute;
+      // left: 0;
+      // bottom: -1rem;
+
       margin-left: 1.5rem;
-      @include adaptive-value-min-max(font-size, 10px, 14px);
+      @include adaptive-value-min-max(font-size, 10, 14);
       line-height: 1.1;
       color: $scale-10;
     }
@@ -372,19 +411,22 @@ export default {
     align-self: center;
 
     margin: 1.25em 0 1em;
+
+    font-size: clamp(1.4rem, 1.25vw + 1rem, 2rem);
   }
 
   // .form__message
 
   &__message {
     align-self: center;
-    @include adaptive-value-min-max(font-size, 12px, 14px);
+    @include adaptive-value-min-max(font-size, 12, 16);
   }
 
   // .form__link
 
   &__link {
     align-self: center;
+    @include adaptive-value-min-max(font-size, 12, 16);
 
     &:hover {
       text-decoration: underline;

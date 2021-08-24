@@ -62,6 +62,7 @@ export default {
 
     const prevLength = context.getters.lengthOfSelectedTasksOnGroupId(groupId);
 
+    // todo обращаемся к мутации в другом модуле
     context.commit(
       'groups/setNewAvgImportance',
       {

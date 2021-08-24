@@ -2,7 +2,16 @@
 /* eslint-disable no-param-reassign */
 export default function foo(
   items,
-  { dateAdditionFrom, dateAdditionTo, dateEndingFrom, dateEndingTo, impFrom, impTo },
+  {
+    dateAdditionFrom,
+    dateAdditionTo,
+    dateEndingFrom,
+    dateEndingTo,
+    impFrom,
+    impTo,
+    onlyDone,
+    onlyUndone
+  },
   isGroups = false
 ) {
   console.log('items: ', items);
@@ -24,6 +33,18 @@ export default function foo(
       ? items.filter((item) => item.avgImportance >= +impFrom && item.avgImportance <= +impTo)
       : items.filter((item) => item.importance >= +impFrom && item.importance <= +impTo);
     console.log('selectedItems: ', selectedItems);
+  }
+
+  //* если выбран показать только выполненные / невыполненные задания
+  if (onlyDone || onlyUndone) {
+    selectedItems = onlyDone
+      ? items.filter((item) => item.done === true)
+      : items.filter((item) => item.done === false);
+  }
+
+  if (!onlyDone && !onlyUndone) {
+    console.log('возвращаем все');
+    selectedItems = items;
   }
 
   if (dateAdditionFrom && dateAdditionTo) {

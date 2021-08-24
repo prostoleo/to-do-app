@@ -54,6 +54,7 @@
                   }}</small>
                 </div>
               </div>
+
               <div class="content__row">
                 <h3 class="content__row-title">Описание</h3>
                 <div class="content__row-title-block" :class="{ editable: !!isEditing }">
@@ -63,6 +64,15 @@
                   <small v-if="editingValidation.description.isError">{{
                     editingValidation.description.message
                   }}</small>
+                </div>
+              </div>
+
+              <div class="content__row">
+                <h3 class="content__row-title">Статус выполнения</h3>
+                <div class="content__row-title-block">
+                  <p id="description">
+                    {{ currentTask.done ? 'Выполнено' : 'Невыполнено' }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -84,6 +94,11 @@
                 Отменить
                 <span class="icon _icon-close"></span>
               </BaseButton>
+
+              <BaseButton class="toggle-done" @click="toggleDone">
+                {{ currentTask.done ? 'Отменить выполнение' : 'Выполнить' }}
+              </BaseButton>
+
               <BaseButton class="delete" @click="startDeletingTask">
                 Удалить
               </BaseButton>
@@ -154,12 +169,11 @@ export default {
     this.$emit('not-found');
   },
 
-  created() {
-    const paramId = this.$route.params.taskId;
-    const taskToLoad = store.getters['tasks/taskOnId'](paramId);
-    console.log('taskToLoad: ', taskToLoad);
-
-    this.currentTask = taskToLoad;
+  watch: {
+    updateCurrentTask: {
+      handler: 'getCurrentTask',
+      immediate: true
+    }
   },
 
   computed: {
@@ -179,6 +193,15 @@ export default {
   },
 
   methods: {
+    // todo для получения данных
+    getCurrentTask() {
+      const paramId = this.$route.params.taskId;
+      const taskToLoad = store.getters['tasks/taskOnId'](paramId);
+      console.log('taskToLoad: ', taskToLoad);
+
+      this.currentTask = taskToLoad;
+    },
+
     // todo delete task
     startDeletingTask() {
       this.isDeleting = true;
@@ -303,6 +326,15 @@ export default {
     formatDateLocal(data) {
       // console.log('data: ', data);
       return formatDate(data);
+    },
+
+    toggleDone() {
+      const status = !this.currentTask.done;
+
+      this.$store.dispatch('tasks/toggleDoneStatus', {
+        task: this.currentTask,
+        status
+      });
     }
   },
 
@@ -473,12 +505,19 @@ export default {
   // width: 50vw;
   // min-width: 25rem;
   // max-width: 50rem;
-  width: 60%;
-  min-width: 25rem;
+  width: 100%;
+  max-width: 15rem;
   display: grid;
-  gap: 0 min(50px, 5%);
-  grid-auto-flow: column;
-  flex: 0 1 60% !important;
+  gap: 2.5rem 0;
+  grid-auto-flow: row;
+
+  @include mq(lg) {
+    flex: 0 1 60%;
+    min-width: 25rem;
+    max-width: 100%;
+    display: flex;
+    gap: 0 min(20px, 5%);
+  }
 
   & > * {
     display: inline-flex;

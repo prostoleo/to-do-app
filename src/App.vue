@@ -1,6 +1,11 @@
 <template>
-  <TheNav :show="navIsOpened" @close-nav="closeNav" v-if="!isNotFound"></TheNav>
-  <router-view v-slot="slotProps" @open-nav="openNav" @not-found="setNotFound">
+  <TheNav :show="navIsOpened" @close-nav="closeNav" v-if="!hideNav"></TheNav>
+  <router-view
+    v-slot="slotProps"
+    @open-nav="openNav"
+    @not-found="setHideNav"
+    @hide-nav="setHideNav"
+  >
     <transition name="route" mode="out-in">
       <component :is="slotProps.Component"></component>
     </transition>
@@ -15,7 +20,7 @@ export default {
     return {
       navIsOpen: false,
 
-      isNotFound: false
+      hideNav: false
     };
   },
 
@@ -50,8 +55,8 @@ export default {
   }, */
 
   methods: {
-    setNotFound(data = false) {
-      this.isNotFound = data;
+    setHideNav(data = false) {
+      this.hideNav = data;
     },
 
     openNav() {
@@ -85,7 +90,7 @@ body.lock {
 
 #app {
   min-height: 100vh;
-  max-width: 1500px;
+  // max-width: 1500px;
 
   @include mq(lg) {
     display: flex;
