@@ -603,12 +603,14 @@ form {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  width: 80%;
+  width: 100%;
 
   position: relative;
 
   & > * {
     margin-top: 2.25em;
+    width: 90%;
+    margin: 0 auto;
   }
 
   & button {
@@ -618,6 +620,16 @@ form {
 }
 
 .input-row {
+  /* width: 60%;
+  min-width: 20rem;
+  margin: 0 auto; */
+
+  input {
+    width: 60%;
+    min-width: 20rem;
+    margin: 0 auto;
+  }
+
   label {
     display: block;
     font-size: 1.4rem;
@@ -649,12 +661,15 @@ form {
     margin-bottom: 0.25em;
     color: $scale-10;
 
+    line-height: 1;
+
     margin-left: 1.25em;
   }
 
   textarea {
     resize: vertical;
     width: 100%;
+    max-width: 35rem;
     border-radius: 2.5em;
     border: 1px solid $input-main;
 

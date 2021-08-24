@@ -129,6 +129,16 @@
         По важности (от и до)
       </label>
     </div>
+
+    <!-- // todo потом доделать -->
+    <!-- <div class="filter__row flat">
+      <input type="checkbox" id="filter-only--done" />
+      <label for="filter-only--done">Только выполненные</label>
+    </div>
+    <div class="filter__row flat">
+      <input type="checkbox" id="filter-only--undone" />
+      <label for="filter-only--undone">Только невыполненные</label>
+    </div> -->
   </form>
 </template>
 
@@ -277,6 +287,17 @@ export default {
   &__row {
     display: flex;
     flex-direction: column-reverse;
+
+    &.flat {
+      // justify-content: space-between;
+      flex-direction: row;
+      gap: 0 1em;
+      margin-top: 1.25em;
+
+      & > label {
+        flex-wrap: wrap;
+      }
+    }
 
     &:first-of-type {
       margin-bottom: 1.5em;

@@ -7,6 +7,8 @@ $breakpoints: (
 );
 
 $maw-container: 1500px;
+$max-width: 1500px;
+$min-width: 320px;
 
 @mixin mq($key) {
   $size: map-get($breakpoints, $key);

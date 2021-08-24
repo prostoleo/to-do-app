@@ -181,10 +181,14 @@ export default {
 
   position: relative;
 
-  width: min(60rem, 50vw);
+  width: min(45rem, 90vw);
   overflow: hidden;
   border: none;
   z-index: 1000;
+
+  // overflow-y: scroll;
+  overflow-y: auto;
+  max-height: 90vh;
 
   // .dialog_wrapper
 
@@ -225,7 +229,7 @@ export default {
 
   &__close {
     position: absolute;
-    top: 0.5em;
+    top: 0.35em;
     right: 0.5em;
     z-index: 5;
 
@@ -237,7 +241,7 @@ export default {
 
   &__header {
     text-align: center;
-    padding: 0.5em;
+    padding: 1em;
 
     margin: -1.5em -1.5em 0;
 
@@ -250,12 +254,20 @@ export default {
   &__title {
     font-size: 2.2rem;
     font-weight: 700;
+
+    margin: 0 auto;
+    max-width: 75%;
+    line-height: 1;
   }
 
   // .dialog__body
 
   &__body {
     padding: 1em 0;
+
+    & > * {
+      margin: 0 auto;
+    }
   }
 }
 </style>

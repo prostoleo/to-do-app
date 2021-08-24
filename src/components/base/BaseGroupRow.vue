@@ -10,24 +10,36 @@
   <!-- :class="{ row_4: row4 }" -->
   <li class="groups-info__item" v-else ref="li" :data-group-id="groupId" :data-task-id="taskId">
     <!-- // todo - добавить :to с динамическим id (computed - toId)  -->
-    <router-link class="groups-info__link" :to="`${toId}`">
+    <router-link class="groups-info__link" :class="{ done: taskIsDone }" :to="`${toId}`">
       <slot name="body"></slot>
     </router-link>
     <!-- <div class="groups-info__link" v-else>
       <slot name="body"></slot>
     </div> -->
     <!-- <button class="icon-edit _icon-edit"></button> -->
+    <button
+      class="icon"
+      :class="taskIsDone ? '_icon-undo' : '_icon-done'"
+      @click="toggleDoneTask"
+      v-if="!isGroupPage"
+    ></button>
     <button class="icon _icon-close" @click="deleteGroupOrTask"></button>
   </li>
 
-  <BaseDialog :show="isDeleting" :title="`Удаление дела`" @close-dialog="endDeleting" lock>
+  <BaseDialog
+    :show="isDeleting"
+    :title="`Удаление дела`"
+    @close-dialog="endDeleting"
+    lock
+    v-if="isDeleting"
+  >
     <div v-if="isDeleting">
       <p>
-        Вы уверены, что хотите удалить дело "{{ currentTask.title }}" ? Отменить это действие будет
-        <b>невозможно</b>.
+        Вы уверены, что хотите удалить {{ pInDialog }} "{{ currentItem.title }}" ? Отменить это
+        действие будет <b>невозможно</b>.
       </p>
       <div class="dialog-controls">
-        <BaseButton class="delete" @click="confirmDelete">Удалить дело</BaseButton>
+        <BaseButton class="delete" @click="confirmDelete">Удалить {{ pInDialog }}</BaseButton>
         <BaseButton class="deny" @click="endDeleting">Отмена</BaseButton>
       </div>
     </div>
@@ -67,7 +79,9 @@ export default {
 
   data() {
     return {
-      isDeleting: false
+      isDeleting: false,
+      taskIsDone: false,
+      currentItem: null
     };
   },
 
@@ -75,36 +89,79 @@ export default {
     //* вычисляем id
     toId() {
       return this.taskId ? `/tasks/${this.taskId}` : `/groups/${this.id}`;
+    },
+
+    pInDialog() {
+      return this.groupId ? 'группу' : 'дело';
+    },
+
+    isGroupPage() {
+      // console.log('this.$route: ', this.$route);
+      return this.$route.name === 'Groups';
     }
   },
 
   methods: {
-    // todo удаляем группы или задание в зависимости от того rowNotLink
+    // todo удаляем группы или задание в зависимости от того на странице groups (группы) или любой другой (задания)
     deleteGroupOrTask() {
+      this.isDeleting = true;
+
       //* если не линк - значит находимся в task и удаляем task - иначе удаляем group
       if (!this.groupId) {
         const { taskId } = this.$refs.li.dataset;
 
+        const curTask = this.$store.getters['tasks/taskOnId'](taskId);
+        console.log('curTask: ', curTask);
+
+        this.currentItem = curTask;
+
         console.log('taskId: ', taskId);
         console.log('typeof taskId: ', typeof taskId);
-
-        this.$store.dispatch('tasks/deleteTask', {
-          taskId
-        });
       } else {
         const { groupId } = this.$refs.li.dataset;
 
         console.log('groupId: ', groupId);
         console.log('typeof groupId: ', typeof groupId);
 
+        const curGroup = this.$store.getters['groups/groupOnId'](groupId);
+        console.log('curGroup: ', curGroup);
+
+        this.currentItem = curGroup;
+      }
+    },
+
+    confirmDelete() {
+      const id = this.groupId ? this.currentItem.groupId : this.currentItem.taskId;
+
+      if (!this.groupId) {
+        this.$store.dispatch('tasks/deleteTask', {
+          taskId: id
+        });
+      } else {
         this.$store.dispatch('groups/deleteGroup', {
-          groupId
+          groupId: id
         });
 
         this.$store.dispatch('tasks/deleteTasksOnGroupId', {
-          groupId
+          groupId: id
         });
       }
+    },
+
+    endDeleting() {
+      this.isDeleting = false;
+    },
+
+    toggleDoneTask() {
+      this.taskIsDone = !this.taskIsDone;
+
+      const task = this.$store.getters['tasks/taskOnId'](this.taskId);
+      console.log('task: ', task);
+
+      this.$store.dispatch('tasks/toggleDoneStatus', {
+        task,
+        status: this.taskIsDone
+      });
     }
   }
 };
@@ -117,6 +174,29 @@ li {
 
   padding-right: 3rem;
 
+  a.done {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+
+      top: 50%;
+      left: 0;
+      right: 0;
+
+      transform-origin: left center;
+      transform: translate(0%, -50%) scaleX(10%);
+
+      width: 100%;
+      height: 3px;
+
+      background: #000;
+
+      animation: done 170ms ease-in-out forwards;
+    }
+  }
+
   button {
     position: absolute;
     top: 54%;
@@ -127,7 +207,7 @@ li {
     color: $scale-10;
     opacity: 0.5;
 
-    &.icon-edit {
+    &._icon-edit {
       right: 0.5em;
       color: $text-main;
 
@@ -135,6 +215,18 @@ li {
       &:focus {
         opacity: 1;
         color: $accent;
+      }
+    }
+
+    &._icon-done,
+    &._icon-undo {
+      right: 0.7em;
+      color: $accent;
+      filter: grayscale(80%);
+
+      &:hover,
+      &:focus {
+        filter: grayscale(0%);
       }
     }
 
@@ -202,6 +294,16 @@ header {
 
   &.row_4 {
     grid-template-columns: min-content 20% 20% 35%;
+  }
+}
+
+.dialog__body {
+  @extend %tpl-dialog-body;
+}
+
+@keyframes done {
+  to {
+    transform: scaleX(90%);
   }
 }
 </style>

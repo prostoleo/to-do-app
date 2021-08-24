@@ -206,6 +206,7 @@ div {
 
     border-radius: 4em;
     border: 1px solid currentColor;
+    background-color: transparent;
 
     // padding: 0.5em 1em;
     padding: 1em;

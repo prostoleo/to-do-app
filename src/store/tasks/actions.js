@@ -8,8 +8,9 @@ export default {
     const newData = {
       ...data,
       dateOfAddition: new Date(data.dateOfAddition).toISOString(),
-      dateOfEnding: new Date(data.dateOfEnding).toString()
+      dateOfEnding: new Date(data.dateOfEnding).toString(),
       // dateOfEnding: data.dateOfEnding
+      done: false
     };
     console.log('newData: ', newData);
 
@@ -72,5 +73,17 @@ export default {
       },
       { root: true }
     );
+  },
+
+  toggleDoneStatus(context, { task, status }) {
+    const index = context.state.tasks.findIndex((t) => t === task);
+    console.log('index: ', index);
+
+    if (index !== -1) {
+      context.commit('toggleDoneStatus', {
+        index,
+        status
+      });
+    }
   }
 };

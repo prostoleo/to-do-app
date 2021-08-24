@@ -522,41 +522,6 @@ export default {
 }
 
 .dialog .dialog__body {
-  p {
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: $text-main;
-    margin-bottom: 0.75em;
-  }
-
-  .dialog-controls {
-    display: inline-flex;
-    align-self: center;
-
-    button.delete {
-      color: $scale-10;
-      border-color: $scale-10;
-
-      opacity: 0.65;
-
-      margin-right: 1em;
-
-      &:hover,
-      &:focus {
-        opacity: 1;
-        background-color: $scale-10;
-        color: $text-main;
-      }
-    }
-
-    button.deny {
-      opacity: 0.65;
-
-      &:hover,
-      &:focus {
-        opacity: 1;
-      }
-    }
-  }
+  @extend %tpl-dialog-body;
 }
 </style>

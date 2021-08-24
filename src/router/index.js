@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import Auth from '../views/Auth.vue';
 import Groups from '../views/Groups.vue';
 import GroupId from '../views/GroupId.vue';
 import TaskId from '../views/TaskId.vue';
@@ -9,6 +10,11 @@ const routes = [
   {
     path: '/',
     redirect: '/groups'
+  },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: Auth
   },
   {
     path: '/groups',

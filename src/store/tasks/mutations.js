@@ -20,5 +20,11 @@ export default {
 
   deleteTasksOnGroupId(state, groupId) {
     state.tasks = state.tasks.filter((t) => t.groupId !== groupId);
+  },
+
+  toggleDoneStatus(state, { index, status }) {
+    console.log('status: ', status);
+    state.tasks[index].done = status;
+    console.log('state.tasks[index]: ', state.tasks[index]);
   }
 };
