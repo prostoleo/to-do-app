@@ -191,7 +191,7 @@ li {
       width: 100%;
       height: 3px;
 
-      background: #000;
+      background: $text-main;
 
       animation: done 170ms ease-in-out forwards;
     }

@@ -30,6 +30,7 @@
                 </li>
               </ul>
             </nav>
+            <span class="logout _icon-logout"></span>
           </BaseContainer>
         </div>
       </div>

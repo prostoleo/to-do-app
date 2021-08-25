@@ -14,7 +14,7 @@ import BaseSpinner from './components/base/BaseSpinner.vue';
 import BaseSearch from './components/base/BaseSearch.vue';
 
 import App from './App.vue';
-import router from './router';
+import router from './router/router.js';
 import store from './store';
 
 const app = createApp(App);

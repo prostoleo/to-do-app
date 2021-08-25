@@ -5,7 +5,7 @@
 
       <p class="auth__message">Необходимо войти в аккаунт, чтобы продолжить.</p>
 
-      <form class="auth__form form">
+      <form class="auth__form form" @submit.prevent="submitForm">
         <h2 class="form__title">{{ isLogging ? 'Вход' : 'Регистрация' }}</h2>
 
         <div class="form__row">
@@ -74,7 +74,9 @@
             >Этот пароль не совпадает с раннее введенным !</small
           >
         </div>
-        <BaseButton :mode="'flat'">Войти</BaseButton>
+        <BaseButton :mode="'flat'" :disabled-val="inputData.error">{{
+          isLogging ? 'Войти' : 'Зарегистрироваться'
+        }}</BaseButton>
 
         <p class="form__message">{{ isLogging ? 'Еще нет аккаунта ?' : 'Уже есть аккаунт' }}</p>
         <a class="form__link" @click="toggleIsLogging">{{
@@ -98,9 +100,11 @@ export default {
       isLogging: true,
 
       inputData: {
-        login: null,
-        password: null,
-        passwordAgain: null
+        login: '',
+        password: '',
+        passwordAgain: '',
+        error: true,
+        errorMsg: 'Что-то пошло не так, попробуйте повторите позже'
       },
 
       // validation: {
@@ -148,8 +152,25 @@ export default {
   },
 
   methods: {
+    clearInputsAndErrors() {
+      this.inputData.login = '';
+      this.inputData.password = '';
+      this.inputData.passwordAgain = '';
+      this.inputData.error = true;
+      this.inputData.errorMsg = 'Что-то пошло не так, попробуйтеповторите позже';
+
+      this.login.isError = false;
+      this.login.touched = false;
+      this.password.isError = false;
+      this.password.touched = false;
+      this.passwordAgain.isError = false;
+      this.passwordAgain.touched = false;
+    },
+
     toggleIsLogging() {
       this.isLogging = !this.isLogging;
+
+      this.clearInputsAndErrors();
     },
 
     changePasswordVisibility() {
@@ -203,6 +224,7 @@ export default {
             console.log('login пустой');
             // this.validation.login.isError = true;
             this[id].isError = true;
+            this.inputData.error = true;
           } else {
             // this.validation.login.isError = false;
             this[id].isError = false;
@@ -215,6 +237,7 @@ export default {
           if (!data || data.length < 7) {
             // this.validation[id].isError = true;
             this[id].isError = true;
+            this.inputData.error = true;
           } else {
             // this.validation[id].isError = false;
             this[id].isError = false;
@@ -227,6 +250,7 @@ export default {
           if (!data || data !== this.inputData.password) {
             // this.validation[id].isError = true;
             this[id].isError = true;
+            this.inputData.error = true;
           } else {
             // this.validation[id].isError = false;
             this[id].isError = false;
@@ -238,6 +262,69 @@ export default {
         default:
           break;
       }
+
+      this.checkTotalError();
+    },
+
+    checkTotalError() {
+      const login = !this.login.isError && this.login.touched;
+      console.log('login: ', login);
+      const password = !this.password.isError && this.password.touched;
+      console.log('password: ', password);
+
+      // todo если регистрируемся
+      if (!this.isLogging) {
+        const passwordAgain = !this.passwordAgain.isError && this.passwordAgain.touched;
+        console.log('passwordAgain: ', passwordAgain);
+
+        //* если все валидно - то отменяем общую ошибку
+        if (login && password && passwordAgain) this.inputData.error = false;
+
+        return;
+      }
+
+      // todo если логинемся и все валидно - отменяем общую ошибку
+      if (login && password) this.inputData.error = false;
+    },
+
+    // todo submitForm
+    submitForm() {
+      if (this.isLogging && !this.inputData.error) {
+        this.loginUser();
+      }
+
+      if (!this.isLogging && !this.inputData.error) {
+        this.registerUser();
+      }
+    },
+
+    loginUser() {
+      console.log('log user');
+
+      const user = this.$store.getters['auth/getUserOnId']({
+        login: this.inputData.login,
+        password: this.inputData.password
+      });
+
+      if (user) {
+        this.$store.dispatch('auth/login', {
+          login: this.inputData.login,
+          password: this.inputData.password,
+          id: Date.now().toString(32)
+        });
+      }
+
+      this.$router.replace('/groups');
+    },
+
+    registerUser() {
+      this.$store.dispatch('auth/register', {
+        login: this.inputData.login,
+        password: this.inputData.password,
+        id: Date.now().toString(32)
+      });
+
+      this.toggleIsLogging();
     }
 
     // togglePassword(event) {}
@@ -413,6 +500,11 @@ export default {
     margin: 1.25em 0 1em;
 
     font-size: clamp(1.4rem, 1.25vw + 1rem, 2rem);
+
+    &[disabled='true'] {
+      cursor: not-allowed;
+      filter: grayscale(85%);
+    }
   }
 
   // .form__message

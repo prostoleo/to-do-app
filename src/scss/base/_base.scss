@@ -16,6 +16,14 @@ body.lock {
   overflow-y: hidden !important;
 }
 
+/* body.dark {
+  background-color: hsl(194, 33%, 18%);
+  $input-main: hsl(141, 35%, 84%);
+  $shadow: hsla(0, 0%, 0%, 0.15);
+  $text-main: hsl(194, 40%, 81%);
+  $text-secondary: hsl(0, 0%, 100%);
+} */
+
 html {
   @include mq(xlg) {
     font-size: 12px !important;
