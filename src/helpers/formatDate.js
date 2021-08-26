@@ -1,4 +1,5 @@
 export default function formatDate(date) {
+  console.log('date: ', date);
   const realDate = new Date(date);
   const locale = navigator.language;
 

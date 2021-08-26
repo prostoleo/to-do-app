@@ -26,6 +26,13 @@ export default {
 
   created() {
     // console.log(this.$route);
+    /* localStorage.setItem(
+      'to-do-app__users',
+      JSON.stringify(this.$store.getters['auth/getAllUSers'])
+    ); */
+    /* localStorage.setItem('to-do-app__groups', JSON.stringify(this.$store.getters['groups/groups']));
+
+    localStorage.setItem('to-do-app__tasks', JSON.stringify(this.$store.getters['tasks/tasks'])); */
   },
 
   computed: {

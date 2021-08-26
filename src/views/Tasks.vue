@@ -59,7 +59,9 @@
                   v-for="task in selectedTasks"
                   :key="task.taskId"
                   :task-id="task.taskId"
+                  :id="task.taskId"
                   :row-not-link="true"
+                  :is-done="task.done"
                 >
                   <template #body>
                     <div>
@@ -91,7 +93,9 @@
             <p v-else-if="selectedTasks.length === 0 && query" class="groups-info__zero-tasks">
               По запросу {{ query }} ничего не найдено😞. Попробуйте изменить запрос
             </p>
-            <p v-else class="groups-info__zero-tasks">У вас нет ни одного дела. Добавьте дел.</p>
+            <p v-else-if="selectedTasks.length === 0 && filterInfo" class="groups-info__zero-tasks">
+              У вас нет ни одного дела. Добавьте дел.
+            </p>
           </section>
         </div>
       </BaseContainer>
@@ -100,6 +104,7 @@
 </template>
 
 <script>
+/* eslint-disable implicit-arrow-linebreak */
 //* форматирование даты
 import formatDate from '../helpers/formatDate.js';
 import formatAvgImportance from '../helpers/formatAvgImportance.js';
@@ -107,6 +112,12 @@ import formatAvgImportance from '../helpers/formatAvgImportance.js';
 import sortGroupsTasks from '../helpers/sort/sortGroupsTasks.js';
 import changeSortInfo from '../helpers/sort/changeSortInfo.js';
 import resetSortInfo from '../helpers/sort/resetSortInfo.js';
+import selectOnQuery from '../helpers/groups/selectOnQuery.js';
+
+//* фильтры
+import filterDateOfEnding from '../helpers/filter/filterDateOfEnding.js';
+import filterImportance from '../helpers/filter/filterImportance.js';
+import filterDoneUndone from '../helpers/filter/filterDoneUndone.js';
 
 // todo импортируем addTaskForm
 import AddTaskForm from '../components/tasks/AddTaskForm.vue';
@@ -166,26 +177,43 @@ export default {
 
     selectedTasks() {
       //* проверка на truthy value
-      const truthy = this.truthySort;
-      console.log('truthy: ', truthy);
+      const { truthySort } = this;
+      console.log('truthySort: ', truthySort);
 
       const allTasks = this.$store.getters['tasks/tasks'];
+      console.log('allTasks: ', allTasks);
 
-      const selectedTasks = this.$store.getters['tasks/selectedTasks']({
+      /* let selectedTasks = this.$store.getters['tasks/selectedTasks']({
         allTasks,
         query: this.query,
         filterInfo: this.filterInfo
-      });
+      }); */
+      console.log('this.filterInfo: ', this.filterInfo);
+      // ============================
+      //* новый вариант
+      let selectedTasks = selectOnQuery(allTasks, this.query);
       console.log('selectedTasks: ', selectedTasks);
 
-      if (!truthy) {
+      selectedTasks = filterDateOfEnding(selectedTasks, this.filterInfo);
+
+      console.log('selectedTasks: ', selectedTasks);
+
+      selectedTasks = filterImportance(selectedTasks, this.filterInfo);
+      console.log('selectedTasks: ', selectedTasks);
+
+      selectedTasks = filterDoneUndone(selectedTasks, this.filterInfo);
+      console.log('selectedTasks: ', selectedTasks);
+
+      // ============================
+
+      if (!truthySort) {
         return selectedTasks;
       }
 
-      const [key] = truthy;
+      const [key] = truthySort;
 
       //* используем отдельную функцию
-      const sortedTasks = sortGroupsTasks(selectedTasks, key, true);
+      const sortedTasks = sortGroupsTasks(selectedTasks, key);
       console.log('sortedTasks: ', sortedTasks);
 
       return sortedTasks.slice();

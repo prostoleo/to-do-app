@@ -6,6 +6,18 @@ export default {
     return state.groups;
   },
 
+  getGroupsOfCurUser(_, getters, _3, rootGetters) {
+    console.log('getters: ', getters);
+    console.log('rootGetters: ', rootGetters);
+    const groups = JSON.parse(localStorage.getItem('to-do-app__groups'));
+
+    const { userId } = rootGetters['auth/getCurUser'];
+
+    const returnedValue = groups?.filter((g) => g.userId === userId);
+
+    return returnedValue.length > 0 ? returnedValue : null;
+  },
+
   groupOnId: (state) => (id) => state.groups.find((g) => g.groupId === id),
 
   // eslint-disable-next-line consistent-return

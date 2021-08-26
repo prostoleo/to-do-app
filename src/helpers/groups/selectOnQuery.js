@@ -1,3 +1,9 @@
 export default function foo(items, query) {
-  return items.slice().filter((item) => item.title.toLowerCase().includes(query.toLowerCase()));
+  if (!query) return items;
+
+  const selectedOnQuery = items
+    .slice()
+    .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()));
+
+  return selectedOnQuery;
 }

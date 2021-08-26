@@ -174,7 +174,7 @@ export default {
       return {
         // isError: this.dateOfEndingIsError,
         isError: this.dateOfEnding.isError,
-        message: 'Дата окончания дела должна быть позже нынешнего времени'
+        message: 'Дата окончания дела должна быть не раньше завтрашнего дня'
       };
     },
     timeOfEndingError() {
@@ -577,7 +577,8 @@ export default {
         ), */
         dateOfEnding: new Date(`${this.dateOfEnding.value}T${this.timeOfEnding.value}`).getTime(),
         description: this.description.value.trim(),
-        importance: +this.importance.value
+        importance: +this.importance.value,
+        userId: this.$store.getters['auth/getCurUser'].userId
       };
 
       console.log('dataToSubmit: ', dataToSubmit);
@@ -616,6 +617,7 @@ form {
   & button {
     align-self: center;
     margin-top: 2.75em !important;
+    width: max-content;
   }
 }
 
@@ -623,6 +625,7 @@ form {
   /* width: 60%;
   min-width: 20rem;
   margin: 0 auto; */
+  margin-bottom: 1.5em;
 
   input {
     width: 60%;

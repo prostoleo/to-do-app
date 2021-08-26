@@ -65,6 +65,7 @@
                   v-for="task in selectedTasks"
                   :key="task.taskId"
                   :task-id="task.taskId"
+                  :is-done="task.done"
                   :row-not-link="true"
                 >
                   <template #body>
@@ -97,6 +98,9 @@
             <p v-else-if="selectedTasks.length === 0 && query" class="groups-info__zero-tasks">
               По запросу {{ query }} ничего не найдено😞. Попробуйте изменить запрос
             </p>
+            <p v-else-if="selectedTasks.length === 0 && filterInfo" class="groups-info__zero-tasks">
+              Ни одного дела не найдено по указанным критериям
+            </p>
             <p v-else class="groups-info__zero-tasks">У вас нет ни одного дела. Добавьте дел.</p>
           </section>
         </div>
@@ -121,6 +125,13 @@ import formatAvgImportance from '../helpers/formatAvgImportance.js';
 import sortGroupsTasks from '../helpers/sort/sortGroupsTasks.js';
 import changeSortInfo from '../helpers/sort/changeSortInfo.js';
 import resetSortInfo from '../helpers/sort/resetSortInfo.js';
+
+import selectOnQuery from '../helpers/groups/selectOnQuery.js';
+
+//* фильтры
+import filterDateOfEnding from '../helpers/filter/filterDateOfEnding.js';
+import filterImportance from '../helpers/filter/filterImportance.js';
+import filterDoneUndone from '../helpers/filter/filterDoneUndone.js';
 
 export default {
   name: 'GroupId',
@@ -207,18 +218,36 @@ export default {
 
       const tasksOnGroupId = this.$store.getters['tasks/tasksOnGroupId'];
 
-      const selectedTasks = this.$store.getters['tasks/selectedTasks']({
+      /* const selectedTasks = this.$store.getters['tasks/selectedTasks']({
         tasksOnGroupId,
         query: this.query,
         filterInfo: this.filterInfo
       });
+      console.log('selectedTasks: ', selectedTasks); */
+
+      // ============================
+      //* новый вариант
+      let selectedTasks = selectOnQuery(tasksOnGroupId, this.query);
       console.log('selectedTasks: ', selectedTasks);
+
+      selectedTasks = filterDateOfEnding(selectedTasks, this.filterInfo);
+
+      console.log('selectedTasks: ', selectedTasks);
+
+      selectedTasks = filterImportance(selectedTasks, this.filterInfo);
+      console.log('selectedTasks: ', selectedTasks);
+
+      selectedTasks = filterDoneUndone(selectedTasks, this.filterInfo);
+      console.log('selectedTasks: ', selectedTasks);
+
+      // ============================
 
       if (!truthy) {
         return selectedTasks;
       }
 
       const [key] = truthy;
+      console.log('key: ', key);
 
       //* используем отдельную функцию
       const sortedTasks = sortGroupsTasks(selectedTasks, key, true);

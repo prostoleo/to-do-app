@@ -9,6 +9,14 @@ export default {
     return state.tasks;
   },
 
+  getTasksOfCurUser(_, _2, _3, rootGetters) {
+    const tasks = JSON.parse(localStorage.getItem('to-do-app__tasks'));
+
+    const { userId } = rootGetters['auth/getCurUser'];
+
+    return tasks.filter((t) => t.userId === userId);
+  },
+
   tasksOnGroupId(store, _, _2, rootGetters) {
     // eslint-disable-next-line prefer-destructuring
     const { groupId } = rootGetters;
@@ -28,6 +36,7 @@ export default {
     const tasksOnGroupId = data?.tasksOnGroupId ?? null;
     console.log('tasksOnGroupId: ', tasksOnGroupId);
     const allTasks = data?.allTasks ?? null;
+    console.log('allTasks: ', allTasks);
 
     if (tasksOnGroupId) {
       tasks = tasksOnGroupId;
@@ -75,7 +84,7 @@ export default {
         impTo
       }); */
 
-      selectedTasks = selectOnFilterInfo(selectedTasks, truthyFilterInfo);
+      selectedTasks = selectOnFilterInfo(selectedTasks, filterInfo);
 
       return selectedTasks;
     }
@@ -100,7 +109,7 @@ export default {
         impTo
       }); */
 
-      selectedTasks = selectOnFilterInfo(tasks, truthyFilterInfo);
+      selectedTasks = selectOnFilterInfo(tasks, filterInfo);
 
       console.log('selectedTasks: ', selectedTasks);
       return selectedTasks;

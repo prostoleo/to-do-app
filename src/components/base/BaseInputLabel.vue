@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="input-row">
     <label for="input" v-if="!floating">{{ label }}</label>
     <input
       :type="type"

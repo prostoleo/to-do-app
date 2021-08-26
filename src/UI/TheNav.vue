@@ -6,7 +6,7 @@
       <div class="aside__content">
         <header class="aside__header">
           <BaseContainer>
-            <h2 class="aside__greeting">Добро пожаловать, {{ username }}</h2>
+            <h2 class="aside__greeting">Добро пожаловать, {{ currentUserName }}</h2>
           </BaseContainer>
         </header>
         <div class="aside__body">
@@ -30,7 +30,10 @@
                 </li>
               </ul>
             </nav>
-            <span class="logout _icon-logout"></span>
+            <button class="logout" @click="userLogout">
+              Выйти из аккаунта
+              <span class="logout _icon-logout"></span>
+            </button>
           </BaseContainer>
         </div>
       </div>
@@ -55,7 +58,7 @@ export default {
 
   data() {
     return {
-      username: 'prostoleo',
+      // username: ,
       isShown: false
     };
   },
@@ -66,6 +69,10 @@ export default {
         return true;
       }
       return false;
+    },
+
+    currentUserName() {
+      return this.$store.getters['auth/getCurUser'].login;
     }
   },
 
@@ -78,6 +85,11 @@ export default {
       if (window.innerWidth < 900) {
         this.$emit('close-nav');
       }
+    },
+
+    userLogout() {
+      this.$store.dispatch('auth/logout');
+      // this.$router.replace('/auth');
     }
     /* closeOverlay($event) {
       // this.isShown = false;
@@ -204,6 +216,7 @@ export default {
 
   &__content {
     z-index: 1000;
+    height: 100%;
   }
 
   // .aside__greeting
@@ -227,6 +240,31 @@ export default {
 
     z-index: 1;
     padding: 1.5em 0;
+    height: 90%;
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100% !important;
+    }
+
+    button.logout {
+      font-size: 1.6rem;
+      padding: 0.5em 1em;
+
+      border: 1px solid $text-main;
+
+      align-self: flex-start;
+
+      margin-top: 2.5em;
+
+      &:hover,
+      &:focus {
+        outline: 1px solid $text-main;
+        outline-offset: 0.25em;
+      }
+    }
   }
 
   // .aside__close

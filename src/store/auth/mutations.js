@@ -7,5 +7,11 @@ export default {
     state.userInfo.login = data.login;
     state.userInfo.password = data.password;
     state.userInfo.id = data.id;
+  },
+
+  logout(state) {
+    state.userInfo.login = '';
+    state.userInfo.password = '';
+    state.userInfo.id = '';
   }
 };

@@ -98,6 +98,12 @@ import sortGroupsTasks from '../helpers/sort/sortGroupsTasks.js';
 import changeSortInfo from '../helpers/sort/changeSortInfo.js';
 import resetSortInfo from '../helpers/sort/resetSortInfo.js';
 
+import selectOnQuery from '../helpers/groups/selectOnQuery.js';
+
+//* фильтры
+import filterDateOfAddition from '../helpers/filter/filterDateOfEnding.js';
+import filterAvgImportance from '../helpers/filter/filterAvgImportance.js';
+
 export default {
   name: 'Groups',
   /* components: {
@@ -109,6 +115,23 @@ export default {
     console.log('beforeCreate');
 
     this.$emit('not-found');
+  },
+
+  created() {
+    /* const groups = this.$store.getters['groups/groups'];
+    JSON.stringify(localStorage.setItem('to-do-app__groups', groups));
+    console.log('groups: ', groups);
+
+    const tasks = this.$store.getters['tasks/tasks'];
+    JSON.stringify(localStorage.setItem('to-do-app__tasks', tasks));
+    console.log('tasks: ', tasks);
+
+    const users = this.$store.getters['auth/getAllUsers'];
+    JSON.stringify(localStorage.setItem('to-do-app__users'), users);
+    console.log('users: ', users); */
+
+    // console.log('parse',));
+    console.log('selectedGroups: ', this.selectedGroups);
   },
 
   data() {
@@ -149,20 +172,36 @@ export default {
       //* проверка на truthy value у sort
       const truthy = this.truthySort;
 
-      const selectedOnQueryAndFilters = this.$store.getters['groups/selectedGroups']({
+      /* const selectedOnQueryAndFilters = this.$store.getters['groups/selectedGroups']({
         query: this.query,
         filterInfo: this.filterInfo,
         isGroups: true
-      });
+      }); */
+
+      // ============================
+      //* новый вариант
+      const allGroups = this.$store.getters['groups/groups'];
+
+      let selectedGroups = selectOnQuery(allGroups, this.query);
+      console.log('selectedGroups: ', selectedGroups);
+
+      selectedGroups = filterDateOfAddition(selectedGroups, this.filterInfo);
+
+      console.log('selectedGroups: ', selectedGroups);
+
+      selectedGroups = filterAvgImportance(selectedGroups, this.filterInfo);
+      console.log('selectedGroups: ', selectedGroups);
+
+      // ============================
 
       if (!truthy) {
-        return selectedOnQueryAndFilters;
+        return selectedGroups;
       }
 
       const [key] = truthy;
 
       //* используем отдельную функцию
-      const sorted = sortGroupsTasks(selectedOnQueryAndFilters, key);
+      const sorted = sortGroupsTasks(selectedGroups, key);
 
       return sorted;
     }
@@ -211,6 +250,8 @@ export default {
 
     //* форматирование даты
     formatDateLocal(date) {
+      console.log('date: ', date);
+      console.log('this.selectedGroups', this.selectedGroups);
       return formatDate(date);
     },
 
@@ -224,7 +265,8 @@ export default {
           .toString()
           .slice(-4),
         title: this.addedGroup,
-        dateOfAddition: new Date(Date.now()).toISOString()
+        dateOfAddition: new Date(Date.now()).toISOString(),
+        userId: this.$store.getters['auth/getCurUser'].userId
       });
 
       /* const input = event.target.querySelector('input');

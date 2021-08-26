@@ -131,11 +131,11 @@
     </div>
 
     <!-- // todo потом доделать -->
-    <div class="filter__row flat">
+    <div class="filter__row flat" v-if="!isGroups">
       <input type="checkbox" id="filter-only--done" />
       <label for="filter-only--done">Только выполненные</label>
     </div>
-    <div class="filter__row flat">
+    <div class="filter__row flat" v-if="!isGroups">
       <input type="checkbox" id="filter-only--undone" />
       <label for="filter-only--undone">Только невыполненные</label>
     </div>
@@ -204,14 +204,16 @@ export default {
       const inputsCheckbox = form.querySelectorAll('input[type="checkbox"]');
       console.log('inputsCheckbox: ', inputsCheckbox);
 
-      const curCheckbox = document.getElementById(targetId);
-      const curCheckboxChecked = curCheckbox.checked;
-      console.log('curCheckboxChecked: ', curCheckboxChecked);
+      const curInput = document.getElementById(targetId);
+      const curInputChecked = curInput.checked;
+      console.log('curInputChecked: ', curInputChecked);
 
-      // eslint-disable-next-line no-return-assign
-      inputsCheckbox.forEach((checkbox) => (checkbox.checked = false));
+      if (curInput.type === 'checkbox') {
+        // eslint-disable-next-line no-return-assign
+        inputsCheckbox.forEach((checkbox) => (checkbox.checked = false));
+      }
 
-      if (curCheckboxChecked) curCheckbox.checked = true;
+      if (curInputChecked && curInput.type === 'checkbox') curInput.checked = true;
 
       // =============
 

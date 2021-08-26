@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-export default function (id, sortInfo, isTasks = false) {
+export default function foo(id, sortInfo, isTasks = false) {
   const newSortInfo = { ...sortInfo };
 
   if (id.includes('up_name')) {
@@ -22,7 +22,7 @@ export default function (id, sortInfo, isTasks = false) {
     newSortInfo.downDateEnding = true;
     return newSortInfo;
   }
-  if (isTasks && id.includes('down_date-ending')) {
+  if (isTasks && id.includes('up_date-ending')) {
     newSortInfo.upDateEnding = true;
     return newSortInfo;
   }

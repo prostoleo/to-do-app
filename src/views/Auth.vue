@@ -218,49 +218,96 @@ export default {
 
       const data = this.inputData[id];
 
-      switch (id) {
-        case 'login':
-          if (!data || data === '' || data.length > 20) {
-            console.log('login пустой');
-            // this.validation.login.isError = true;
-            this[id].isError = true;
-            this.inputData.error = true;
-          } else {
-            // this.validation.login.isError = false;
-            this[id].isError = false;
-          }
-          // console.log('login isError: ', this.validation);
-          // console.log('login isError: ', this.validation[id].isError);
-          console.log('this[id]: ', this[id]);
-          break;
-        case 'password':
-          if (!data || data.length < 7) {
-            // this.validation[id].isError = true;
-            this[id].isError = true;
-            this.inputData.error = true;
-          } else {
-            // this.validation[id].isError = false;
-            this[id].isError = false;
-          }
-          // console.log('password isError: ', this.validation);
-          // console.log('password isError: ', this.validation[id].isError);
-          console.log('this[id]: ', this[id]);
-          break;
-        case 'passwordAgain':
-          if (!data || data !== this.inputData.password) {
-            // this.validation[id].isError = true;
-            this[id].isError = true;
-            this.inputData.error = true;
-          } else {
-            // this.validation[id].isError = false;
-            this[id].isError = false;
-          }
-          // console.log('passwordAgain isError: ', this.validation);
-          // console.log('passwordAgain isError: ', this.validation[id].isError);
-          break;
+      //* если в регистрации
+      if (!this.isLogging) {
+        switch (id) {
+          case 'login':
+            if (
+              !data ||
+              data === '' ||
+              data.length > 20 ||
+              this.$store.getters['auth/isLoginTaken'](data)
+            ) {
+              console.log('login пустой');
+              // this.validation.login.isError = true;
+              this[id].isError = true;
+              this.inputData.error = true;
+            } else {
+              // this.validation.login.isError = false;
+              this[id].isError = false;
+            }
+            // console.log('login isError: ', this.validation);
+            // console.log('login isError: ', this.validation[id].isError);
+            console.log('this[id]: ', this[id]);
+            break;
+          case 'password':
+            if (!data || data.length < 7) {
+              // this.validation[id].isError = true;
+              this[id].isError = true;
+              this.inputData.error = true;
+            } else {
+              // this.validation[id].isError = false;
+              this[id].isError = false;
+            }
+            // console.log('password isError: ', this.validation);
+            // console.log('password isError: ', this.validation[id].isError);
+            console.log('this[id]: ', this[id]);
+            break;
+          case 'passwordAgain':
+            if (!data || data !== this.inputData.password) {
+              // this.validation[id].isError = true;
+              this[id].isError = true;
+              this.inputData.error = true;
+            } else {
+              // this.validation[id].isError = false;
+              this[id].isError = false;
+            }
+            // console.log('passwordAgain isError: ', this.validation);
+            // console.log('passwordAgain isError: ', this.validation[id].isError);
+            break;
 
-        default:
-          break;
+          default:
+            break;
+        }
+      }
+
+      //* если логинемся
+      if (this.isLogging) {
+        switch (id) {
+          case 'login':
+            if (!this.$store.getters['auth/isLoginTaken'](data)) {
+              console.log('такого логина нет');
+              this[id].isError = true;
+              this.inputData.error = true;
+            } else {
+              this[id].isError = false;
+            }
+            console.log('this[id]: ', this[id]);
+            break;
+          case 'password':
+            if (
+              !data ||
+              data.length < 7 ||
+              !this.$store.getters['auth/getUserOnId']({
+                login: this.inputData.login,
+                password: this.inputData.password
+              })
+            ) {
+              // this.validation[id].isError = true;
+              this[id].isError = true;
+              this.inputData.error = true;
+            } else {
+              // this.validation[id].isError = false;
+              this[id].isError = false;
+            }
+            // console.log('password isError: ', this.validation);
+            // console.log('password isError: ', this.validation[id].isError);
+            console.log('this[id]: ', this[id]);
+            break;
+
+          default:
+            break;
+        }
       }
 
       this.checkTotalError();

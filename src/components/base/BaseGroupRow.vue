@@ -10,7 +10,7 @@
   <!-- :class="{ row_4: row4 }" -->
   <li class="groups-info__item" v-else ref="li" :data-group-id="groupId" :data-task-id="taskId">
     <!-- // todo - добавить :to с динамическим id (computed - toId)  -->
-    <router-link class="groups-info__link" :class="{ done: taskIsDone }" :to="`${toId}`">
+    <router-link class="groups-info__link" :class="{ done: taskIsDone }" :to="`${toId}`" :key="id">
       <slot name="body"></slot>
     </router-link>
     <!-- <div class="groups-info__link" v-else>
@@ -70,6 +70,12 @@ export default {
       required: false
     },
 
+    isDone: {
+      type: Boolean,
+      required: false
+      // default: false
+    },
+
     rowNotLink: {
       type: Boolean,
       required: false,
@@ -80,7 +86,7 @@ export default {
   data() {
     return {
       isDeleting: false,
-      taskIsDone: false,
+      taskIsDone: this.isDone ?? null,
       currentItem: null
     };
   },
@@ -99,6 +105,10 @@ export default {
       // console.log('this.$route: ', this.$route);
       return this.$route.name === 'Groups';
     }
+
+    /* compClassDone() {
+      if (this.isDone !== null && )
+    } */
   },
 
   methods: {
