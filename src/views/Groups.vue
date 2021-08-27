@@ -76,7 +76,7 @@
               </ul>
             </div>
             <p v-else-if="selectedGroups.length === 0 && query" class="groups-info__zero-tasks">
-              По запросу {{ query }} ничего не найдено😞. Попробуйте изменить запрос
+              По запросу <b>{{ query }}</b> ничего не найдено😞. Попробуйте изменить запрос
             </p>
             <p v-else class="groups-info__zero-tasks">У вас нет ни одного дела. Добавьте дел.</p>
           </section>
@@ -101,7 +101,7 @@ import resetSortInfo from '../helpers/sort/resetSortInfo.js';
 import selectOnQuery from '../helpers/groups/selectOnQuery.js';
 
 //* фильтры
-import filterDateOfAddition from '../helpers/filter/filterDateOfEnding.js';
+import filterDateOfAddition from '../helpers/filter/filterDateOfAddition.js';
 import filterAvgImportance from '../helpers/filter/filterAvgImportance.js';
 
 export default {

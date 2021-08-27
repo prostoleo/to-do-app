@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { createRouter, createWebHistory } from 'vue-router';
 
 // todo импортируем store

@@ -7,15 +7,19 @@ import BaseInputLabel from './components/base/BaseInputLabel.vue';
 import BaseMenuBurger from './components/base/BaseMenuBurger.vue';
 import BaseButton from './components/base/BaseButton.vue';
 import BaseSortFilterForm from './components/base/BaseSortFilterForm.vue';
-import BaseGroupRow from './components/base/BaseGroupRow.vue';
 import BaseSortFilter from './components/base/BaseSortFilter.vue';
-import BaseDialog from './components/base/BaseDialog.vue';
-import BaseSpinner from './components/base/BaseSpinner.vue';
+import BaseGroupRow from './components/base/BaseGroupRow.vue';
 import BaseSearch from './components/base/BaseSearch.vue';
+
+/* import BaseSpinner from './components/base/BaseSpinner.vue';
+import BaseDialog from './components/base/BaseDialog.vue'; */
 
 import App from './App.vue';
 import router from './router/router.js';
 import store from './store';
+
+const BaseSpinner = () => import('./components/base/BaseSpinner.vue');
+const BaseDialog = () => import('./components/base/BaseDialog.vue');
 
 const app = createApp(App);
 

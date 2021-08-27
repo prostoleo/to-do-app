@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { createStore } from 'vuex';
 
 import GroupsModule from './groups/index.js';
@@ -5,7 +6,7 @@ import TasksModule from './tasks/index.js';
 import AuthModule from './auth/index.js';
 
 export default createStore({
-  strict: true,
+  // strict: true,
   modules: {
     groups: GroupsModule,
     tasks: TasksModule,
