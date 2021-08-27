@@ -9,20 +9,38 @@
         <h2 class="form__title">{{ isLogging ? 'Вход' : 'Регистрация' }}</h2>
 
         <div class="form__row">
-          <label for="login">Логин</label>
+          <label for="username">Логин</label>
           <!-- required -->
           <input
             type="text"
-            id="login"
+            id="username"
             placeholder="Ваш логин.."
             maxlength="20"
             @blur="validateInput"
-            v-model.trim="inputData.login"
+            v-model.trim="inputData.username"
           />
-          <!-- <small v-if="isLogging && validation.login.isError && validation.login.touched" -->
-          <small v-if="isLogging && login.isError && login.touched">Такого логина не найдено</small>
-          <!-- <small v-if="!isLogging && validation.login.isError && validation.login.touched" -->
-          <small v-if="!isLogging && login.isError && login.touched"
+          <!-- <small v-if="isLogging && validation.username.isError && validation.username.touched" -->
+          <small v-if="isLogging && username.isError && username.touched"
+            >Такого логина не найдено</small
+          >
+          <!-- <small v-if="!isLogging && validation.username.isError && validation.username.touched" -->
+          <small v-if="!isLogging && username.isError && username.touched"
+            >Логин должен быть не менее 1 и не более 20 символов</small
+          >
+        </div>
+
+        <div class="form__row" v-if="!isLogging">
+          <label for="email">Почта</label>
+          <!-- required -->
+          <input
+            type="email"
+            id="email"
+            placeholder="youremail@yandex.ru"
+            @blur="validateInput"
+            v-model.trim="inputData.email"
+          />
+          <small v-if="isLogging && email.isError && email.touched">Такого логина не найдено</small>
+          <small v-if="!isLogging && email.isError && email.touched"
             >Логин должен быть не менее 1 и не более 20 символов</small
           >
         </div>
@@ -88,6 +106,9 @@
 </template>
 
 <script>
+// import axios from 'axios';
+import { BASE_URL } from '../helpers/config/config.js';
+
 export default {
   emits: ['hide-nav'],
 
@@ -100,7 +121,8 @@ export default {
       isLogging: true,
 
       inputData: {
-        login: '',
+        username: '',
+        email: '',
         password: '',
         passwordAgain: '',
         error: true,
@@ -108,7 +130,12 @@ export default {
       },
 
       // validation: {
-      login: {
+      username: {
+        // value: null,
+        isError: false,
+        touched: false
+      },
+      email: {
         // value: null,
         isError: false,
         touched: false
@@ -141,26 +168,26 @@ export default {
   computed: {
     classPassword() {
       return this.togglePasswordVisibility.password.isVisible
-        ? '_icon-hide-password'
-        : '_icon-show-password';
+        ? '_icon-show-password'
+        : '_icon-hide-password';
     },
     classPasswordAgain() {
       return this.togglePasswordVisibility.passwordAgain.isVisible
-        ? '_icon-hide-password'
-        : '_icon-show-password';
+        ? '_icon-show-password'
+        : '_icon-hide-password';
     }
   },
 
   methods: {
     clearInputsAndErrors() {
-      this.inputData.login = '';
+      this.inputData.username = '';
       this.inputData.password = '';
       this.inputData.passwordAgain = '';
       this.inputData.error = true;
       this.inputData.errorMsg = 'Что-то пошло не так, попробуйтеповторите позже';
 
-      this.login.isError = false;
-      this.login.touched = false;
+      this.username.isError = false;
+      this.username.touched = false;
       this.password.isError = false;
       this.password.touched = false;
       this.passwordAgain.isError = false;
@@ -221,23 +248,36 @@ export default {
       //* если в регистрации
       if (!this.isLogging) {
         switch (id) {
-          case 'login':
+          case 'username':
             if (
               !data ||
               data === '' ||
               data.length > 20 ||
               this.$store.getters['auth/isLoginTaken'](data)
             ) {
-              console.log('login пустой');
-              // this.validation.login.isError = true;
+              console.log('username пустой');
+              // this.validation.username.isError = true;
               this[id].isError = true;
               this.inputData.error = true;
             } else {
-              // this.validation.login.isError = false;
+              // this.validation.username.isError = false;
               this[id].isError = false;
             }
-            // console.log('login isError: ', this.validation);
-            // console.log('login isError: ', this.validation[id].isError);
+            // console.log('username isError: ', this.validation);
+            // console.log('username isError: ', this.validation[id].isError);
+            console.log('this[id]: ', this[id]);
+            break;
+          case 'email':
+            if (!data || data === '' || !data.includes('@') || !data.includes('.')) {
+              // this.validation.username.isError = true;
+              this[id].isError = true;
+              this.inputData.error = true;
+            } else {
+              // this.validation.username.isError = false;
+              this[id].isError = false;
+            }
+            // console.log('username isError: ', this.validation);
+            // console.log('username isError: ', this.validation[id].isError);
             console.log('this[id]: ', this[id]);
             break;
           case 'password':
@@ -274,7 +314,7 @@ export default {
       //* если логинемся
       if (this.isLogging) {
         switch (id) {
-          case 'login':
+          case 'username':
             if (!this.$store.getters['auth/isLoginTaken'](data)) {
               console.log('такого логина нет');
               this[id].isError = true;
@@ -289,7 +329,7 @@ export default {
               !data ||
               data.length < 7 ||
               !this.$store.getters['auth/getUserOnId']({
-                login: this.inputData.login,
+                username: this.inputData.username,
                 password: this.inputData.password
               })
             ) {
@@ -314,24 +354,25 @@ export default {
     },
 
     checkTotalError() {
-      const login = !this.login.isError && this.login.touched;
-      console.log('login: ', login);
+      const username = !this.username.isError && this.username.touched;
+      console.log('username: ', username);
       const password = !this.password.isError && this.password.touched;
       console.log('password: ', password);
 
       // todo если регистрируемся
       if (!this.isLogging) {
+        const email = !this.email.isError && this.email.touched;
         const passwordAgain = !this.passwordAgain.isError && this.passwordAgain.touched;
         console.log('passwordAgain: ', passwordAgain);
 
         //* если все валидно - то отменяем общую ошибку
-        if (login && password && passwordAgain) this.inputData.error = false;
+        if (username && email && password && passwordAgain) this.inputData.error = false;
 
         return;
       }
 
       // todo если логинемся и все валидно - отменяем общую ошибку
-      if (login && password) this.inputData.error = false;
+      if (username && password) this.inputData.error = false;
     },
 
     // todo submitForm
@@ -349,13 +390,13 @@ export default {
       console.log('log user');
 
       const user = this.$store.getters['auth/getUserOnId']({
-        login: this.inputData.login,
+        username: this.inputData.username,
         password: this.inputData.password
       });
 
       if (user) {
-        this.$store.dispatch('auth/login', {
-          login: this.inputData.login,
+        this.$store.dispatch('auth/username', {
+          username: this.inputData.username,
           password: this.inputData.password,
           id: Date.now().toString(32)
         });
@@ -364,14 +405,32 @@ export default {
       this.$router.replace('/groups');
     },
 
-    registerUser() {
-      this.$store.dispatch('auth/register', {
-        login: this.inputData.login,
-        password: this.inputData.password,
-        id: Date.now().toString(32)
-      });
+    async registerUser() {
+      try {
+        // console.log('data: ', data);
+        // todo регистрируем пользователя через strapi
+        const res = await this.axios.post(`${BASE_URL}auth/local/register`, {
+          username: this.inputData.username,
+          password: this.inputData.password,
+          email: this.inputData.email,
+          id: Date.now().toString(32)
+        });
+        console.log('res: ', res);
 
-      this.toggleIsLogging();
+        // const
+
+        if (res.statusText === 'OK') {
+          this.$store.dispatch('auth/register', {
+            jwt: res.data.jwt,
+            createdAt: res.data.user.created_at,
+            id: res.data.user.id
+          });
+
+          this.toggleIsLogging();
+        }
+      } catch (error) {
+        console.error(`💣💣💣 ${error.message}, ${error.status}`);
+      }
     }
 
     // togglePassword(event) {}

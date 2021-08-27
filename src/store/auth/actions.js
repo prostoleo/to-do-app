@@ -1,3 +1,4 @@
+// import axios from 'axios';
 import { AUTO_LOGOUT_SEC } from '../../helpers/config/config';
 // eslint-disable-next-line import/no-cycle
 import router from '../../router/router.js';
@@ -6,8 +7,19 @@ import router from '../../router/router.js';
 let timer = null;
 
 export default {
-  register(context, data) {
-    context.commit('register', data);
+  async register(context, { jwt, createdAt, id }) {
+    //* когда токен придет в негодность
+    const expiresIn = +AUTO_LOGOUT_SEC * 1000;
+    const expirationDate = Date.parse(createdAt) + expiresIn;
+
+    //* все нужное кладем в LS
+    localStorage.setItem('jwt', jwt);
+    localStorage.setItem('userId', id);
+    localStorage.setItem('tokenExpiration', expirationDate);
+
+    timer = setTimeout(() => {
+      context.dispatch('autoLogout');
+    }, expiresIn);
   },
 
   login(context, data) {

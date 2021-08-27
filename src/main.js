@@ -1,5 +1,12 @@
 import { createApp } from 'vue';
 
+import axios from 'axios';
+import vueAxios from 'vue-axios';
+
+import App from './App.vue';
+import router from './router/router.js';
+import store from './store';
+
 import TheNaV from './UI/TheNav.vue';
 
 import BaseContainer from './components/base/BaseContainer.vue';
@@ -13,10 +20,6 @@ import BaseSearch from './components/base/BaseSearch.vue';
 
 /* import BaseSpinner from './components/base/BaseSpinner.vue';
 import BaseDialog from './components/base/BaseDialog.vue'; */
-
-import App from './App.vue';
-import router from './router/router.js';
-import store from './store';
 
 const BaseSpinner = () => import('./components/base/BaseSpinner.vue');
 const BaseDialog = () => import('./components/base/BaseDialog.vue');
@@ -37,5 +40,6 @@ app.component('BaseSearch', BaseSearch);
 
 app.use(store);
 app.use(router);
+app.use(vueAxios, axios);
 
 app.mount('#app');

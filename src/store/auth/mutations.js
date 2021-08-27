@@ -1,7 +1,7 @@
 export default {
-  register(state, data) {
+  /* register(state, data) {
     state.users.push(data);
-  },
+  }, */
 
   login(state, data) {
     state.userInfo.login = data.login;
