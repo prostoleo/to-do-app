@@ -18,11 +18,11 @@ import BaseSortFilter from './components/base/BaseSortFilter.vue';
 import BaseGroupRow from './components/base/BaseGroupRow.vue';
 import BaseSearch from './components/base/BaseSearch.vue';
 
-/* import BaseSpinner from './components/base/BaseSpinner.vue';
-import BaseDialog from './components/base/BaseDialog.vue'; */
+import BaseSpinner from './components/base/BaseSpinner.vue';
+import BaseDialog from './components/base/BaseDialog.vue';
 
-const BaseSpinner = () => import('./components/base/BaseSpinner.vue');
-const BaseDialog = () => import('./components/base/BaseDialog.vue');
+/* const BaseSpinner = () => import('./components/base/BaseSpinner.vue');
+const BaseDialog = () => import('./components/base/BaseDialog.vue'); */
 
 const app = createApp(App);
 

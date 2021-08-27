@@ -8,9 +8,10 @@ export default {
   namespaced: true,
   state: {
     userInfo: {
-      login: localStorage.getItem('to-do-app__login') ?? '',
-      password: localStorage.getItem('to-do-app__password') ?? '',
-      userId: localStorage.getItem('to-do-app_userId') ?? ''
+      username: localStorage.getItem('username') ?? '',
+      jwt: localStorage.getItem('jwt') ?? '',
+      userId: localStorage.getItem('userId') ?? '',
+      tokenExpiration: localStorage.getItem('tokenExpiration') ?? ''
     },
     // JSON.parse(localStorage.getItem('to-do-app__users')) ??
     users: [

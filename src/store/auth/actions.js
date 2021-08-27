@@ -22,31 +22,33 @@ export default {
     }, expiresIn);
   },
 
-  login(context, data) {
-    console.log('context: ', context);
-    console.log('context.dispatch: ', context.dispatch);
+  // eslint-disable-next-line object-curly-newline
+  login(context, { jwt, username, createdAt, id }) {
+    //* когда токен придет в негодность
+    const expiresIn = +AUTO_LOGOUT_SEC * 1000;
+    const expirationDate = Date.parse(createdAt) + expiresIn;
 
-    context.commit('login', data);
+    //* все нужное кладем в LS
+    localStorage.setItem('jwt', jwt);
+    localStorage.setItem('username', username);
+    localStorage.setItem('userId', id);
+    localStorage.setItem('tokenExpiration', expirationDate);
 
-    localStorage.setItem('to-do-app__login', data.login);
-    localStorage.setItem('to-do-app__password', data.password);
-    localStorage.setItem('to-do-app__userId', data.id);
+    context.commit('login', { username, jwt, id });
 
     // console.log('timer: ', timer);
     timer = setTimeout(() => {
       context.dispatch('autoLogout');
-    }, AUTO_LOGOUT_SEC * 1000);
-
-    localStorage.setItem('to-do-app__users', JSON.stringify(context.getters.getAllUSers));
+    }, expiresIn);
   },
 
   logout(context) {
     console.log('logout: ');
     context.commit('logout');
-    localStorage.removeItem('to-do-app__password');
-    localStorage.removeItem('to-do-app__login');
-    localStorage.removeItem('to-do-app__userId');
-    localStorage.removeItem('to-do-app__groups');
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('username');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('tokenExpiration');
 
     clearTimeout(timer);
     router.replace('/auth');

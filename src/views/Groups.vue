@@ -90,6 +90,8 @@
 //* импорт компонентов
 // import BaseGroupRow from '@/base/BaseGroupRow.vue';
 
+import { BASE_URL } from '../helpers/config/config.js';
+
 //* форматирование даты
 import formatDate from '../helpers/formatDate.js';
 
@@ -156,6 +158,13 @@ export default {
     };
   },
 
+  watch: {
+    getData: {
+      handler: 'getGroups',
+      immediate: true
+    }
+  },
+
   computed: {
     truthySort() {
       const truthy = Object.entries(this.sortInfo).find((entry) => entry[1] === true);
@@ -212,6 +221,28 @@ export default {
   },
 
   methods: {
+    async getGroups() {
+      try {
+        const { userId } = this.$store.getters['auth/getCurUser'];
+        console.log('userId: ', userId);
+
+        const resp = await this.axios.get(`${BASE_URL}groups`);
+        console.log('resp: ', resp);
+
+        if (resp.statusText === 'OK') {
+          console.log(resp.data);
+          const { data } = resp;
+
+          const groups = data.filter((g) => g.id === +userId);
+          console.log('groups: ', groups);
+
+          this.$store.dispatch('groups/setGroups', groups);
+        }
+      } catch (error) {
+        console.warn(`💣💣💣 ${error.name}, ${error.message}`);
+      }
+    },
+
     // todo метод для возращения sortInfo в первоначальное положение
     resetSortInfo() {
       this.sortInfo = resetSortInfo();

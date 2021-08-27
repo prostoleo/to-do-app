@@ -1,4 +1,9 @@
 export default {
+  setGroups(context, data) {
+    console.log('data: ', data);
+    context.commit('setGroups', data);
+  },
+
   addGroup(context, data) {
     console.log('context: ', context);
     const newData = {

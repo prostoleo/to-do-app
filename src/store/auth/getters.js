@@ -12,7 +12,7 @@ export default {
     state.users.find((user) => user.login === login && user.password === password),
 
   isLoggedIn(state) {
-    return !!state.userInfo.login && !!state.userInfo.password;
+    return !!state.userInfo.username && !!state.userInfo.jwt && !!state.userInfo.userId;
   },
 
   isLoginTaken: (state) => (login) => state.users.some((user) => user.login === login)

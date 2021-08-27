@@ -3,15 +3,17 @@ export default {
     state.users.push(data);
   }, */
 
-  login(state, data) {
-    state.userInfo.login = data.login;
-    state.userInfo.password = data.password;
-    state.userInfo.id = data.id;
+  login(state, { username, jwt, id }) {
+    state.userInfo.username = username;
+    state.userInfo.jwt = jwt;
+
+    state.userInfo.userId = id;
   },
 
   logout(state) {
-    state.userInfo.login = '';
-    state.userInfo.password = '';
-    state.userInfo.id = '';
+    state.userInfo.username = '';
+    state.userInfo.jwt = '';
+
+    state.userInfo.userId = '';
   }
 };

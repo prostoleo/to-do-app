@@ -101,11 +101,17 @@
           isLogging ? 'Зарегистрируйтесь !' : 'Войдите в аккаунт'
         }}</a>
       </form>
+
+      <BaseDialog :show="showErrDialog" :title="'Ошибка'" @close-dialog="clearInputsAndErrors">
+        <p class="error">{{ messageErrDialog }}</p>
+      </BaseDialog>
     </BaseContainer>
   </div>
 </template>
 
 <script>
+/* eslint-disable consistent-return */
+
 // import axios from 'axios';
 import { BASE_URL } from '../helpers/config/config.js';
 
@@ -161,11 +167,31 @@ export default {
           type: 'password',
           isVisible: false
         }
+      },
+
+      logging: {
+        isError: false,
+        errMessage: 'Пользователя с такими данными не существует!'
+      },
+      registering: {
+        isError: false,
+        errMessage: 'Пользователь с таким именем / почтой уже имеется!'
       }
     };
   },
 
   computed: {
+    showErrDialog() {
+      return this.logging.isError || this.registering.isError;
+    },
+
+    messageErrDialog() {
+      if (this.logging.isError) return this.logging.errMessage;
+      if (this.registering.isError) return this.registering.errMessage;
+
+      return null;
+    },
+
     classPassword() {
       return this.togglePasswordVisibility.password.isVisible
         ? '_icon-show-password'
@@ -181,17 +207,23 @@ export default {
   methods: {
     clearInputsAndErrors() {
       this.inputData.username = '';
+      this.inputData.email = '';
       this.inputData.password = '';
       this.inputData.passwordAgain = '';
       this.inputData.error = true;
-      this.inputData.errorMsg = 'Что-то пошло не так, попробуйтеповторите позже';
+      this.inputData.errorMsg = 'Что-то пошло не так, попробуйте повторите позже';
 
       this.username.isError = false;
       this.username.touched = false;
+      this.email.isError = false;
+      this.email.touched = false;
       this.password.isError = false;
       this.password.touched = false;
       this.passwordAgain.isError = false;
       this.passwordAgain.touched = false;
+
+      this.logging.isError = false;
+      this.registering.isError = false;
     },
 
     toggleIsLogging() {
@@ -312,7 +344,7 @@ export default {
       }
 
       //* если логинемся
-      if (this.isLogging) {
+      /* if (this.isLogging) {
         switch (id) {
           case 'username':
             if (!this.$store.getters['auth/isLoginTaken'](data)) {
@@ -348,7 +380,7 @@ export default {
           default:
             break;
         }
-      }
+      } */
 
       this.checkTotalError();
     },
@@ -386,10 +418,10 @@ export default {
       }
     },
 
-    loginUser() {
+    async loginUser() {
       console.log('log user');
 
-      const user = this.$store.getters['auth/getUserOnId']({
+      /* const user = this.$store.getters['auth/getUserOnId']({
         username: this.inputData.username,
         password: this.inputData.password
       });
@@ -402,7 +434,33 @@ export default {
         });
       }
 
-      this.$router.replace('/groups');
+      this.$router.replace('/groups'); */
+      try {
+        const res = await this.axios.post(`${BASE_URL}auth/local`, {
+          identifier: this.inputData.username,
+          password: this.inputData.password
+        });
+        console.log('res: ', res);
+        console.log('res.statusText: ', res.statusText);
+
+        if (res.statusText === 'OK') {
+          console.log(' resp is ok ');
+
+          await this.$store.dispatch('auth/login', {
+            jwt: res.data.jwt,
+            username: res.data.user.username,
+            createdAt: res.data.user.created_at,
+            id: res.data.user.id
+          });
+
+          this.$router.replace('/groups');
+        }
+      } catch (error) {
+        console.log('this: ', this);
+        console.log('error: ', error);
+        // console.warn(`💣💣💣 ${error.name} ${error.message}`);
+        this.logging.isError = true;
+      }
     },
 
     async registerUser() {
@@ -422,6 +480,7 @@ export default {
         if (res.statusText === 'OK') {
           this.$store.dispatch('auth/register', {
             jwt: res.data.jwt,
+            username: res.data.user.username,
             createdAt: res.data.user.created_at,
             id: res.data.user.id
           });
@@ -429,7 +488,8 @@ export default {
           this.toggleIsLogging();
         }
       } catch (error) {
-        console.error(`💣💣💣 ${error.message}, ${error.status}`);
+        console.warn(`💣💣💣 ${error.name} ${error.message}`);
+        this.registering.isError = true;
       }
     }
 
@@ -441,6 +501,14 @@ export default {
 <style lang="scss" scoped>
 .the-nav {
   display: none !important;
+}
+
+dialog.dialog {
+  p.error {
+    font-size: 1.4rem;
+    font-weight: 500;
+    text-align: center;
+  }
 }
 
 .auth {
