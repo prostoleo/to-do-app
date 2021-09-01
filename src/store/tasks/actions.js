@@ -1,6 +1,10 @@
 // import formatAvgImportance from '../../helpers/formatAvgImportance.js';
 
 export default {
+  setTasks(context, data) {
+    context.commit('setTasks', data);
+  },
+
   addTask(context, data) {
     console.log('context: ', context);
     console.log('data: ', data);

@@ -99,8 +99,10 @@ export default {
     } */
     clear(newValue) {
       if (newValue === true) {
+        console.log('cleaк input');
         this.data = null;
         this.$refs.input.value = '';
+        this.classActive = false;
       }
     }
   },
@@ -115,7 +117,7 @@ export default {
 
       const { value } = this.$refs.input;
 
-      if (value.trim()) {
+      if (value.trim() !== '') {
         this.classActive = true;
       }
 
@@ -133,7 +135,7 @@ export default {
     blurEvent() {
       const { value } = this.$refs.input;
 
-      if (!value.trim()) {
+      if (value.trim() === '') {
         this.classActive = false;
       }
 

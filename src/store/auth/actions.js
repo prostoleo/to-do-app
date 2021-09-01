@@ -7,9 +7,11 @@ import router from '../../router/router.js';
 let timer = null;
 
 export default {
+  // eslint-disable-next-line no-unused-vars
   async register(context, { jwt, createdAt, id }) {
+    console.log('register');
     //* когда токен придет в негодность
-    const expiresIn = +AUTO_LOGOUT_SEC * 1000;
+    /* const expiresIn = +AUTO_LOGOUT_SEC * 1000;
     const expirationDate = Date.parse(createdAt) + expiresIn;
 
     //* все нужное кладем в LS
@@ -19,7 +21,7 @@ export default {
 
     timer = setTimeout(() => {
       context.dispatch('autoLogout');
-    }, expiresIn);
+    }, expiresIn); */
   },
 
   // eslint-disable-next-line object-curly-newline

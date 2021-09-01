@@ -8,8 +8,9 @@ export default {
     state.groups.unshift(data);
   },
 
-  deleteGroup(state, groupId) {
-    state.groups = state.groups.filter((g) => g.groupId !== groupId);
+  deleteGroup(state, id) {
+    // state.groups = state.groups.filter((g) => g.groupId !== groupId);
+    state.groups = state.groups.filter((g) => g.id !== id);
   },
 
   setNewAvgImportance(state, { groupId, prevAvg, prevLength, newImp, isAddTask }) {

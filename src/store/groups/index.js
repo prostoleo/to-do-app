@@ -7,7 +7,8 @@ export default {
   // JSON.parse(localStorage.getItem('to-do-app__groups'))
   // [JSON.parse(localStorage.getItem('to-do-app__groups'))] ??
   state: {
-    groups: [
+    groups: []
+    /* [
       {
         groupId: '1',
         title: 'Дом',
@@ -24,7 +25,7 @@ export default {
         avgImportance: 5.5,
         userId: '1234'
       }
-    ]
+    ] */
   },
   getters,
   mutations,

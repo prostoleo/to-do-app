@@ -268,6 +268,11 @@ export default {
     & > * {
       margin: 0 auto;
     }
+
+    & > p {
+      font-size: 1.4rem;
+      color: $text-main;
+    }
   }
 }
 </style>

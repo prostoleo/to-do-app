@@ -141,7 +141,7 @@ export default {
     },
 
     confirmDelete() {
-      const id = this.groupId ? this.currentItem.groupId : this.currentItem.taskId;
+      /* const id = this.groupId ? this.currentItem.groupId : this.currentItem.taskId;
 
       if (!this.groupId) {
         this.$store.dispatch('tasks/deleteTask', {
@@ -155,6 +155,14 @@ export default {
         this.$store.dispatch('tasks/deleteTasksOnGroupId', {
           groupId: id
         });
+      } */
+
+      if (!this.groupId) {
+        this.$store.dispatch('tasks/deleteTask', this.currentItem);
+      } else {
+        this.$store.dispatch('groups/deleteGroup', this.currentItem);
+
+        this.$store.dispatch('tasks/deleteTasksOnGroupId', this.currentItem);
       }
     },
 

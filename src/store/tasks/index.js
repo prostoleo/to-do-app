@@ -9,7 +9,8 @@ import mutations from './mutations.js';
 export default {
   namespaced: true,
   state: {
-    tasks: [
+    tasks: []
+    /* [
       {
         taskId: '111',
         groupId: '1',
@@ -80,7 +81,7 @@ export default {
         done: false,
         userId: '1234'
       }
-    ]
+    ] */
   },
   getters,
   mutations,
