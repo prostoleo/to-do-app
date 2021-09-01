@@ -1,32 +1,48 @@
 // import formatAvgImportance from '../../helpers/formatAvgImportance.js';
 
+import axios from 'axios';
+import { BASE_URL } from '../../helpers/config/config';
+
 export default {
   setTasks(context, data) {
     context.commit('setTasks', data);
+
+    localStorage.setItem('tasks', data);
   },
 
-  addTask(context, data) {
-    console.log('context: ', context);
-    console.log('data: ', data);
+  async addTask(context, data) {
+    try {
+      console.log('context: ', context);
+      console.log('data: ', data);
 
-    const newData = {
-      ...data,
-      dateOfAddition: new Date(data.dateOfAddition).toISOString(),
-      dateOfEnding: new Date(data.dateOfEnding).toString(),
-      // dateOfEnding: data.dateOfEnding
-      done: false
-    };
-    console.log('newData: ', newData);
+      const newData = {
+        ...data,
+        dateOfAddition: new Date(data.dateOfAddition).toISOString(),
+        dateOfEnding: new Date(data.dateOfEnding).toISOString(),
+        // dateOfEnding: data.dateOfEnding
+        done: false,
+        userId: localStorage.getItem('userId')
+      };
+      console.log('newData: ', newData);
 
-    // const prevAvg = formatAvgImportance(context.getters.
-    // calcAvgImportanceOnReceivedGroupId(newData.groupId))
-    context.dispatch('handleChangeAvgImportance', {
-      groupId: newData.groupId,
-      importance: newData.importance,
-      isAddTask: true
-    });
+      const resp = await axios.post(`${BASE_URL}tasks`, newData);
+      console.log('resp: ', resp);
 
-    context.commit('addTask', newData);
+      if (resp.statusText === 'OK') {
+        const dataReceived = resp.data;
+        // const prevAvg = formatAvgImportance(context.getters.
+        // calcAvgImportanceOnReceivedGroupId(newData.groupId))
+        context.dispatch('handleChangeAvgImportance', {
+          groupId: newData.groupId,
+          importance: newData.importance,
+          isAddTask: true
+        });
+
+        context.commit('addTask', dataReceived);
+      }
+    } catch (error) {
+      console.error(`💣💣💣 ${error} `);
+    }
   },
 
   //* удаляем задание по конкретному taskId
@@ -61,6 +77,7 @@ export default {
   },
 
   handleChangeAvgImportance(context, { groupId, importance, isAddTask }) {
+    console.log({ groupId, importance, isAddTask });
     const prevAvg = context.getters.calcAvgImportanceOnReceivedGroupId(groupId);
     console.log('prevAvg: ', prevAvg);
 

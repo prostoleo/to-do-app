@@ -565,7 +565,7 @@ export default {
       }; */
 
       const dataToSubmit = {
-        groupId: this.groupId ? this.groupId : this.groupIdOfActiveGroupTitle,
+        groupId: this.$route.params.id ?? this.groupIdOfActiveGroupTitle,
         taskId: Date.now()
           .toString(16)
           .slice(-7),

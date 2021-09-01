@@ -13,7 +13,7 @@ export default createStore({
     auth: AuthModule
   },
   state: {
-    currentGroupId: null
+    currentGroupId: localStorage.getItem('groupId') ?? null
   },
   getters: {
     groupId(state) {
@@ -28,6 +28,7 @@ export default createStore({
   actions: {
     changeGroupId(context, data) {
       context.commit('setGroupId', data);
+      localStorage.setItem('groupId', data);
     }
   }
 });

@@ -14,7 +14,10 @@ export default {
   },
 
   setNewAvgImportance(state, { groupId, prevAvg, prevLength, newImp, isAddTask }) {
-    const selected = state.groups.slice().find((g) => g.groupId === groupId);
+    console.log('state.groups: ', state.groups);
+    console.log('groupId: ', groupId);
+    const selected = state.groups.find((g) => g.groupId === groupId);
+    console.log('selected: ', selected);
 
     const newAvg = isAddTask
       ? (prevAvg * prevLength + newImp) / (prevLength + 1)

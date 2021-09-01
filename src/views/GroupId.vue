@@ -5,7 +5,8 @@
       <BaseContainer>
         <div class="main-groupId__content">
           <BaseMenuBurger class="main-groupId__menu" @click="openNav"> </BaseMenuBurger>
-          <h2 class="main-groupId__title">Ваши дела в группе "{{ currentGroup.title }}"</h2>
+          <h2 class="main-groupId__title">Ваши дела в группе "{{ mainTitle }}"</h2>
+          <!-- {{ currentGroup.title }} -->
           <h3 class="main-groupId__subtitle">
             Средняя важность - {{ avgImportanceOfSelectedTasks }}
           </h3>
@@ -139,7 +140,7 @@
 
 <script>
 //* import store
-import store from '@/store';
+// import store from '@/store';
 // import route from '@/router';
 // import router from '@/router';
 // import route from 'vue-router';
@@ -167,11 +168,11 @@ export default {
 
   emits: ['not-found'],
 
-  beforeCreate() {
+  /* beforeCreate() {
     // console.log('beforeCreate');
 
     this.$emit('not-found');
-  },
+  }, */
 
   components: {
     AddTaskForm
@@ -212,7 +213,7 @@ export default {
     };
   },
 
-  beforeRouteEnter(to, _, next) {
+  /* beforeRouteEnter(to, _, next) {
     // ...
     // console.log('to: ', to);
     const paramId = to.params.id;
@@ -234,9 +235,13 @@ export default {
     }
 
     next();
-  },
+  }, */
 
   watch: {
+    getCurGroup: {
+      handler: 'getCurrentGroup',
+      immediate: true
+    },
     getData: {
       handler: 'getTasks',
       immediate: true
@@ -244,6 +249,10 @@ export default {
   },
 
   computed: {
+    mainTitle() {
+      return this.currentGroup?.title;
+    },
+
     truthySort() {
       const truthy = Object.entries(this.sortInfo).find((entry) => entry[1] === true);
 
@@ -258,7 +267,8 @@ export default {
       //* проверка на truthy value
       const truthy = this.truthySort;
 
-      const tasksOnGroupId = this.$store.getters['tasks/tasksOnGroupId'];
+      // const tasksOnGroupId = this.$store.getters['tasks/tasksOnGroupId'];
+      const tasksOnGroupId = this.$store.getters['tasks/tasks'];
 
       /* const selectedTasks = this.$store.getters['tasks/selectedTasks']({
         tasksOnGroupId,
@@ -314,7 +324,7 @@ export default {
       });
     }, */
 
-    currentGroupComp() {
+    /* currentGroupComp() {
       console.log('this.$store.getters: ', this.$store.getters);
       console.log(
         'this.$store.getters[`groups/findGroupOnId`]',
@@ -326,7 +336,7 @@ export default {
       this.currentGroup = group;
 
       return group;
-    },
+    }, */
 
     avgImportanceOfSelectedTasks() {
       return formatAvgImportance(this.selectedTasks);
@@ -343,38 +353,90 @@ export default {
     }
   },
 
-  created() {
+  /* async created() {
     // console.log('this.id: ', this.id);
     // console.log('this.$router: ', this.$router);
 
     // todo проверяем - есть ли такая группа в введенным id
 
-    /* const paramId = this.$route.params.id;
+    // const paramId = this.$route.params.id;
 
-    const groupToLoad = this.$store.getters['groups/groupOnId'](paramId);
+    // const groupToLoad = this.$store.getters['groups/groupOnId'](paramId);
 
-    if (!groupToLoad) {
-      this.$router.replace({
-        path: '/:notFound(.*)',
-        name: 'NotFound',
-        params: { notFound: true }
-      });
+    // if (!groupToLoad) {
+    //   this.$router.replace({
+    //     path: '/:notFound(.*)',
+    //     name: 'NotFound',
+    //     params: { notFound: true }
+    //   });
 
-      return;
-    } */
+    //   return;
+    // }
 
     //* добавляем groupId в store
-    this.$store.dispatch('changeGroupId', { groupId: this.id });
+    // this.$store.dispatch('changeGroupId', { groupId: this.id });
 
-    // todo для получения текущей группы
-    // console.log('this.$store: ', this.$store);
-    const group = this.$store.getters['groups/findGroupOnId'];
-    console.log('group: ', group);
+    // // todo для получения текущей группы
+    // // console.log('this.$store: ', this.$store);
+    // const group = this.$store.getters['groups/findGroupOnId'];
+    // console.log('group: ', group);
 
-    this.currentGroup = group;
+    // this.currentGroup = group;
+
+    try {
+      const groupId = this.$route.params.id;
+      console.log('groupId: ', groupId);
+
+      const resp = await this.axios.get(`${BASE_URL}groups?groupId=${groupId}`);
+
+      if (resp.statusText === 'OK') {
+        this.currentGroup = resp.data;
+      }
+    } catch (error) {
+      console.log(`💣💣💣 ${error.name}, ${error.message}`);
+    }
+  }, */
+
+  async beforeCreate() {
+    this.$emit('not-found');
+
+    /* try {
+      const groupId = this.$route.params.id;
+      console.log('groupId: ', groupId);
+
+      const resp = await this.axios.get(`${BASE_URL}groups?groupId=${groupId}`);
+
+      if (resp.statusText === 'OK') {
+        this.currentGroup = resp.data;
+        console.log('this.currentGroup : ', this.currentGroup);
+      }
+    } catch (error) {
+      console.log(`💣💣💣 ${error.name}, ${error.message}`);
+    } */
   },
 
   methods: {
+    async getCurrentGroup() {
+      try {
+        const groupId = this.$route.params.id;
+        console.log('groupId: ', groupId);
+
+        const { userId } = this.$store.getters['auth/getCurUser'];
+        const resp = await this.axios.get(`${BASE_URL}groups?userId=${userId}`);
+
+        if (resp.statusText === 'OK') {
+          const groups = resp.data;
+          console.log('groups: ', groups);
+
+          this.$store.dispatch('groups/setGroups', groups);
+          this.currentGroup = groups.filter((g) => g.groupId === groupId);
+          console.log('this.currentGroup: ', this.currentGroup);
+        }
+      } catch (error) {
+        console.log(`💣💣💣 ${error.name}, ${error.message}`);
+      }
+    },
+
     //* получаем дела
     async getTasks() {
       try {
@@ -382,16 +444,33 @@ export default {
         this.error.wasShown = false;
         this.isLoading = true;
         const { userId } = this.$store.getters['auth/getCurUser'];
-        const groupId = this.id;
         console.log('userId: ', userId);
+        const groupId = this.$route.params.id;
+        console.log('groupId: ', groupId);
 
-        const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`);
+        const requests = [
+          this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`),
+          this.axios.get(`${BASE_URL}groups?groupId=${groupId}`)
+        ];
+
+        const resp = await Promise.all(requests);
+
+        /* const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`); */
+
         console.log('resp: ', resp);
 
-        if (resp.statusText === 'OK') {
-          console.log(resp.data);
-          const { data } = resp;
+        // if (resp.statusText === 'OK') {
+        if (resp[0].statusText === 'OK' && resp[1].statusText === 'OK') {
+          // console.log(resp.data);
+          // const { data } = resp;
 
+          console.log(resp[0].data);
+          console.log(resp[1].data);
+          console.log('resp[1].data: ', resp[1].data);
+          const { data } = resp[0];
+          const [curGroup] = resp[1].data;
+
+          this.currentGroup = curGroup;
           /* const groups = data.filter((g) => g.id === +userId);
           console.log('groups: ', groups); */
 

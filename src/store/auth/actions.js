@@ -51,6 +51,8 @@ export default {
     localStorage.removeItem('username');
     localStorage.removeItem('userId');
     localStorage.removeItem('tokenExpiration');
+    localStorage.removeItem('groups');
+    localStorage.removeItem('tasks');
 
     clearTimeout(timer);
     router.replace('/auth');

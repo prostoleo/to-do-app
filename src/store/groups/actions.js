@@ -29,7 +29,7 @@ export default {
 
         context.commit('addGroup', res);
 
-        localStorage.setItem('to-do-app__groups', JSON.stringify(context.state.groups));
+        localStorage.setItem('groups', JSON.stringify(context.state.groups));
 
         /* const groups = data.filter((g) => g.id === +userId);
         console.log('groups: ', groups); */
@@ -53,7 +53,7 @@ export default {
 
         context.commit('deleteGroup', id);
 
-        localStorage.setItem('to-do-app__groups', JSON.stringify(context.state.groups));
+        localStorage.setItem('groups', JSON.stringify(context.state.groups));
       }
     } catch (error) {
       console.log(error.message);

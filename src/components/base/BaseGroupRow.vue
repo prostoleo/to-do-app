@@ -162,6 +162,7 @@ export default {
       } else {
         this.$store.dispatch('groups/deleteGroup', this.currentItem);
 
+        //! написать отдельную функцию / путь в strapi чтобы можно было удалить все задания по groupId
         this.$store.dispatch('tasks/deleteTasksOnGroupId', this.currentItem);
       }
     },
