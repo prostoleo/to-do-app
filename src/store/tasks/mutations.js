@@ -26,9 +26,15 @@ export default {
     state.tasks = state.tasks.filter((t) => t.groupId !== groupId);
   },
 
-  toggleDoneStatus(state, { index, status }) {
+  toggleDoneStatus(state, { task, status }) {
     console.log('status: ', status);
-    state.tasks[index].done = status;
-    console.log('state.tasks[index]: ', state.tasks[index]);
+    // state.tasks[index].done = status;
+    const taskToChange = state.tasks.find((t) => t.taskId === task.taskId);
+    console.log('taskToChange: ', taskToChange);
+
+    taskToChange.done = status;
+    console.log('taskToChange.done: ', taskToChange.done);
+
+    // console.log('state.tasks[index]: ', state.tasks[index]);
   }
 };

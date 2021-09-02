@@ -136,6 +136,8 @@ export default {
     opacity: 1;
     visibility: visible;
     pointer-events: unset;
+
+    min-height: 100vh;
   }
 }
 
@@ -182,7 +184,7 @@ export default {
   @include mq(lg) {
     position: relative !important;
     transform: translateX(0%);
-    min-height: 100vh;
+    min-height: 100vh !important;
   }
   // transform: translateX(-150%);
   // transition: all 2000ms ease-out;

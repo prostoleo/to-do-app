@@ -8,6 +8,10 @@ export default {
     return state.users;
   },
 
+  didAutoLogout(state) {
+    return state.userInfo.didAutoLogout;
+  },
+
   getUserOnId: (state) => ({ login, password }) =>
     state.users.find((user) => user.login === login && user.password === password),
 

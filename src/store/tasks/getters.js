@@ -9,13 +9,13 @@ export default {
     return state.tasks;
   },
 
-  getTasksOfCurUser(_, _2, _3, rootGetters) {
+  /* getTasksOfCurUser(_, _2, _3, rootGetters) {
     const tasks = JSON.parse(localStorage.getItem('to-do-app__tasks'));
 
     const { userId } = rootGetters['auth/getCurUser'];
 
     return tasks.filter((t) => t.userId === userId);
-  },
+  }, */
 
   tasksOnGroupId(store, _, _2, rootGetters) {
     // eslint-disable-next-line prefer-destructuring

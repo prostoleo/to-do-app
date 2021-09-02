@@ -56,6 +56,7 @@
           "varsIngnorePattern": "[^_*]"
         }
       ],
+      "object-curly-newline": "off",
       "import/extensions": [
         0
       ],

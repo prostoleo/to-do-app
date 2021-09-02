@@ -46,22 +46,33 @@ export default {
   },
 
   //* удаляем задание по конкретному taskId
-  deleteTask(context, data) {
-    console.log('data: ', data);
+  async deleteTask(context, data) {
+    try {
+      console.log('data: ', data);
 
-    const { taskId } = data;
+      const { taskId, id } = data;
 
-    // const taskIndexToDelete = context.state.tasks.findIndex((task) => task.taskId === taskId);
-    const task = context.state.tasks.find((t) => t.taskId === taskId);
-    console.log('task: ', task);
+      console.log({ taskId, id });
 
-    context.dispatch('handleChangeAvgImportance', {
-      groupId: task.groupId,
-      importance: task.importance,
-      isAddTask: false
-    });
+      const resp = await axios.delete(`${BASE_URL}tasks/${id}`);
+      console.log('resp: ', resp);
 
-    context.commit('deleteTask', task);
+      if (resp.statusText === 'OK') {
+        // const taskIndexToDelete = context.state.tasks.findIndex((task) => task.taskId === taskId);
+        const task = context.state.tasks.find((t) => t.taskId === taskId);
+        console.log('task: ', task);
+
+        context.dispatch('handleChangeAvgImportance', {
+          groupId: task.groupId,
+          importance: task.importance,
+          isAddTask: false
+        });
+
+        context.commit('deleteTask', task);
+      }
+    } catch (error) {
+      console.log(`💣💣💣 ${error}`);
+    }
   },
 
   updateTask(context, data) {
@@ -84,7 +95,7 @@ export default {
     const prevLength = context.getters.lengthOfSelectedTasksOnGroupId(groupId);
 
     // todo обращаемся к мутации в другом модуле
-    context.commit(
+    /* context.commit(
       'groups/setNewAvgImportance',
       {
         groupId,
@@ -94,18 +105,78 @@ export default {
         isAddTask
       },
       { root: true }
-    );
+    ); */
+    context.dispatch('setNewAvgImportance', {
+      groupId,
+      prevAvg,
+      prevLength,
+      newImp: importance,
+      isAddTask
+    });
   },
 
-  toggleDoneStatus(context, { task, status }) {
-    const index = context.state.tasks.findIndex((t) => t === task);
-    console.log('index: ', index);
+  // eslint-disable-next-line no-unused-vars
+  async setNewAvgImportance(context, { groupId, prevAvg, prevLength, newImp, isAddTask }) {
+    try {
+      console.log('context - setNewAvgImportance: ', context);
+      console.log('context.rootState.groups - setNewAvgImportance: ', context.rootState.groups);
 
-    if (index !== -1) {
-      context.commit('toggleDoneStatus', {
-        index,
-        status
+      console.log('groupId: ', groupId);
+
+      //* находим нужную группу
+      const selected = context.rootState.groups.groups.find((g) => g.groupId === groupId);
+      console.log('selected: ', selected);
+
+      //* получили новое значение avgImportance
+      const newAvg = isAddTask
+        ? (prevAvg * prevLength + newImp) / (prevLength + 1)
+        : (prevAvg * prevLength - newImp) / (prevLength - 1);
+
+      console.log('newAvg: ', newAvg);
+
+      const newAvgCleared = Number.parseFloat(newAvg.toFixed(2));
+
+      // * отправляем запрос в strapi для изменения на новый avgImportance
+      const resp = await axios.put(`${BASE_URL}groups/${selected.id}`, {
+        ...selected,
+        avgImportance: newAvgCleared
       });
+      console.log('resp: ', resp);
+
+      if (resp.statusText === 'OK') {
+        context.commit(
+          'groups/setNewAvgImportance',
+          {
+            selected,
+            newAvgCleared
+          },
+          { root: true }
+        );
+      }
+    } catch (error) {
+      console.warn(`💣💣💣 ${error}, не удалось обновить avgImportance`);
+    }
+  },
+
+  // eslint-disable-next-line no-unused-vars
+  async toggleDoneStatus(context, { task, status }) {
+    console.log('context: ', context);
+    try {
+      const { userId } = context.rootState.auth.userInfo;
+
+      const res = await axios.get(`${BASE_URL}tasks?userId=${userId}`);
+
+      if (res.statusText === 'OK') {
+        const tasks = res.data;
+
+        context.commit('setTasks', tasks);
+        context.commit('toggleDoneStatus', {
+          task,
+          status
+        });
+      }
+    } catch (error) {
+      console.log(`💣💣💣 ${error}`);
     }
   }
 };

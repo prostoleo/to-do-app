@@ -90,11 +90,40 @@
                 </BaseGroupRow>
               </ul>
             </div>
-            <p v-else-if="selectedTasks.length === 0 && query" class="groups-info__zero-tasks">
+            <BaseSpinner v-else-if="isLoading"></BaseSpinner>
+
+            <BaseDialog
+              v-else-if="selectedTasks.length === 0 && error.isError && !isLoading && !query"
+              :show="error.isError"
+              :title="'Ошибка'"
+              @close-dialog="error.isError = false"
+            >
+              <p>{{ error.errMsg }}</p>
+            </BaseDialog>
+            <p
+              v-else-if="selectedTasks.length === 0 && !query && !isLoading && !!filterInfo"
+              class="groups-info__zero-tasks"
+            >
+              По данным фильтрам ничего не найдено😞. Попробуйте изменить фильтры
+            </p>
+            <p
+              v-else-if="selectedTasks.length === 0 && query && !isLoading"
+              class="groups-info__zero-tasks"
+            >
               По запросу <b>{{ query }}</b> ничего не найдено😞. Попробуйте изменить запрос
             </p>
-            <p v-else-if="selectedTasks.length === 0 && filterInfo" class="groups-info__zero-tasks">
-              У вас нет ни одного дела. Добавьте дел.
+
+            <p
+              v-else-if="
+                selectedTasks.length === 0 &&
+                  !query &&
+                  !isLoading &&
+                  !error.isError &&
+                  !error.wasShown
+              "
+              class="groups-info__zero-tasks"
+            >
+              У вас нет ни одной группы. Добавьте групп.
             </p>
           </section>
         </div>
@@ -121,6 +150,7 @@ import filterDoneUndone from '../helpers/filter/filterDoneUndone.js';
 
 // todo импортируем addTaskForm
 import AddTaskForm from '../components/tasks/AddTaskForm.vue';
+import { BASE_URL } from '../helpers/config/config.js';
 
 export default {
   name: 'Tasks',
@@ -162,8 +192,22 @@ export default {
         upImportance: false
       },
 
-      filterInfo: null
+      filterInfo: null,
+
+      isLoading: false,
+      error: {
+        isError: false,
+        errMsg: 'Упс, что-то пошло не так 😞. Попробуйте повторить позже',
+        wasShown: false
+      }
     };
+  },
+
+  watch: {
+    getData: {
+      handler: 'getTasks',
+      immediate: true
+    }
   },
 
   computed: {
@@ -227,6 +271,44 @@ export default {
   created() {},
 
   methods: {
+    //* получаем дела
+    async getTasks() {
+      try {
+        this.error.isError = false;
+        this.error.wasShown = false;
+        this.isLoading = true;
+        const { userId } = this.$store.getters['auth/getCurUser'];
+        console.log('userId: ', userId);
+
+        const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}`);
+
+        /* const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`); */
+
+        console.log('resp: ', resp);
+
+        // if (resp.statusText === 'OK') {
+        if (resp.statusText === 'OK') {
+          // console.log(resp.data);
+          // const { data } = resp;
+
+          console.log(resp.data);
+          const { data } = resp;
+
+          /* const groups = data.filter((g) => g.id === +userId);
+          console.log('groups: ', groups); */
+
+          this.$store.dispatch('tasks/setTasks', data);
+        } else {
+          throw new Error('Упс, что-то пошло не так 😞. Попробуйте повторить позже');
+        }
+      } catch (error) {
+        console.log(`💣💣💣 ${error.name}, ${error.message}`);
+        this.error.isError = true;
+        this.error.wasShown = true;
+      }
+      this.isLoading = false;
+    },
+
     // todo метод для возращения sortInfo в первоначальное положение
     resetSortInfo() {
       this.sortInfo = resetSortInfo(true);

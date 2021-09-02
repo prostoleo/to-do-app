@@ -74,6 +74,7 @@ router.beforeEach((to) => {
   //* если страница требует аутентификацию и пользователь НЕ зашел в аккаунт - отказать в доступе
   if (to.meta.requiresAuth && !store.getters['auth/isLoggedIn']) {
     // next(false);
+    console.log(' to auth ');
     router.replace('/auth');
     //* если страница НЕ требует аутентификацию и пользователь зашел в аккаунт - отказать в доступе
   }

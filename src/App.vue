@@ -24,6 +24,10 @@ export default {
     };
   },
 
+  beforeCreate() {
+    this.$store.dispatch('auth/tryLogin');
+  },
+
   created() {
     // console.log(this.$route);
     /* localStorage.setItem(
@@ -36,6 +40,9 @@ export default {
   },
 
   computed: {
+    didAutoLogout() {
+      return this.$store.getters['auth/didAutoLogout'];
+    },
     /* isNotFound() {
       return this.$route.name;
     }, */
@@ -51,6 +58,14 @@ export default {
       return this.navIsOpen;
     }
   },
+
+  /* watch: {
+    didAutoLogout(curValue, oldValue) {
+      if (curValue && curValue !== oldValue) {
+        this.$router.replace('/auth');
+      }
+    }
+  }, */
 
   /* watch: {
     navIsOpen() {
@@ -120,7 +135,7 @@ router-view > * {
 }
 
 .the-nav {
-  height: 100vh;
+  min-height: 100vh;
 
   @include mq(lg) {
     height: 100% !important;

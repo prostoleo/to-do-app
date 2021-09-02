@@ -6,7 +6,7 @@
         <div class="main-taskId__content-wrapper">
           <div class="main-taskId__content">
             <BaseMenuBurger class="main-taskId__menu" @click="openNav"> </BaseMenuBurger>
-            <h2 class="main-taskId__title">Дело "{{ currentTask.title }}"</h2>
+            <h2 class="main-taskId__title">Дело "{{ mainTitle }}"</h2>
             <BaseButton class="main-taskId__back" @click="getBack">
               <span class="icon _icon-arrow"></span>
               Назад
@@ -14,7 +14,7 @@
           </div>
 
           <section class="taskId-info">
-            <div class="taskId-info__content content">
+            <div class="taskId-info__content content" v-if="!isLoading">
               <div class="content__row">
                 <h3 class="content__row-title">Название</h3>
                 <div class="content__row-title-block" :class="{ editable: !!isEditing }">
@@ -71,11 +71,21 @@
                 <h3 class="content__row-title">Статус выполнения</h3>
                 <div class="content__row-title-block">
                   <p id="description">
-                    {{ currentTask.done ? 'Выполнено' : 'Невыполнено' }}
+                    {{ done }}
                   </p>
                 </div>
               </div>
             </div>
+            <BaseSpinner v-else-if="isLoading"></BaseSpinner>
+
+            <BaseDialog
+              v-else-if="!currentTask && error.isError"
+              :show="error.isError"
+              :title="'Ошибка'"
+              @close-dialog="error.isError = false"
+            >
+              <p>{{ error.errMsg }}</p>
+            </BaseDialog>
             <div class="taskId-info__controls controls">
               <BaseButton class="edit" v-if="!isEditing" @click="startEditingTask">
                 Редактировать
@@ -96,7 +106,7 @@
               </BaseButton>
 
               <BaseButton class="toggle-done" @click="toggleDone">
-                {{ currentTask.done ? 'Отменить выполнение' : 'Выполнить' }}
+                {{ toggleDoneBtnText }}
               </BaseButton>
 
               <BaseButton class="delete" @click="startDeletingTask">
@@ -111,8 +121,8 @@
               >
                 <div v-if="isDeleting">
                   <p>
-                    Вы уверены, что хотите удалить дело "{{ currentTask.title }}" ? Отменить это
-                    действие будет <b>невозможно</b>.
+                    Вы уверены, что хотите удалить дело "{{ title }}" ? Отменить это действие будет
+                    <b>невозможно</b>.
                   </p>
                   <div class="dialog-controls">
                     <BaseButton class="delete" @click="confirmDelete">Удалить дело</BaseButton>
@@ -129,8 +139,10 @@
 </template>
 
 <script>
-import store from '@/store';
+// import store from '@/store';
+// import axios from 'axios';
 import formatDate from '../helpers/formatDate';
+import { BASE_URL } from '../helpers/config/config';
 
 export default {
   name: 'Task',
@@ -159,7 +171,14 @@ export default {
         }
       },
 
-      editableFields: ['title', 'importance', 'description']
+      editableFields: ['title', 'importance', 'description'],
+
+      isLoading: false,
+      error: {
+        isError: false,
+        errMsg: 'Упс, что-то пошло не так 😞. Попробуйте повторить позже',
+        wasShown: false
+      }
     };
   },
 
@@ -177,14 +196,26 @@ export default {
   },
 
   computed: {
+    done() {
+      return this.currentTask.done ? 'Выполнено' : 'Невыполнено';
+    },
+
+    toggleDoneBtnText() {
+      return this.currentTask?.done ? 'Отменить выполнение' : 'Выполнить';
+    },
+
+    mainTitle() {
+      return this.currentTask?.title;
+    },
+
     title() {
-      return this.currentTask.title;
+      return this.currentTask?.title;
     },
     importance() {
-      return this.currentTask.importance;
+      return this.currentTask?.importance;
     },
     description() {
-      return this.currentTask.description;
+      return this.currentTask?.description;
     },
 
     editable() {
@@ -194,12 +225,32 @@ export default {
 
   methods: {
     // todo для получения данных
-    getCurrentTask() {
-      const paramId = this.$route.params.taskId;
-      const taskToLoad = store.getters['tasks/taskOnId'](paramId);
-      console.log('taskToLoad: ', taskToLoad);
+    // eslint-disable-next-line consistent-return
+    async getCurrentTask() {
+      try {
+        this.isLoading = true;
 
-      this.currentTask = taskToLoad;
+        const paramId = this.$route.params.taskId;
+        /* const taskToLoad = store.getters['tasks/taskOnId'](paramId);
+      console.log('taskToLoad: ', taskToLoad); */
+
+        const resp = await this.axios.get(`${BASE_URL}tasks/?taskId=${paramId}`);
+        console.log('resp: ', resp);
+
+        if (resp.statusText === 'OK') {
+          const [task] = resp.data;
+          this.currentTask = task;
+        }
+
+        this.isLoading = false;
+        return resp.data;
+      } catch (error) {
+        console.log(`💣💣💣 ${error}`);
+        this.isLoading = false;
+        if (error.includes('404')) {
+          this.$router.replace({ path: '/:notFound(.*)', name: 'NotFound' });
+        }
+      }
     },
 
     // todo delete task
@@ -328,17 +379,32 @@ export default {
       return formatDate(data);
     },
 
-    toggleDone() {
-      const status = !this.currentTask.done;
+    async toggleDone() {
+      try {
+        const status = !this.currentTask.done;
+        const task = this.currentTask;
 
-      this.$store.dispatch('tasks/toggleDoneStatus', {
-        task: this.currentTask,
-        status
-      });
+        const resp = await this.axios.put(`${BASE_URL}tasks/${this.currentTask.id}`, {
+          ...task,
+          done: status
+        });
+        console.log('resp: ', resp);
+
+        if (resp.statusText === 'OK') {
+          console.log('this.currentTask: ', this.currentTask);
+          this.$store.dispatch('tasks/toggleDoneStatus', {
+            task: this.currentTask,
+            status
+          });
+        }
+      } catch (error) {
+        console.log(`💣💣💣 ${error}`);
+      }
+      this.currentTask.done = !this.currentTask.done;
     }
-  },
+  }
 
-  beforeRouteEnter(to, _, next) {
+  /* async beforeRouteEnter(to, _, next) {
     // ...
     console.log('to: ', to);
     const paramId = to.params.taskId;
@@ -347,10 +413,21 @@ export default {
     // console.log('router: ', router);
     console.log('store: ', store);
 
-    const taskToLoad = store.getters['tasks/taskOnId'](paramId);
+    // const taskToLoad = store.getters['tasks/taskOnId'](paramId);
+    // console.log('taskToLoad: ', taskToLoad);
+    const resp = await axios.get(`${BASE_URL}tasks/?taskId=${paramId}`);
+    console.log('resp: ', resp);
+
+    const taskToLoad = resp.data;
     console.log('taskToLoad: ', taskToLoad);
 
-    if (!taskToLoad) {
+    if (resp.statusText === 'OK') {
+      next((vm) => {
+        console.log('vm: ', vm);
+        // eslint-disable-next-line no-param-reassign
+        vm.currentTask = taskToLoad;
+      });
+    } else {
       console.log(' task load not found ');
       // ! работает
       // next('/not-found');
@@ -359,8 +436,18 @@ export default {
       next({ path: '/not-found', name: 'NotFound', params: { notFound: 'not-found' } });
     }
 
-    next();
-  }
+    // if (!taskToLoad) {
+    //   console.log(' task load not found ');
+    //   // ! работает
+    //   // next('/not-found');
+
+    //   // ! работает - 2 вар
+    //   next({ path: '/not-found', name: 'NotFound', params: { notFound: 'not-found' } });
+    // }
+
+    // this.currentTask = taskToLoad;
+    // next();
+  } */
 };
 </script>
 

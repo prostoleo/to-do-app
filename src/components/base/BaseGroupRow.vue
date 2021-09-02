@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { BASE_URL } from '../../helpers/config/config';
+
 export default {
   props: {
     isHeader: {
@@ -171,16 +173,30 @@ export default {
       this.isDeleting = false;
     },
 
-    toggleDoneTask() {
-      this.taskIsDone = !this.taskIsDone;
+    async toggleDoneTask() {
+      try {
+        this.taskIsDone = !this.taskIsDone;
 
-      const task = this.$store.getters['tasks/taskOnId'](this.taskId);
-      console.log('task: ', task);
+        const task = this.$store.getters['tasks/taskOnId'](this.taskId);
+        console.log('task: ', task);
 
-      this.$store.dispatch('tasks/toggleDoneStatus', {
-        task,
-        status: this.taskIsDone
-      });
+        //* отправляем запрос
+        const resp = await this.axios.put(`${BASE_URL}tasks/${task.id}`, {
+          ...task,
+          done: this.taskIsDone
+        });
+        console.log('resp: ', resp);
+
+        //* если успешно - то меняем статус задания локально
+        if (resp.statusText === 'OK') {
+          this.$store.dispatch('tasks/toggleDoneStatus', {
+            task,
+            status: this.taskIsDone
+          });
+        }
+      } catch (error) {
+        console.log(`💣💣💣 ${error}`);
+      }
     }
   }
 };
