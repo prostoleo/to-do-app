@@ -41,7 +41,8 @@ export default {
         context.commit('addTask', dataReceived);
       }
     } catch (error) {
-      console.error(`💣💣💣 ${error} `);
+      console.log(`💣💣💣 ${error} `);
+      throw error;
     }
   },
 
@@ -72,6 +73,7 @@ export default {
       }
     } catch (error) {
       console.log(`💣💣💣 ${error}`);
+      throw error;
     }
   },
 
@@ -91,6 +93,7 @@ export default {
       }
     } catch (error) {
       console.log(`💣💣💣 ${error}`);
+      throw error;
     }
   },
 
@@ -172,12 +175,13 @@ export default {
   },
 
   // eslint-disable-next-line no-unused-vars
-  async toggleDoneStatus(context, { task, status }) {
+  async toggleDoneStatus(context, { task, status, isTasksRoute }) {
+    console.log('isTasksRoute: ', isTasksRoute);
     console.log('context: ', context);
     try {
-      const { userId } = context.rootState.auth.userInfo;
+      /* const { userId } = context.rootState.auth.userInfo;
 
-      const res = await axios.get(`${BASE_URL}tasks?userId=${userId}`);
+      const res = isTasksRoute ? await axios.get(`${BASE_URL}tasks?userId=${userId}`) :;
 
       if (res.statusText === 'OK') {
         const tasks = res.data;
@@ -187,7 +191,11 @@ export default {
           task,
           status
         });
-      }
+      } */
+      context.commit('toggleDoneStatus', {
+        task,
+        status
+      });
     } catch (error) {
       console.log(`💣💣💣 ${error}`);
     }

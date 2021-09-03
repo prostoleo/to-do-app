@@ -123,7 +123,7 @@
               "
               class="groups-info__zero-tasks"
             >
-              У вас нет ни одной группы. Добавьте групп.
+              У вас нет ни одной дела. Добавьте дел.
             </p>
           </section>
         </div>
@@ -354,8 +354,17 @@ export default {
       return formatDate(date);
     },
 
-    submitForm(data) {
-      this.$store.dispatch('tasks/addTask', data);
+    async submitForm(data) {
+      try {
+        this.isLoading = true;
+        await this.$store.dispatch('tasks/addTask', data);
+      } catch (error) {
+        console.log(`💣💣💣 ${error.name}, ${error.message}`);
+        this.error.isError = true;
+        this.error.wasShown = true;
+      }
+      this.closeDialog();
+      this.isLoading = false;
     }
   }
 };

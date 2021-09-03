@@ -279,16 +279,22 @@ export default {
       this.isDeleting = false;
     },
 
-    confirmDelete() {
-      const { taskId } = this.$route.params;
+    async confirmDelete() {
+      try {
+        const { taskId } = this.$route.params;
 
-      const { groupId } = this.currentTask;
+        const { groupId } = this.currentTask;
 
-      console.log({ taskId, groupId });
+        console.log({ taskId, groupId });
 
-      this.$store.dispatch('tasks/deleteTask', this.currentTask);
+        await this.$store.dispatch('tasks/deleteTask', this.currentTask);
 
-      this.$router.replace(`/groups/${groupId}`);
+        this.$router.replace(`/groups/${groupId}`);
+      } catch (error) {
+        console.log(`💣💣💣 ${error}`);
+        this.error.isError = true;
+        this.error.wasShown = true;
+      }
     },
 
     // todo startEditingTask
@@ -373,24 +379,30 @@ export default {
       this.endEditing();
     },
 
-    updateTask() {
-      console.log('update task!');
-      const taskToUpdate = { ...this.currentTask };
+    async updateTask() {
+      try {
+        console.log('update task!');
+        const taskToUpdate = { ...this.currentTask };
 
-      this.editableFields.forEach((field) => {
-        console.log('field: ', field);
-        const el = document.getElementById(field);
-        // console.log('el: ', el);
+        this.editableFields.forEach((field) => {
+          console.log('field: ', field);
+          const el = document.getElementById(field);
+          // console.log('el: ', el);
 
-        // el.textContent = this.currentTask[field];
-        taskToUpdate[field] = el.textContent;
-      });
+          // el.textContent = this.currentTask[field];
+          taskToUpdate[field] = el.textContent;
+        });
 
-      this.endEditing();
+        this.endEditing();
 
-      console.log('taskToUpdate: ', taskToUpdate);
+        console.log('taskToUpdate: ', taskToUpdate);
 
-      this.$store.dispatch('tasks/updateTask', taskToUpdate);
+        await this.$store.dispatch('tasks/updateTask', taskToUpdate);
+      } catch (error) {
+        console.log(`💣💣💣 ${error}`);
+        this.error.isError = true;
+        this.error.wasShown = true;
+      }
     },
 
     openNav() {

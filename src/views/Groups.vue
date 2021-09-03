@@ -333,26 +333,33 @@ export default {
     },
 
     // todo добавление группы
-    submitAddGroup() {
-      console.log('this.addedGroup: ', this.addedGroup);
-      if (!this.addedGroup) return;
+    async submitAddGroup() {
+      try {
+        console.log('this.addedGroup: ', this.addedGroup);
+        if (!this.addedGroup) return;
 
-      const groupToAdd = {
-        groupId: parseInt(Date.now(), 16)
-          .toString()
-          .slice(-4),
-        title: this.addedGroup,
-        dateOfAddition: new Date(Date.now()).toISOString(),
-        userId: this.$store.getters['auth/getCurUser'].userId
-      };
+        const groupToAdd = {
+          groupId: Date.now()
+            .toString(32)
+            .slice(-5),
+          title: this.addedGroup,
+          dateOfAddition: new Date(Date.now()).toISOString(),
+          userId: this.$store.getters['auth/getCurUser'].userId
+        };
+        this.isLoading = true;
+        await this.$store.dispatch('groups/addGroup', groupToAdd);
 
-      this.$store.dispatch('groups/addGroup', groupToAdd);
-
-      /* const input = event.target.querySelector('input');
+        /* const input = event.target.querySelector('input');
 
       input.value = '';
       input.unfocus(); */
-      this.clearInputAdd = true;
+        this.clearInputAdd = true;
+      } catch (error) {
+        console.log(`💣💣💣 ${error.name}, ${error.message}`);
+        this.error.isError = true;
+        this.error.wasShown = true;
+      }
+      this.isLoading = false;
     },
 
     // todo добавление группы

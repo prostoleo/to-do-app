@@ -44,15 +44,25 @@ export default {
 
   async deleteGroup(context, data) {
     try {
-      //* удаляем группу в strapi
-      const resp = await axios.delete(`${BASE_URL}groups/${data.id}`);
-      console.log('resp: ', resp);
+      //* удаляем группу в strapi и сопутствующие дела
+      const requests = [
+        axios.delete(`${BASE_URL}groups/${data.id}`),
+        axios.delete(`${BASE_URL}tasks-all/${data.groupId}`)
+      ];
+
+      //* 1 старый вариант
+      /* const resp = await axios.delete(`${BASE_URL}groups/${data.id}`);
+      console.log('resp: ', resp); */
+      const resp = await Promise.all(requests);
 
       //* удаляем группу локально
-      if (resp.statusText === 'OK') {
+      if (resp[0].statusText === 'OK' && resp[1].statusText === 'OK') {
         const { id } = data;
 
+        //* удаляем группу локально
         context.commit('deleteGroup', id);
+        //* удаляем нужные tasks локально
+        context.dispatch('tasks/deleteTasksOnGroupId', data, { root: true });
 
         localStorage.setItem('groups', JSON.stringify(context.state.groups));
       }

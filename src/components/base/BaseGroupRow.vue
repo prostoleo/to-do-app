@@ -165,7 +165,7 @@ export default {
         this.$store.dispatch('groups/deleteGroup', this.currentItem);
 
         //! написать отдельную функцию / путь в strapi чтобы можно было удалить все задания по groupId
-        this.$store.dispatch('tasks/deleteTasksOnGroupId', this.currentItem);
+        // this.$store.dispatch('tasks/deleteTasksOnGroupId', this.currentItem);
       }
     },
 
@@ -180,6 +180,10 @@ export default {
         const task = this.$store.getters['tasks/taskOnId'](this.taskId);
         console.log('task: ', task);
 
+        // eslint-disable-next-line no-unused-vars
+        let isTasksRoute = false;
+        if (this.$route.name === 'Tasks') isTasksRoute = true;
+
         //* отправляем запрос
         const resp = await this.axios.put(`${BASE_URL}tasks/${task.id}`, {
           ...task,
@@ -191,7 +195,8 @@ export default {
         if (resp.statusText === 'OK') {
           this.$store.dispatch('tasks/toggleDoneStatus', {
             task,
-            status: this.taskIsDone
+            status: this.taskIsDone,
+            isTasksRoute
           });
         }
       } catch (error) {
