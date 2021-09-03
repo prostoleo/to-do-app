@@ -20,7 +20,8 @@ export default {
 
       localStorage.setItem('to-do-app__groups', JSON.stringify(context.state.groups)); */
 
-      const resp = await axios.post(`${BASE_URL}groups?id=${newData.userId}`, newData);
+      // const resp = await axios.post(`${BASE_URL}groups?id=${newData.userId}`, newData);
+      const resp = await axios.post(`${BASE_URL}groups`, newData);
       console.log('resp: ', resp);
 
       if (resp.statusText === 'OK') {

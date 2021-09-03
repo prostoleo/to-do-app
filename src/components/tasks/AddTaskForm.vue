@@ -58,11 +58,13 @@
     <div class="input-row">
       <label for="description">Описание</label>
       <textarea
+        ref="description-textarea"
         id="description"
         maxlength="2048"
-        @input="updateData(null, $event)"
+        @input="updateData(null, $event), showCounter($event)"
         @blur="validateData(null, $event)"
       ></textarea>
+      <span v-if="!description.isError">{{ lengthOfDescription }} / 2048</span>
       <small v-if="description.isError">{{ descriptionError }}</small>
     </div>
 
@@ -105,6 +107,7 @@ export default {
   data() {
     return {
       totalError: true,
+      lengthOfDescription: 0,
       // taskId: null,
       // taskIdError: false,
       /* title: null,
@@ -220,6 +223,15 @@ export default {
   },
 
   methods: {
+    showCounter(event) {
+      const { target } = event;
+      console.log('target: ', target);
+      console.log('target.value: ', target.value);
+      console.log('target.value.length: ', target.value.length);
+
+      this.lengthOfDescription = target.value.length;
+    },
+
     totalMiliSeconds(date, time) {
       console.log('date: ', date);
       console.log('typeof date: ', typeof date);
@@ -626,6 +638,13 @@ form {
   min-width: 20rem;
   margin: 0 auto; */
   margin-bottom: 1.5em;
+  position: relative;
+
+  &:nth-last-of-type(2) {
+    margin-bottom: 3.5em !important;
+  }
+
+  position: relative;
 
   input {
     width: 60%;
@@ -680,6 +699,21 @@ form {
 
     font-size: 1.4rem;
     font-weight: 400;
+    color: $text-main;
+  }
+
+  span {
+    position: absolute;
+    top: 2.5em;
+    right: 4.5em;
+    width: max-content;
+    height: auto;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25em;
+    font-size: 1.2rem;
     color: $text-main;
   }
 }

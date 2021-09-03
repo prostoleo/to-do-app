@@ -58,9 +58,18 @@
               <div class="content__row">
                 <h3 class="content__row-title">Описание</h3>
                 <div class="content__row-title-block" :class="{ editable: !!isEditing }">
-                  <p :contenteditable="isEditing" id="description" @blur="validateEdit($event)">
+                  <p
+                    :contenteditable="isEditing"
+                    @blur="validateEdit($event)"
+                    @input="showCounter"
+                    id="description"
+                  >
                     {{ description }}
                   </p>
+                  <span v-if="isEditing && !editingValidation.description.isError"
+                    >{{ !!lengthOfDescription ? lengthOfDescription : description.length }} /
+                    2048</span
+                  >
                   <small v-if="editingValidation.description.isError">{{
                     editingValidation.description.message
                   }}</small>
@@ -70,7 +79,7 @@
               <div class="content__row">
                 <h3 class="content__row-title">Статус выполнения</h3>
                 <div class="content__row-title-block">
-                  <p id="description">
+                  <p id="status">
                     {{ done }}
                   </p>
                 </div>
@@ -155,6 +164,7 @@ export default {
       isEditing: false,
       isEditingValid: true,
       isDeleting: false,
+      lengthOfDescription: null,
 
       editingValidation: {
         title: {
@@ -163,7 +173,7 @@ export default {
         },
         importance: {
           isError: false,
-          message: 'Важность должна быть не меньше 1 и не больше 10'
+          message: 'Важность должна быть целым числом между 1 и 10'
         },
         description: {
           isError: false,
@@ -224,6 +234,13 @@ export default {
   },
 
   methods: {
+    showCounter(event) {
+      const { target } = event;
+      console.log('target: ', target);
+
+      this.lengthOfDescription = target.textContent.length;
+    },
+
     // todo для получения данных
     // eslint-disable-next-line consistent-return
     async getCurrentTask() {
@@ -269,9 +286,7 @@ export default {
 
       console.log({ taskId, groupId });
 
-      this.$store.dispatch('tasks/deleteTask', {
-        taskId
-      });
+      this.$store.dispatch('tasks/deleteTask', this.currentTask);
 
       this.$router.replace(`/groups/${groupId}`);
     },
@@ -292,6 +307,14 @@ export default {
       this.isEditing = false;
     },
 
+    //* валидируем важность - жолжна быть целым числом между 1 и 10
+    validateImportance(val) {
+      if (Number.isInteger(+val) && Number.isFinite(+val) && +val >= 1 && +val <= 10) {
+        return true;
+      }
+      return false;
+    },
+
     validateEdit(event) {
       console.log('event.target: ', event.target);
       const { id } = event.target;
@@ -307,7 +330,11 @@ export default {
           }
           break;
         case this.editableFields[1]:
-          if (+val < 1 || +val > 10) {
+          console.log('val: ', val);
+          console.log('typeof val: ', typeof val);
+          console.log('!this.validateImportance(val): ', !this.validateImportance(val));
+
+          if (!this.validateImportance(val)) {
             this.editingValidation[this.editableFields[1]].isError = true;
             this.isEditingValid = false;
           } else {
@@ -560,8 +587,29 @@ export default {
     padding: 0.5em 1em;
     padding-left: 0 !important;
 
+    position: relative;
+
+    span {
+      position: absolute;
+      bottom: -2.75rem;
+      left: 0;
+      width: max-content;
+      height: auto;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25em;
+
+      font-size: 1.2rem;
+      color: $text-main;
+
+      border: 1px solid $text-main;
+      outline: none !important;
+    }
+
     @include mq(med) {
-      flex: 0 0 60%;
+      flex: 0 0 65%;
     }
 
     p {
@@ -598,7 +646,7 @@ export default {
   gap: 2.5rem 0;
   grid-auto-flow: row;
 
-  @include mq(lg) {
+  @include mq(med) {
     flex: 0 1 60%;
     min-width: 25rem;
     max-width: 100%;

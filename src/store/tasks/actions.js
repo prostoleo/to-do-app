@@ -75,10 +75,23 @@ export default {
     }
   },
 
-  updateTask(context, data) {
-    console.log('data: ', data);
+  // todo обновляем задание
+  async updateTask(context, data) {
+    try {
+      console.log('data: ', data);
 
-    context.commit('updateTask', data);
+      const resp = await axios.put(`${BASE_URL}tasks/${data.id}`, data);
+      console.log('resp: ', resp);
+
+      if (resp.statusText === 'OK') {
+        const updatedTask = resp.data;
+        console.log('updatedTask: ', updatedTask);
+
+        context.commit('updateTask', updatedTask);
+      }
+    } catch (error) {
+      console.log(`💣💣💣 ${error}`);
+    }
   },
 
   deleteTasksOnGroupId(context, data) {

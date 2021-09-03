@@ -1,5 +1,5 @@
 <template>
-  <div class="the-nav" :class="{ show: show }">
+  <div class="the-nav" :class="showTheNav">
     <div class="aside__backdrop" @click="close"></div>
 
     <aside class="aside">
@@ -64,6 +64,20 @@ export default {
   },
 
   computed: {
+    showTheNav() {
+      const width = window.innerWidth;
+
+      if (this.show && width < 900) {
+        return 'show';
+      }
+
+      if (!this.show && width < 900) {
+        return '';
+      }
+
+      return 'show';
+    },
+
     innerWidthMore() {
       if (window.innerWidth >= 900) {
         return true;
