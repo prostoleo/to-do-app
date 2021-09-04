@@ -44,6 +44,14 @@
       </div>
     </div>
   </BaseDialog>
+  <BaseDialog
+    v-else-if="!isDeleting && error.isError"
+    :show="error.isError"
+    :title="'Ошибка'"
+    @close-dialog="error.isError = false"
+  >
+    <p>{{ error.errMsg }}</p>
+  </BaseDialog>
 </template>
 
 <script>
@@ -89,7 +97,12 @@ export default {
     return {
       isDeleting: false,
       taskIsDone: this.isDone ?? null,
-      currentItem: null
+      currentItem: null,
+      error: {
+        isError: false,
+        errMsg: 'Упс, что-то пошло не так 😞. Попробуйте повторить позже',
+        wasShown: false
+      }
     };
   },
 
@@ -142,7 +155,7 @@ export default {
       }
     },
 
-    confirmDelete() {
+    async confirmDelete() {
       /* const id = this.groupId ? this.currentItem.groupId : this.currentItem.taskId;
 
       if (!this.groupId) {
@@ -159,13 +172,19 @@ export default {
         });
       } */
 
-      if (!this.groupId) {
-        this.$store.dispatch('tasks/deleteTask', this.currentItem);
-      } else {
-        this.$store.dispatch('groups/deleteGroup', this.currentItem);
+      try {
+        if (!this.groupId) {
+          await this.$store.dispatch('tasks/deleteTask', this.currentItem);
+        } else {
+          await this.$store.dispatch('groups/deleteGroup', this.currentItem);
 
-        //! написать отдельную функцию / путь в strapi чтобы можно было удалить все задания по groupId
-        // this.$store.dispatch('tasks/deleteTasksOnGroupId', this.currentItem);
+          //! написать отдельную функцию / путь в strapi чтобы можно было удалить все задания по groupId
+          // this.$store.dispatch('tasks/deleteTasksOnGroupId', this.currentItem);
+        }
+      } catch (error) {
+        console.log(`💣💣💣 ${error.name}, ${error.message}`);
+        this.error.isError = true;
+        this.error.wasShown = true;
       }
     },
 

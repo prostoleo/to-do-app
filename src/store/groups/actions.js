@@ -47,7 +47,7 @@ export default {
       //* удаляем группу в strapi и сопутствующие дела
       const requests = [
         axios.delete(`${BASE_URL}groups/${data.id}`),
-        axios.delete(`${BASE_URL}tasks-all/${data.groupId}`)
+        axios.delete(`${BASE_URL}tasks/deleteAll/${data.groupId}`)
       ];
 
       //* 1 старый вариант
@@ -68,6 +68,7 @@ export default {
       }
     } catch (error) {
       console.log(error.message);
+      throw error;
     }
   }
 };
