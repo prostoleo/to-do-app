@@ -18,13 +18,13 @@ const Tasks = () => import('../views/Tasks.vue');
 const NotFound = () => import('../views/NotFound.vue');
 
 const routes = [
-  {
+  /* {
     path: '/',
     redirect: '/groups',
     meta: { requiresAuth: true }
-  },
+  }, */
   {
-    path: '/auth',
+    path: '/',
     name: 'Auth',
     component: Auth,
     meta: { requiresUnauth: true }
@@ -75,7 +75,7 @@ router.beforeEach((to) => {
   if (to.meta.requiresAuth && !store.getters['auth/isLoggedIn']) {
     // next(false);
     console.log(' to auth ');
-    router.replace('/auth');
+    router.replace('/');
     //* если страница НЕ требует аутентификацию и пользователь зашел в аккаунт - отказать в доступе
   }
 

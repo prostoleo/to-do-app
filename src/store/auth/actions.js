@@ -86,7 +86,7 @@ export default {
     localStorage.removeItem('tasks');
 
     clearTimeout(timer);
-    router.replace('/auth');
+    router.replace('/');
   },
 
   autoLogout(context) {

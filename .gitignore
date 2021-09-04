@@ -3,6 +3,7 @@ node_modules
 /dist
 .editorconfig
 /src/test
+netlify.toml
 
 
 # local env files

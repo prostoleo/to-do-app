@@ -86,7 +86,7 @@ export default {
     },
 
     currentUserName() {
-      return this.$store.getters['auth/getCurUser'].login;
+      return this.$store.getters['auth/getCurUser'].username;
     }
   },
 
