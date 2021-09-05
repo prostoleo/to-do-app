@@ -25,7 +25,7 @@ export default {
       };
       console.log('newData: ', newData);
 
-      const resp = await axios.post(`${BASE_URL}tasks`, newData);
+      const resp = await axios.post(`${BASE_URL}/tasks`, newData);
       console.log('resp: ', resp);
 
       if (resp.statusText === 'OK') {
@@ -55,7 +55,7 @@ export default {
 
       console.log({ taskId, id });
 
-      const resp = await axios.delete(`${BASE_URL}tasks/${id}`);
+      const resp = await axios.delete(`${BASE_URL}/tasks/${id}`);
       console.log('resp: ', resp);
 
       if (resp.statusText === 'OK') {
@@ -82,7 +82,7 @@ export default {
     try {
       console.log('data: ', data);
 
-      const resp = await axios.put(`${BASE_URL}tasks/${data.id}`, data);
+      const resp = await axios.put(`${BASE_URL}/tasks/${data.id}`, data);
       console.log('resp: ', resp);
 
       if (resp.statusText === 'OK') {
@@ -153,7 +153,7 @@ export default {
       const newAvgCleared = Number.parseFloat(newAvg.toFixed(2));
 
       // * отправляем запрос в strapi для изменения на новый avgImportance
-      const resp = await axios.put(`${BASE_URL}groups/${selected.id}`, {
+      const resp = await axios.put(`${BASE_URL}/groups/${selected.id}`, {
         ...selected,
         avgImportance: newAvgCleared
       });

@@ -204,7 +204,7 @@ export default {
         if (this.$route.name === 'Tasks') isTasksRoute = true;
 
         //* отправляем запрос
-        const resp = await this.axios.put(`${BASE_URL}tasks/${task.id}`, {
+        const resp = await this.axios.put(`${BASE_URL}/tasks/${task.id}`, {
           ...task,
           done: this.taskIsDone
         });

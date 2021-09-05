@@ -267,7 +267,7 @@ export default {
         const { userId } = this.$store.getters['auth/getCurUser'];
         console.log('userId: ', userId);
 
-        const resp = await this.axios.get(`${BASE_URL}groups?userId=${userId}`);
+        const resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}`);
         console.log('resp: ', resp);
 
         if (resp.statusText === 'OK') {

@@ -436,7 +436,7 @@ export default {
 
       this.$router.replace('/groups'); */
       try {
-        const res = await this.axios.post(`${BASE_URL}auth/local`, {
+        const res = await this.axios.post(`${BASE_URL}/auth/local`, {
           identifier: this.inputData.username,
           password: this.inputData.password
         });
@@ -467,7 +467,7 @@ export default {
       try {
         // console.log('data: ', data);
         // todo регистрируем пользователя через strapi
-        const res = await this.axios.post(`${BASE_URL}auth/local/register`, {
+        const res = await this.axios.post(`${BASE_URL}/auth/local/register`, {
           username: this.inputData.username,
           password: this.inputData.password,
           email: this.inputData.email,

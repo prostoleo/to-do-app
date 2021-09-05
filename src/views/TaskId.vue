@@ -251,7 +251,7 @@ export default {
         /* const taskToLoad = store.getters['tasks/taskOnId'](paramId);
       console.log('taskToLoad: ', taskToLoad); */
 
-        const resp = await this.axios.get(`${BASE_URL}tasks/?taskId=${paramId}`);
+        const resp = await this.axios.get(`${BASE_URL}/tasks/?taskId=${paramId}`);
         console.log('resp: ', resp);
 
         if (resp.statusText === 'OK') {
@@ -423,7 +423,7 @@ export default {
         const status = !this.currentTask.done;
         const task = this.currentTask;
 
-        const resp = await this.axios.put(`${BASE_URL}tasks/${this.currentTask.id}`, {
+        const resp = await this.axios.put(`${BASE_URL}/tasks/${this.currentTask.id}`, {
           ...task,
           done: status
         });
