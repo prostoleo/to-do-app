@@ -280,6 +280,7 @@ export default {
         const { userId } = this.$store.getters['auth/getCurUser'];
         console.log('userId: ', userId);
 
+        this.$store.dispatch('addToken');
         const resp = await this.axios.get(`${BASE_URL}/tasks?userId=${userId}`);
 
         /* const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`); */

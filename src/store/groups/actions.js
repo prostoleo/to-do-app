@@ -21,6 +21,7 @@ export default {
       localStorage.setItem('to-do-app__groups', JSON.stringify(context.state.groups)); */
 
       // const resp = await axios.post(`${BASE_URL}groups?id=${newData.userId}`, newData);
+      context.dispatch('addToken', null, { root: true });
       const resp = await axios.post(`${BASE_URL}/groups`, newData);
       console.log('resp: ', resp);
 
@@ -44,6 +45,8 @@ export default {
 
   async deleteGroup(context, data) {
     try {
+      context.dispatch('addToken', null, { root: true });
+
       //* удаляем группу в strapi и сопутствующие дела
       const requests = [
         axios.delete(`${BASE_URL}/groups/${data.id}`),

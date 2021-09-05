@@ -250,7 +250,7 @@ export default {
         const paramId = this.$route.params.taskId;
         /* const taskToLoad = store.getters['tasks/taskOnId'](paramId);
       console.log('taskToLoad: ', taskToLoad); */
-
+        this.$store.dispatch('addToken');
         const resp = await this.axios.get(`${BASE_URL}/tasks/?taskId=${paramId}`);
         console.log('resp: ', resp);
 
@@ -423,6 +423,7 @@ export default {
         const status = !this.currentTask.done;
         const task = this.currentTask;
 
+        this.$store.dispatch('addToken');
         const resp = await this.axios.put(`${BASE_URL}/tasks/${this.currentTask.id}`, {
           ...task,
           done: status

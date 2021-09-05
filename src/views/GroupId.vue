@@ -422,6 +422,7 @@ export default {
         console.log('groupId: ', groupId);
 
         const { userId } = this.$store.getters['auth/getCurUser'];
+        this.$store.dispatch('addToken');
         const resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}`);
 
         if (resp.statusText === 'OK') {
@@ -450,6 +451,7 @@ export default {
         const groupId = this.$route.params.id;
         console.log('groupId: ', groupId);
 
+        this.$store.dispatch('addToken');
         const requests = [
           this.axios.get(`${BASE_URL}/tasks?userId=${userId}&groupId=${groupId}`),
           this.axios.get(`${BASE_URL}/groups?groupId=${groupId}`)

@@ -25,6 +25,7 @@ export default {
       };
       console.log('newData: ', newData);
 
+      context.dispatch('addToken', null, { root: true });
       const resp = await axios.post(`${BASE_URL}/tasks`, newData);
       console.log('resp: ', resp);
 
@@ -55,6 +56,7 @@ export default {
 
       console.log({ taskId, id });
 
+      context.dispatch('addToken', null, { root: true });
       const resp = await axios.delete(`${BASE_URL}/tasks/${id}`);
       console.log('resp: ', resp);
 
@@ -82,6 +84,7 @@ export default {
     try {
       console.log('data: ', data);
 
+      context.dispatch('addToken', null, { root: true });
       const resp = await axios.put(`${BASE_URL}/tasks/${data.id}`, data);
       console.log('resp: ', resp);
 
@@ -152,6 +155,7 @@ export default {
 
       const newAvgCleared = Number.parseFloat(newAvg.toFixed(2));
 
+      context.dispatch('addToken', null, { root: true });
       // * отправляем запрос в strapi для изменения на новый avgImportance
       const resp = await axios.put(`${BASE_URL}/groups/${selected.id}`, {
         ...selected,

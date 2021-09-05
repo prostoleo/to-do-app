@@ -203,6 +203,7 @@ export default {
         let isTasksRoute = false;
         if (this.$route.name === 'Tasks') isTasksRoute = true;
 
+        this.$store.dispatch('addToken');
         //* отправляем запрос
         const resp = await this.axios.put(`${BASE_URL}/tasks/${task.id}`, {
           ...task,
