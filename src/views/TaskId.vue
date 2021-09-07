@@ -19,7 +19,7 @@
                 <h3 class="content__row-title">Название</h3>
                 <div class="content__row-title-block" :class="{ editable: !!isEditing }">
                   <p :contenteditable="isEditing" id="title" @blur="validateEdit($event)">
-                    {{ title }}
+                    {{ mainTitle }}
                   </p>
                   <small v-if="editingValidation.title.isError">{{
                     editingValidation.title.message
@@ -30,7 +30,7 @@
                 <h3 class="content__row-title">Дата добавления</h3>
                 <div class="content__row-title-block">
                   <p>
-                    {{ formatDateLocal(currentTask.dateOfAddition) }}
+                    {{ formatDateLocal(currentTask?.dateOfAddition) }}
                   </p>
                 </div>
               </div>
@@ -38,7 +38,7 @@
                 <h3 class="content__row-title">Дата окончания</h3>
                 <div class="content__row-title-block">
                   <p>
-                    {{ formatDateLocal(currentTask.dateOfEnding) }}
+                    {{ formatDateLocal(currentTask?.dateOfEnding) }}
                   </p>
                 </div>
               </div>
@@ -207,7 +207,7 @@ export default {
 
   computed: {
     done() {
-      return this.currentTask.done ? 'Выполнено' : 'Невыполнено';
+      return this.currentTask?.done ? 'Выполнено' : 'Невыполнено';
     },
 
     toggleDoneBtnText() {
@@ -244,6 +244,7 @@ export default {
     // todo для получения данных
     // eslint-disable-next-line consistent-return
     async getCurrentTask() {
+      let resp;
       try {
         this.isLoading = true;
 
@@ -251,12 +252,14 @@ export default {
         /* const taskToLoad = store.getters['tasks/taskOnId'](paramId);
       console.log('taskToLoad: ', taskToLoad); */
         this.$store.dispatch('addToken');
-        const resp = await this.axios.get(`${BASE_URL}/tasks/?taskId=${paramId}`);
+        resp = await this.axios.get(`${BASE_URL}/tasks/?taskId=${paramId}`);
         console.log('resp: ', resp);
 
-        if (resp.statusText === 'OK') {
+        if (resp.statusText === 'OK' && resp.data.length > 0) {
           const [task] = resp.data;
           this.currentTask = task;
+        } else {
+          throw new Error('Упс, что-то пошло не так, попробуйте позже');
         }
 
         this.isLoading = false;
@@ -264,8 +267,13 @@ export default {
       } catch (error) {
         console.log(`💣💣💣 ${error}`);
         this.isLoading = false;
-        if (error.includes('404')) {
-          this.$router.replace({ path: '/:notFound(.*)', name: 'NotFound' });
+
+        if (resp.data.length === 0 || error.includes('404')) {
+          this.$router.replace({
+            path: '/not-found',
+            name: 'NotFound',
+            params: { notFound: 'not-found' }
+          });
         }
       }
     },

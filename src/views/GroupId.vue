@@ -104,7 +104,7 @@
               :title="'Ошибка'"
               @close-dialog="error.isError = false"
             >
-              <p>{{ error.errMsg }}</p>
+              <p class="message">{{ error.errMsg }}</p>
             </BaseDialog>
             <p
               v-else-if="selectedTasks.length === 0 && !query && !isLoading && !!filterInfo"
@@ -416,32 +416,46 @@ export default {
   },
 
   methods: {
-    async getCurrentGroup() {
+    /* async getCurrentGroup() {
+      let resp;
       try {
         const groupId = this.$route.params.id;
         console.log('groupId: ', groupId);
 
         const { userId } = this.$store.getters['auth/getCurUser'];
         this.$store.dispatch('addToken');
-        const resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}`);
+        // const resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}`);
+        resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}&groupId=${groupId}`);
+        console.log('resp: ', resp);
 
-        if (resp.statusText === 'OK') {
+        if (resp.statusText === 'OK' && resp.data.groupId) {
           const groups = resp.data;
           console.log('groups: ', groups);
 
           this.$store.dispatch('groups/setGroups', groups);
-          this.currentGroup = groups.filter((g) => g.groupId === groupId);
+          // this.currentGroup = groups.filter((g) => g.groupId === groupId);
+          this.currentGroup = groups;
           console.log('this.currentGroup: ', this.currentGroup);
         }
       } catch (error) {
         console.log(`💣💣💣 ${error.name}, ${error.message}`);
+
+        // if (resp?.data?.length === 0 || !resp) {
+        //   this.$router.replace({
+        //     path: '/not-found',
+        //     name: 'NotFound',
+        //     params: { notFound: 'not-found' }
+        //   });
+        // }
+
         this.error.isError = true;
         this.error.wasShown = true;
       }
-    },
+    }, */
 
     //* получаем дела
     async getTasks() {
+      let resp;
       try {
         this.error.isError = false;
         this.error.wasShown = false;
@@ -457,14 +471,15 @@ export default {
           this.axios.get(`${BASE_URL}/groups?groupId=${groupId}`)
         ];
 
-        const resp = await Promise.all(requests);
-
-        /* const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`); */
-
+        resp = await Promise.all(requests);
         console.log('resp: ', resp);
 
+        // const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`);
+
+        // console.log('resp: ', resp);
+
         // if (resp.statusText === 'OK') {
-        if (resp[0].statusText === 'OK' && resp[1].statusText === 'OK') {
+        if (resp[0].statusText === 'OK' && resp[1].data.length > 0 && resp[1].statusText === 'OK') {
           // console.log(resp.data);
           // const { data } = resp;
 
@@ -475,9 +490,82 @@ export default {
           const [curGroup] = resp[1].data;
 
           this.currentGroup = curGroup;
-          /* const groups = data.filter((g) => g.id === +userId);
-          console.log('groups: ', groups); */
+          const groups = data.filter((g) => g.id === +userId);
+          console.log('groups: ', groups);
 
+          this.$store.dispatch('tasks/setTasks', data);
+        } else {
+          throw new Error('Упс, что-то пошло не так 😞. Попробуйте повторить позже');
+        }
+      } catch (error) {
+        console.log(`💣💣💣 ${error.name}, ${error.message}`);
+
+        if (resp[0]?.data?.length === 0 || !resp[0]) {
+          this.$router.replace({
+            path: '/not-found',
+            name: 'NotFound',
+            params: { notFound: 'not-found' }
+          });
+        }
+
+        this.error.isError = true;
+        this.error.wasShown = true;
+      }
+      this.isLoading = false;
+    },
+
+    //! нижние 2 работают - верхние 2 - нет
+
+    /* async getCurrentGroup() {
+      try {
+        const groupId = this.$route.params.id;
+        console.log('groupId: ', groupId);
+        const { userId } = this.$store.getters['auth/getCurUser'];
+        this.$store.dispatch('addToken');
+        const resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}`);
+        if (resp.statusText === 'OK') {
+          const groups = resp.data;
+          console.log('groups: ', groups);
+          this.$store.dispatch('groups/setGroups', groups);
+          this.currentGroup = groups.filter((g) => g.groupId === groupId);
+          console.log('this.currentGroup: ', this.currentGroup);
+        }
+      } catch (error) {
+        console.log(`💣💣💣 ${error.name}, ${error.message}`);
+        this.error.isError = true;
+        this.error.wasShown = true;
+      }
+    }, */
+    //* получаем дела
+    /* async getTasks() {
+      try {
+        this.error.isError = false;
+        this.error.wasShown = false;
+        this.isLoading = true;
+        const { userId } = this.$store.getters['auth/getCurUser'];
+        console.log('userId: ', userId);
+        const groupId = this.$route.params.id;
+        console.log('groupId: ', groupId);
+        this.$store.dispatch('addToken');
+        const requests = [
+          this.axios.get(`${BASE_URL}/tasks?userId=${userId}&groupId=${groupId}`),
+          this.axios.get(`${BASE_URL}/groups?groupId=${groupId}`)
+        ];
+        const resp = await Promise.all(requests);
+        // const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`);
+        console.log('resp: ', resp);
+        // if (resp.statusText === 'OK') {
+        if (resp[0].statusText === 'OK' && resp[1].statusText === 'OK') {
+          // console.log(resp.data);
+          // const { data } = resp;
+          console.log(resp[0].data);
+          console.log(resp[1].data);
+          console.log('resp[1].data: ', resp[1].data);
+          const { data } = resp[0];
+          const [curGroup] = resp[1].data;
+          this.currentGroup = curGroup;
+          // const groups = data.filter((g) => g.id === +userId);
+          // console.log('groups: ', groups);
           this.$store.dispatch('tasks/setTasks', data);
         } else {
           throw new Error('Упс, что-то пошло не так 😞. Попробуйте повторить позже');
@@ -489,7 +577,7 @@ export default {
         this.$router.replace({ path: '/:notFound(.*)', name: 'NotFound' });
       }
       this.isLoading = false;
-    },
+    }, */
 
     // todo метод для возращения sortInfo в первоначальное положение
     resetSortInfo() {
@@ -557,6 +645,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+p.message {
+  font-size: 1.4rem;
+  color: $text-main;
+}
+
 .main-groupId {
   @include mq(lg) {
     padding-top: 10rem;

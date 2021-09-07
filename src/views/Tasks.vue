@@ -101,7 +101,7 @@
               <p>{{ error.errMsg }}</p>
             </BaseDialog>
             <p
-              v-else-if="selectedTasks.length === 0 && !query && !isLoading && !!filterInfo"
+              v-else-if="selectedTasks.length === 0 && !isLoading && !!filterInfo"
               class="groups-info__zero-tasks"
             >
               По данным фильтрам ничего не найдено😞. Попробуйте изменить фильтры
@@ -204,6 +204,11 @@ export default {
   },
 
   watch: {
+    groupsHandler: {
+      handler: 'getGroups',
+      immediate: true
+    },
+
     getData: {
       handler: 'getTasks',
       immediate: true
@@ -257,7 +262,7 @@ export default {
       const [key] = truthySort;
 
       //* используем отдельную функцию
-      const sortedTasks = sortGroupsTasks(selectedTasks, key);
+      const sortedTasks = sortGroupsTasks(selectedTasks, key, true);
       console.log('sortedTasks: ', sortedTasks);
 
       return sortedTasks.slice();
@@ -271,6 +276,37 @@ export default {
   created() {},
 
   methods: {
+    async getGroups() {
+      try {
+        this.error.isError = false;
+        this.error.wasShown = false;
+        this.isLoading = true;
+        const { userId } = this.$store.getters['auth/getCurUser'];
+        console.log('userId: ', userId);
+
+        this.$store.dispatch('addToken');
+        const resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}`);
+        console.log('resp: ', resp);
+
+        if (resp.statusText === 'OK') {
+          console.log(resp.data);
+          const { data } = resp;
+
+          /* const groups = data.filter((g) => g.id === +userId);
+          console.log('groups: ', groups); */
+
+          this.$store.dispatch('groups/setGroups', data);
+        } else {
+          throw new Error('Упс, что-то пошло не так 😞. Попробуйте повторить позже');
+        }
+      } catch (error) {
+        console.log(`💣💣💣 ${error.name}, ${error.message}`);
+        this.error.isError = true;
+        this.error.wasShown = true;
+      }
+      this.isLoading = false;
+    },
+
     //* получаем дела
     async getTasks() {
       try {

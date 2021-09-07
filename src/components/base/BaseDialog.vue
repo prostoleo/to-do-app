@@ -269,8 +269,8 @@ export default {
       margin: 0 auto;
     }
 
-    & > p {
-      font-size: 1.4rem;
+    p.message {
+      font-size: 1.4rem !important;
       color: $text-main;
     }
   }

@@ -14,8 +14,9 @@ export default {
   logout(state) {
     state.userInfo.username = '';
     state.userInfo.jwt = '';
-
     state.userInfo.userId = '';
+    state.userInfo.tokenExpiration = '';
+    state.userInfo.didAutoLogout = false;
   },
 
   setAutoLogout(state) {

@@ -16,7 +16,7 @@ export default {
     },
     // JSON.parse(localStorage.getItem('to-do-app__users')) ??
     users: [
-      {
+      /* {
         login: 'John',
         password: '1234567',
         id: '1234'
@@ -25,7 +25,7 @@ export default {
         login: 'Jessica',
         password: '0000000',
         id: '4321'
-      }
+      } */
     ]
   },
   getters,

@@ -20,7 +20,7 @@ export default {
     return {
       navIsOpen: false,
 
-      hideNav: false
+      hideNav: true
     };
   },
 

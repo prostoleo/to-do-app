@@ -7,18 +7,21 @@ export default {
     context.commit('setGroups', data);
   },
 
-  async addGroup(context, data) {
-    try {
+  addGroup(context, data) {
+    context.commit('addGroup', data);
+    localStorage.setItem('groups', JSON.stringify(context.state.groups));
+    /* try {
       console.log('context: ', context);
-      const newData = {
-        ...data,
-        avgImportance: data?.avgImportance ?? null
-      };
-      console.log('newData: ', newData);
 
-      /* context.commit('addGroup', newData);
+      // const newData = {
+      //   ...data,
+      //   avgImportance: data?.avgImportance ?? null
+      // };
+      // console.log('newData: ', newData);
 
-      localStorage.setItem('to-do-app__groups', JSON.stringify(context.state.groups)); */
+      // context.commit('addGroup', newData);
+
+      // localStorage.setItem('to-do-app__groups', JSON.stringify(context.state.groups));
 
       // const resp = await axios.post(`${BASE_URL}groups?id=${newData.userId}`, newData);
       context.dispatch('addToken', null, { root: true });
@@ -33,14 +36,14 @@ export default {
 
         localStorage.setItem('groups', JSON.stringify(context.state.groups));
 
-        /* const groups = data.filter((g) => g.id === +userId);
-        console.log('groups: ', groups); */
+        // const groups = data.filter((g) => g.id === +userId);
+        // console.log('groups: ', groups);
       } else {
         throw new Error('Упс, что-то пошло не так 😞. Попробуйте повторить позже');
       }
     } catch (error) {
       console.log(`${error.mesage}, не удалось добавить группу`);
-    }
+    } */
   },
 
   async deleteGroup(context, data) {

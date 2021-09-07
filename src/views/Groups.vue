@@ -54,7 +54,7 @@
                   <template #body>
                     <div>
                       <span class="groups-info__col">
-                        {{ group.title }}
+                        {{ group?.title }}
                       </span>
                     </div>
                     <div>
@@ -66,7 +66,7 @@
                     <div>
                       <span
                         class="groups-info__col"
-                        :class="'bg-scale-' + +Math.round(group.avgImportance)"
+                        :class="'bg-scale-' + +Math.round(group?.avgImportance)"
                       >
                         <b>{{ group.avgImportance }}</b>
                       </span>
@@ -345,22 +345,32 @@ export default {
             .slice(-5),
           title: this.addedGroup,
           dateOfAddition: new Date(Date.now()).toISOString(),
-          userId: this.$store.getters['auth/getCurUser'].userId
+          userId: this.$store.getters['auth/getCurUser'].userId.toString()
         };
-        this.isLoading = true;
-        await this.$store.dispatch('groups/addGroup', groupToAdd);
+        /* context.commit('addGroup', newData);
 
-        /* const input = event.target.querySelector('input');
+      localStorage.setItem('to-do-app__groups', JSON.stringify(context.state.groups)); */
 
-      input.value = '';
-      input.unfocus(); */
-        this.clearInputAdd = true;
+        // const resp = await axios.post(`${BASE_URL}groups?id=${newData.userId}`, newData);
+        this.$store.dispatch('addToken');
+        const resp = await this.axios.post(`${BASE_URL}/groups`, groupToAdd);
+        console.log('resp: ', resp);
+
+        if (resp.statusText === 'OK') {
+          const res = resp.data;
+          console.log('res: ', res);
+
+          this.$store.dispatch('groups/addGroup', res);
+          this.clearInputAdd = true;
+
+          /* const groups = data.filter((g) => g.id === +userId);
+        console.log('groups: ', groups); */
+        } else {
+          throw new Error('Упс, что-то пошло не так 😞. Попробуйте повторить позже');
+        }
       } catch (error) {
-        console.log(`💣💣💣 ${error.name}, ${error.message}`);
-        this.error.isError = true;
-        this.error.wasShown = true;
+        console.log(`${error.mesage}, не удалось добавить группу`);
       }
-      this.isLoading = false;
     },
 
     // todo добавление группы

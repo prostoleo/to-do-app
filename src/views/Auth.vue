@@ -39,9 +39,9 @@
             @blur="validateInput"
             v-model.trim="inputData.email"
           />
-          <small v-if="isLogging && email.isError && email.touched">Такого логина не найдено</small>
+          <small v-if="isLogging && email.isError && email.touched">Такой почты не найдено</small>
           <small v-if="!isLogging && email.isError && email.touched"
-            >Логин должен быть не менее 1 и не более 20 символов</small
+            >Введите, пожалуйтса, адрес электронной почты</small
           >
         </div>
 
@@ -435,8 +435,9 @@ export default {
       }
 
       this.$router.replace('/groups'); */
+      let res;
       try {
-        const res = await this.axios.post(`${BASE_URL}/auth/local`, {
+        res = await this.axios.post(`${BASE_URL}/auth/local`, {
           identifier: this.inputData.username,
           password: this.inputData.password
         });
@@ -457,8 +458,13 @@ export default {
         }
       } catch (error) {
         console.log('this: ', this);
+        console.log('res: ', res);
         console.log('error: ', error);
+        console.log('error.message: ', error.message);
         // console.warn(`💣💣💣 ${error.name} ${error.message}`);
+        if (error.message.includes('403')) {
+          this.logging.errMessage = 'Упс, что-то пошло не так, попробуйте повторить запрос позже';
+        }
         this.logging.isError = true;
       }
     },
