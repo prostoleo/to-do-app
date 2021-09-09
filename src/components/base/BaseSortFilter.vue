@@ -51,9 +51,6 @@ export default {
 
   methods: {
     toggleSortFilterForm(event) {
-      // console.log(event.target.id);
-      // console.log(event.target.id.includes('sort'));
-
       if (event.target.id.includes('sort')) {
         this.isSortFormOpen = !this.isSortFormOpen;
 
@@ -73,7 +70,6 @@ export default {
     },
 
     changeFilter(data) {
-      console.log('data - BaseSortFilter: ', data);
       this.$emit('change-filter-info', data);
     }
   }

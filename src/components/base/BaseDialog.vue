@@ -27,27 +27,6 @@
 <script>
 import gsap from 'gsap';
 
-/* const tlDialog = gsap.timeline();
-console.log('tlDialog: ', tlDialog);
-
-tlDialog
-  // .from('.dialog_backgrop', {
-  //         opacity: 0,
-  //         duration: 0.15
-  //       })
-  .from(
-    '.dialog',
-    {
-      transformOrigin: 'center center',
-      transform: 'rotateY(45deg)',
-      opacity: 0,
-      duration: 0.35
-    },
-    '+= 0.15'
-  );
-
-tlDialog.pause(); */
-
 export default {
   emits: ['close-dialog'],
 
@@ -77,9 +56,6 @@ export default {
     };
   },
 
-  /* created() {
-  }, */
-
   methods: {
     closeDialog() {
       this.$emit('close-dialog');
@@ -89,26 +65,13 @@ export default {
 
     BeforeEnterDialogAnimation(element) {
       if (this.lock) document.querySelector('body').classList.add('lock');
-      /* const backdropEl = document.querySelector('.dialog_backdrop');
-      console.log('backdropEl: ', backdropEl); */
-
-      /* gsap.set(backdropEl, {
-        opacity: 0
-      }); */
       gsap.set(element, {
-        //* 1 вариант
-        // transformOrigin: 'center center',
-        // transform: 'rotateX(-45deg)',
-        // opacity: 0.5,
-        // perspective: '300px'
-        //* 2 вариант
         y: '-50%',
         opacity: 0
       });
     },
     EnterDialogAnimation(element, done) {
       const backdropEl = document.querySelector('.dialog_backdrop');
-      console.log('backdropEl: ', backdropEl);
 
       const tl = gsap.timeline();
 
@@ -118,13 +81,6 @@ export default {
       }).to(
         element,
         {
-          //* 1 вариант
-          // transformOrigin: 'center center',
-          // transform: 'rotateX(0deg)',
-          // opacity: 1,
-          // duration: 1.35,
-          // onComplete: done
-
           //* 2 вариант
           y: 0,
           opacity: 1,
@@ -136,10 +92,8 @@ export default {
     },
     LeaveDialogAnimation(element, done) {
       const backdropEl = document.querySelector('.dialog_backdrop');
-      console.log('backdropEl: ', backdropEl);
 
       const tl = gsap.timeline();
-      console.log('tl: ', tl);
 
       tl.to(
         backdropEl,
@@ -149,13 +103,6 @@ export default {
         },
         '+= 0.75'
       ).to(element, {
-        //* 1 вариант
-        // transformOrigin: 'center center',
-        // transform: 'rotateX(-45deg)',
-        // opacity: 0.5,
-        // duration: 1.35,
-        // onComplete: done
-        //* 2 вариант
         y: '-50%',
         opacity: 0,
         duration: 0.75,
@@ -186,7 +133,6 @@ export default {
   border: none;
   z-index: 1000;
 
-  // overflow-y: scroll;
   overflow-y: auto;
   max-height: 90vh;
 

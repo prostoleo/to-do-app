@@ -17,8 +17,6 @@ export default {
   },
 
   deleteTask(state, task) {
-    // state.tasks.splice(index, 1);
-
     state.tasks = state.tasks.filter((t) => t.taskId !== task.taskId);
   },
 
@@ -27,14 +25,8 @@ export default {
   },
 
   toggleDoneStatus(state, { task, status }) {
-    console.log('status: ', status);
-    // state.tasks[index].done = status;
     const taskToChange = state.tasks.find((t) => t.taskId === task.taskId);
-    console.log('taskToChange: ', taskToChange);
 
     taskToChange.done = status;
-    console.log('taskToChange.done: ', taskToChange.done);
-
-    // console.log('state.tasks[index]: ', state.tasks[index]);
   }
 };

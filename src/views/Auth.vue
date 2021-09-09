@@ -105,6 +105,11 @@
       <BaseDialog :show="showErrDialog" :title="'Ошибка'" @close-dialog="clearInputsAndErrors">
         <p class="error">{{ messageErrDialog }}</p>
       </BaseDialog>
+
+      <!-- //* для загрузки -->
+      <BaseDialog :show="isLoading" :title="'Пожалуйста подождите..'">
+        <BaseSpinner />
+      </BaseDialog>
     </BaseContainer>
   </div>
 </template>
@@ -112,7 +117,6 @@
 <script>
 /* eslint-disable consistent-return */
 
-// import axios from 'axios';
 import { BASE_URL } from '../helpers/config/config.js';
 
 export default {
@@ -125,6 +129,7 @@ export default {
   data() {
     return {
       isLogging: true,
+      isLoading: false,
 
       inputData: {
         username: '',
@@ -135,28 +140,22 @@ export default {
         errorMsg: 'Что-то пошло не так, попробуйте повторите позже'
       },
 
-      // validation: {
       username: {
-        // value: null,
         isError: false,
         touched: false
       },
       email: {
-        // value: null,
         isError: false,
         touched: false
       },
       password: {
-        // value: null,
         isError: false,
         touched: false
       },
       passwordAgain: {
-        // value: null,
         isError: false,
         touched: false
       },
-      // },
 
       togglePasswordVisibility: {
         password: {
@@ -233,7 +232,6 @@ export default {
     },
 
     changePasswordVisibility() {
-      console.log('change');
       this.togglePasswordVisibility.password.isVisible = !this.togglePasswordVisibility.password
         .isVisible;
 
@@ -263,17 +261,10 @@ export default {
 
     validateInput(event) {
       const { target } = event;
-      console.log('target: ', target);
 
-      const { id, value } = target;
-      console.log('id: ', id);
-      console.log('value: ', value);
+      const { id } = target;
 
-      // this.validation[id].touched = true;
-      // console.log('this.validation: ', this.validation);
-      // console.log('this.validation[id]: ', this.validation[id]);
       this[id].touched = true;
-      console.log('this[id]: ', this[id]);
 
       const data = this.inputData[id];
 
@@ -287,55 +278,35 @@ export default {
               data.length > 20 ||
               this.$store.getters['auth/isLoginTaken'](data)
             ) {
-              console.log('username пустой');
-              // this.validation.username.isError = true;
               this[id].isError = true;
               this.inputData.error = true;
             } else {
-              // this.validation.username.isError = false;
               this[id].isError = false;
             }
-            // console.log('username isError: ', this.validation);
-            // console.log('username isError: ', this.validation[id].isError);
-            console.log('this[id]: ', this[id]);
             break;
           case 'email':
             if (!data || data === '' || !data.includes('@') || !data.includes('.')) {
-              // this.validation.username.isError = true;
               this[id].isError = true;
               this.inputData.error = true;
             } else {
-              // this.validation.username.isError = false;
               this[id].isError = false;
             }
-            // console.log('username isError: ', this.validation);
-            // console.log('username isError: ', this.validation[id].isError);
-            console.log('this[id]: ', this[id]);
             break;
           case 'password':
             if (!data || data.length < 7) {
-              // this.validation[id].isError = true;
               this[id].isError = true;
               this.inputData.error = true;
             } else {
-              // this.validation[id].isError = false;
               this[id].isError = false;
             }
-            // console.log('password isError: ', this.validation);
-            // console.log('password isError: ', this.validation[id].isError);
-            console.log('this[id]: ', this[id]);
             break;
           case 'passwordAgain':
             if (!data || data !== this.inputData.password) {
-              // this.validation[id].isError = true;
               this[id].isError = true;
               this.inputData.error = true;
             } else {
-              // this.validation[id].isError = false;
               this[id].isError = false;
             }
-            // console.log('passwordAgain isError: ', this.validation);
-            // console.log('passwordAgain isError: ', this.validation[id].isError);
             break;
 
           default:
@@ -343,59 +314,17 @@ export default {
         }
       }
 
-      //* если логинемся
-      /* if (this.isLogging) {
-        switch (id) {
-          case 'username':
-            if (!this.$store.getters['auth/isLoginTaken'](data)) {
-              console.log('такого логина нет');
-              this[id].isError = true;
-              this.inputData.error = true;
-            } else {
-              this[id].isError = false;
-            }
-            console.log('this[id]: ', this[id]);
-            break;
-          case 'password':
-            if (
-              !data ||
-              data.length < 7 ||
-              !this.$store.getters['auth/getUserOnId']({
-                username: this.inputData.username,
-                password: this.inputData.password
-              })
-            ) {
-              // this.validation[id].isError = true;
-              this[id].isError = true;
-              this.inputData.error = true;
-            } else {
-              // this.validation[id].isError = false;
-              this[id].isError = false;
-            }
-            // console.log('password isError: ', this.validation);
-            // console.log('password isError: ', this.validation[id].isError);
-            console.log('this[id]: ', this[id]);
-            break;
-
-          default:
-            break;
-        }
-      } */
-
       this.checkTotalError();
     },
 
     checkTotalError() {
       const username = !this.username.isError && this.username.touched;
-      console.log('username: ', username);
       const password = !this.password.isError && this.password.touched;
-      console.log('password: ', password);
 
       // todo если регистрируемся
       if (!this.isLogging) {
         const email = !this.email.isError && this.email.touched;
         const passwordAgain = !this.passwordAgain.isError && this.passwordAgain.touched;
-        console.log('passwordAgain: ', passwordAgain);
 
         //* если все валидно - то отменяем общую ошибку
         if (username && email && password && passwordAgain) this.inputData.error = false;
@@ -419,49 +348,27 @@ export default {
     },
 
     async loginUser() {
-      console.log('log user');
-
-      /* const user = this.$store.getters['auth/getUserOnId']({
-        username: this.inputData.username,
-        password: this.inputData.password
-      });
-
-      if (user) {
-        this.$store.dispatch('auth/username', {
-          username: this.inputData.username,
-          password: this.inputData.password,
-          id: Date.now().toString(32)
-        });
-      }
-
-      this.$router.replace('/groups'); */
       let res;
       try {
+        this.isLoading = true;
         res = await this.axios.post(`${BASE_URL}/auth/local`, {
           identifier: this.inputData.username,
           password: this.inputData.password
         });
-        console.log('res: ', res);
-        console.log('res.statusText: ', res.statusText);
 
         if (res.statusText === 'OK') {
-          console.log(' resp is ok ');
-
           await this.$store.dispatch('auth/login', {
             jwt: res.data.jwt,
             username: res.data.user.username,
             createdAt: res.data.user.created_at,
             id: res.data.user.id
           });
-
+          this.isLoading = false;
           this.$router.replace('/groups');
         }
       } catch (error) {
-        console.log('this: ', this);
-        console.log('res: ', res);
-        console.log('error: ', error);
-        console.log('error.message: ', error.message);
-        // console.warn(`💣💣💣 ${error.name} ${error.message}`);
+        console.warn(`💣💣💣 ${error}`);
+        this.isLoading = false;
         if (error.message.includes('403')) {
           this.logging.errMessage = 'Упс, что-то пошло не так, попробуйте повторить запрос позже';
         }
@@ -471,7 +378,7 @@ export default {
 
     async registerUser() {
       try {
-        // console.log('data: ', data);
+        this.isLoading = true;
         // todo регистрируем пользователя через strapi
         const res = await this.axios.post(`${BASE_URL}/auth/local/register`, {
           username: this.inputData.username,
@@ -479,27 +386,20 @@ export default {
           email: this.inputData.email,
           id: Date.now().toString(32)
         });
-        console.log('res: ', res);
-
-        // const
 
         if (res.statusText === 'OK') {
-          this.$store.dispatch('auth/register', {
-            jwt: res.data.jwt,
-            username: res.data.user.username,
-            createdAt: res.data.user.created_at,
-            id: res.data.user.id
-          });
-
+          this.isLoading = false;
           this.toggleIsLogging();
         }
       } catch (error) {
+        this.isLoading = false;
         console.warn(`💣💣💣 ${error.name} ${error.message}`);
+        if (error.message.includes('403')) {
+          this.logging.errMessage = 'Упс, что-то пошло не так, попробуйте повторить запрос позже';
+        }
         this.registering.isError = true;
       }
     }
-
-    // togglePassword(event) {}
   }
 };
 </script>
@@ -522,7 +422,6 @@ dialog.dialog {
   background: url('../../src/assets/img/auth-bg.svg');
   background-repeat: no-repeat;
   background-size: cover;
-  // background-position: 200px;
 
   padding: 1.5em 0;
 
@@ -530,7 +429,6 @@ dialog.dialog {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    // justify-content: center;
 
     flex-direction: column;
 
@@ -607,7 +505,6 @@ dialog.dialog {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    // align-items: flex-start;
 
     margin-bottom: 1em;
 
@@ -663,10 +560,6 @@ dialog.dialog {
     }
 
     small {
-      // position: absolute;
-      // left: 0;
-      // bottom: -1rem;
-
       margin-left: 1.5rem;
       @include adaptive-value-min-max(font-size, 10, 14);
       line-height: 1.1;

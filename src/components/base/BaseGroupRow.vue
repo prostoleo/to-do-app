@@ -117,13 +117,8 @@ export default {
     },
 
     isGroupPage() {
-      // console.log('this.$route: ', this.$route);
       return this.$route.name === 'Groups';
     }
-
-    /* compClassDone() {
-      if (this.isDone !== null && )
-    } */
   },
 
   methods: {
@@ -136,50 +131,23 @@ export default {
         const { taskId } = this.$refs.li.dataset;
 
         const curTask = this.$store.getters['tasks/taskOnId'](taskId);
-        console.log('curTask: ', curTask);
 
         this.currentItem = curTask;
-
-        console.log('taskId: ', taskId);
-        console.log('typeof taskId: ', typeof taskId);
       } else {
         const { groupId } = this.$refs.li.dataset;
 
-        console.log('groupId: ', groupId);
-        console.log('typeof groupId: ', typeof groupId);
-
         const curGroup = this.$store.getters['groups/groupOnId'](groupId);
-        console.log('curGroup: ', curGroup);
 
         this.currentItem = curGroup;
       }
     },
 
     async confirmDelete() {
-      /* const id = this.groupId ? this.currentItem.groupId : this.currentItem.taskId;
-
-      if (!this.groupId) {
-        this.$store.dispatch('tasks/deleteTask', {
-          taskId: id
-        });
-      } else {
-        this.$store.dispatch('groups/deleteGroup', {
-          groupId: id
-        });
-
-        this.$store.dispatch('tasks/deleteTasksOnGroupId', {
-          groupId: id
-        });
-      } */
-
       try {
         if (!this.groupId) {
           await this.$store.dispatch('tasks/deleteTask', this.currentItem);
         } else {
           await this.$store.dispatch('groups/deleteGroup', this.currentItem);
-
-          //! написать отдельную функцию / путь в strapi чтобы можно было удалить все задания по groupId
-          // this.$store.dispatch('tasks/deleteTasksOnGroupId', this.currentItem);
         }
       } catch (error) {
         console.log(`💣💣💣 ${error.name}, ${error.message}`);
@@ -197,7 +165,6 @@ export default {
         this.taskIsDone = !this.taskIsDone;
 
         const task = this.$store.getters['tasks/taskOnId'](this.taskId);
-        console.log('task: ', task);
 
         // eslint-disable-next-line no-unused-vars
         let isTasksRoute = false;
@@ -209,7 +176,6 @@ export default {
           ...task,
           done: this.taskIsDone
         });
-        console.log('resp: ', resp);
 
         //* если успешно - то меняем статус задания локально
         if (resp.statusText === 'OK') {

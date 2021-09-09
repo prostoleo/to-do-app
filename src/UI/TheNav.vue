@@ -42,10 +42,6 @@
 </template>
 
 <script>
-/* <!-- v-if="show" -->
-    <!-- <transition name="nav"> -->
-    <!-- v-if="show || innerWidthMore" -->
-    <!-- </transition> --> */
 export default {
   emits: ['close-nav'],
 
@@ -58,7 +54,6 @@ export default {
 
   data() {
     return {
-      // username: ,
       isShown: false
     };
   },
@@ -91,11 +86,7 @@ export default {
   },
 
   methods: {
-    close($event) {
-      // this.isShown = false;
-      console.log($event.target);
-      console.log('close');
-
+    close() {
       if (window.innerWidth < 900) {
         this.$emit('close-nav');
       }
@@ -103,25 +94,15 @@ export default {
 
     userLogout() {
       this.$store.dispatch('auth/logout');
-      // this.$router.replace('/auth');
     }
-    /* closeOverlay($event) {
-      // this.isShown = false;
-      console.log($event.target);
-      console.log('closeOverlay');
-
-      this.$emit('close-nav');
-    } */
   }
 };
 </script>
 
 <style lang="scss" scoped>
-// @use '../scss/main.scss';
 @use '../scss/utilities/index.scss';
 
 .the-nav {
-  // display: none;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -134,7 +115,6 @@ export default {
   }
 
   &.show {
-    // display: block !important;
     opacity: 1;
     visibility: visible;
     pointer-events: unset;
@@ -163,8 +143,6 @@ export default {
   bottom: 0px;
   width: 100vw;
   height: 100vh;
-  /* width: 100%;
-    height: 100%; */
 
   background: $overlay;
 
@@ -200,34 +178,6 @@ export default {
     transform: translateX(0%);
     min-height: 100vh !important;
   }
-  // transform: translateX(-150%);
-  // transition: all 2000ms ease-out;
-
-  /* &.show {
-    transform: translateX(0%);
-    transition: all 2000ms ease-out;
-  } */
-
-  //! потом вернуть
-  // min-height: 100vh;
-
-  // .aside__backdrop
-
-  /* &__backdrop {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    width: 100vw;
-    height: 100vh;
-    // width: 100%;
-    // height: 100%;
-
-    background: $overlay;
-
-    z-index: -10;
-  } */
   // .aside__content
 
   &__content {
@@ -359,14 +309,6 @@ export default {
       opacity: 0;
       transition: all 250ms ease-in-out;
       transform-origin: left center;
-
-      /* &.router-link-active {
-        font-weight: bold;
-
-        transform: scaleX(1);
-        opacity: 1;
-        transition: all 150ms ease-in-out;
-      } */
     }
 
     &.router-link-active {

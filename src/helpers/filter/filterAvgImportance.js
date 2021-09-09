@@ -18,7 +18,5 @@ export default function foo(items, filterInfo) {
     selectedItems = items?.filter((g) => g.avgImportance <= +impTo);
   }
 
-  console.log('selectedItems: ', selectedItems);
-
   return selectedItems;
 }

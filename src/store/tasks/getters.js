@@ -9,18 +9,9 @@ export default {
     return state.tasks;
   },
 
-  /* getTasksOfCurUser(_, _2, _3, rootGetters) {
-    const tasks = JSON.parse(localStorage.getItem('to-do-app__tasks'));
-
-    const { userId } = rootGetters['auth/getCurUser'];
-
-    return tasks.filter((t) => t.userId === userId);
-  }, */
-
   tasksOnGroupId(store, _, _2, rootGetters) {
     // eslint-disable-next-line prefer-destructuring
     const { groupId } = rootGetters;
-    console.log('groupId: ', groupId);
 
     return store.tasks.filter((task) => task.groupId === groupId);
   },
@@ -34,9 +25,7 @@ export default {
     let tasks = null;
 
     const tasksOnGroupId = data?.tasksOnGroupId ?? null;
-    console.log('tasksOnGroupId: ', tasksOnGroupId);
     const allTasks = data?.allTasks ?? null;
-    console.log('allTasks: ', allTasks);
 
     if (tasksOnGroupId) {
       tasks = tasksOnGroupId;
@@ -45,17 +34,9 @@ export default {
     }
 
     const query = data?.query ?? null;
-    console.log('query: ', query);
 
     //* для фильтров
     const filterInfo = data?.filterInfo ?? null;
-    console.log('filterInfo: ', filterInfo);
-
-    //* получаем свойства в отдельные параметры, при этом указываем значение по умолчанию
-    /* const dateEndingFrom = filterInfo?.dateAdditionFrom ?? null;
-    const dateEndingTo = filterInfo?.dateAdditionTo ?? null;
-    const impFrom = filterInfo?.impFrom ?? null;
-    const impTo = filterInfo?.impTo ?? null; */
 
     //* проверяем есть ли хоть truthy значение в объекте
     const hasFilterTruthyValue = filterInfo ? Object.values(filterInfo).some((v) => !!v) : null;
@@ -69,20 +50,9 @@ export default {
       });
     }
 
-    console.log('truthyFilterInfo: ', truthyFilterInfo);
-
     //* если есть tasksOnGroupId - значит находимся в /groups/:id
     if (query && hasFilterTruthyValue) {
-      console.log('query && hasFilterTruthyValue');
-
       selectedTasks = selectOnQuery(tasks, query);
-
-      /* selectedTasks = selectOnFilterInfo(selectedTasks, {
-        dateEndingFrom,
-        dateEndingTo,
-        impFrom,
-        impTo
-      }); */
 
       selectedTasks = selectOnFilterInfo(selectedTasks, filterInfo);
 
@@ -91,40 +61,22 @@ export default {
 
     //* иначе - просто в /tasks
     if (query && !hasFilterTruthyValue) {
-      console.log('query && !hasFilterTruthyValue');
-
       selectedTasks = selectOnQuery(tasks, query);
 
-      console.log('selectedTasks: ', selectedTasks);
       return selectedTasks;
     }
 
     if (!query && hasFilterTruthyValue) {
-      console.log('!query && hasFilterTruthyValue');
-
-      /* selectedTasks = selectOnFilterInfo(tasks, {
-        dateEndingFrom,
-        dateEndingTo,
-        impFrom,
-        impTo
-      }); */
-
       selectedTasks = selectOnFilterInfo(tasks, filterInfo);
 
-      console.log('selectedTasks: ', selectedTasks);
       return selectedTasks;
     }
 
     if (!query && !hasFilterTruthyValue) {
-      console.log('!query && !hasFilterTruthyValue');
-
       selectedTasks = tasks;
 
-      console.log('selectedTasks: ', selectedTasks);
       return selectedTasks;
     }
-
-    // selectedTasks = state.tasks;
   },
 
   lengthOfSelectedTasksOnGroupId: (state) => (id) =>
@@ -134,5 +86,4 @@ export default {
     state.tasks
       .filter((t) => t.groupId === id)
       .reduce((acc, t, _, arr) => acc + t.importance / arr.length, 0)
-  // state.tasks.filter((t) => t.groupId === id)
 };

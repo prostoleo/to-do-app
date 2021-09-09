@@ -1,13 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 export default function foo(items, filterInfo) {
-  console.log('items: ', items);
-  console.log('filterInfo: ', filterInfo);
-
   const dateEndingFrom = filterInfo?.dateEndingFrom ?? null;
   const dateEndingTo = filterInfo?.dateEndingTo ?? null;
-
-  console.log('dateEndingFrom: ', dateEndingFrom);
-  console.log('dateEndingTo: ', dateEndingTo);
 
   let selectedItems;
 

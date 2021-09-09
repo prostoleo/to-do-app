@@ -1,6 +1,5 @@
 <template>
   <div class="tasks">
-    <!-- <TheNav></TheNav> -->
     <main class="main-tasks">
       <BaseContainer>
         <div class="main-tasks__content">
@@ -40,9 +39,6 @@
                   <div>
                     <span class="groups-info__col">Название</span>
                   </div>
-                  <!-- <div>
-                    <span class="groups-info__col">Дата добавления</span>
-                  </div> -->
 
                   <div>
                     <span class="groups-info__col">Дата окончания</span>
@@ -69,15 +65,9 @@
                         {{ task.title }}
                       </span>
                     </div>
-                    <!-- <div>
-                      <span class="groups-info__col">
-                        {{ task.dateOfAddition }}
-                      </span>
-                    </div> -->
 
                     <div>
                       <span class="groups-info__col">
-                        <!-- {{ task.dateOfEnding }} -->
                         {{ formatDateLocal(task.dateOfEnding) }}
                       </span>
                     </div>
@@ -158,8 +148,6 @@ export default {
   emits: ['not-found'],
 
   beforeCreate() {
-    console.log('beforeCreate');
-
     this.$emit('not-found');
   },
 
@@ -219,39 +207,23 @@ export default {
     truthySort() {
       const truthy = Object.entries(this.sortInfo).find((entry) => entry[1] === true);
 
-      console.log('truthy: ', truthy);
-
       return truthy;
     },
 
     selectedTasks() {
       //* проверка на truthy value
       const { truthySort } = this;
-      console.log('truthySort: ', truthySort);
 
       const allTasks = this.$store.getters['tasks/tasks'];
-      console.log('allTasks: ', allTasks);
-
-      /* let selectedTasks = this.$store.getters['tasks/selectedTasks']({
-        allTasks,
-        query: this.query,
-        filterInfo: this.filterInfo
-      }); */
-      console.log('this.filterInfo: ', this.filterInfo);
       // ============================
       //* новый вариант
       let selectedTasks = selectOnQuery(allTasks, this.query);
-      console.log('selectedTasks: ', selectedTasks);
 
       selectedTasks = filterDateOfEnding(selectedTasks, this.filterInfo);
 
-      console.log('selectedTasks: ', selectedTasks);
-
       selectedTasks = filterImportance(selectedTasks, this.filterInfo);
-      console.log('selectedTasks: ', selectedTasks);
 
       selectedTasks = filterDoneUndone(selectedTasks, this.filterInfo);
-      console.log('selectedTasks: ', selectedTasks);
 
       // ============================
 
@@ -263,7 +235,6 @@ export default {
 
       //* используем отдельную функцию
       const sortedTasks = sortGroupsTasks(selectedTasks, key, true);
-      console.log('sortedTasks: ', sortedTasks);
 
       return sortedTasks.slice();
     },
@@ -282,18 +253,12 @@ export default {
         this.error.wasShown = false;
         this.isLoading = true;
         const { userId } = this.$store.getters['auth/getCurUser'];
-        console.log('userId: ', userId);
 
         this.$store.dispatch('addToken');
         const resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}`);
-        console.log('resp: ', resp);
 
         if (resp.statusText === 'OK') {
-          console.log(resp.data);
           const { data } = resp;
-
-          /* const groups = data.filter((g) => g.id === +userId);
-          console.log('groups: ', groups); */
 
           this.$store.dispatch('groups/setGroups', data);
         } else {
@@ -314,25 +279,12 @@ export default {
         this.error.wasShown = false;
         this.isLoading = true;
         const { userId } = this.$store.getters['auth/getCurUser'];
-        console.log('userId: ', userId);
 
         this.$store.dispatch('addToken');
         const resp = await this.axios.get(`${BASE_URL}/tasks?userId=${userId}`);
 
-        /* const resp = await this.axios.get(`${BASE_URL}tasks?userId=${userId}&groupId=${groupId}`); */
-
-        console.log('resp: ', resp);
-
-        // if (resp.statusText === 'OK') {
         if (resp.statusText === 'OK') {
-          // console.log(resp.data);
-          // const { data } = resp;
-
-          console.log(resp.data);
           const { data } = resp;
-
-          /* const groups = data.filter((g) => g.id === +userId);
-          console.log('groups: ', groups); */
 
           this.$store.dispatch('tasks/setTasks', data);
         } else {
@@ -355,23 +307,17 @@ export default {
     changeSortInfo(data) {
       this.resetSortInfo();
 
-      // console.log('data: ', data);
       const { id } = data;
-
-      // console.log('id: ', id);
 
       //* применяем миксин для измениения sortInfo
       this.sortInfo = changeSortInfo(id, this.sortInfo, true);
     },
 
     changeFilterInfo(data) {
-      console.log('data: ', data);
-
       this.filterInfo = data;
     },
 
     updateSearch(data) {
-      console.log('data: ', data);
       this.query = data.data;
     },
 
@@ -504,7 +450,6 @@ export default {
 
   padding-bottom: 3.5em;
   position: relative;
-  // max-width: 600px;
 
   &::before {
     @extend %tpl-hr;
@@ -537,9 +482,7 @@ export default {
   header {
     & div {
       justify-self: flex-start;
-      // justify-self: center;
       align-self: center;
-      // padding: 0.75em;
     }
 
     & span {
@@ -547,8 +490,6 @@ export default {
       font-weight: 600;
 
       color: $text-main;
-
-      // padding: 0.75em;
     }
   }
 

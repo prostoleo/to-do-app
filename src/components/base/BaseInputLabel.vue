@@ -99,7 +99,6 @@ export default {
     } */
     clear(newValue) {
       if (newValue === true) {
-        console.log('cleaк input');
         this.data = null;
         this.$refs.input.value = '';
         this.classActive = false;
@@ -107,14 +106,8 @@ export default {
     }
   },
 
-  created() {
-    console.log('this.$props.error: ', this.$props.error);
-  },
-
   methods: {
     inputEvent(event) {
-      console.log('event: ', event);
-
       const { value } = this.$refs.input;
 
       if (value.trim() !== '') {
@@ -145,59 +138,10 @@ export default {
       });
     }
   }
-
-  /* computed: {
-    minVal() {
-      if (type === 'number') {
-
-      }
-    }
-  }, */
 };
 </script>
 
 <style lang="scss" scoped>
-/* div {
-  position: relative;
-
-  input {
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: $input-main;
-
-    border-radius: 4em;
-    border: 1px solid currentColor;
-
-    // padding: 0.5em 1em;
-    padding: 1em;
-    width: 100%;
-
-    &:focus + label,
-    &:focus-within + label {
-      font-size: 1.2rem;
-      transform: translateX(1.25em) translateY(-0.1em);
-      font-weight: 600;
-      transition: all 150ms ease-in-out;
-    }
-  }
-
-  label {
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    transform: translateX(1.25em) translateY(1em);
-
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: $input-main;
-
-    transition: all 150ms ease-in-out;
-
-    pointer-events: none;
-  }
-} */
-
 div {
   position: relative;
 
@@ -210,7 +154,6 @@ div {
     border: 1px solid currentColor;
     background-color: transparent;
 
-    // padding: 0.5em 1em;
     padding: 1em;
     width: 100%;
     max-width: 35rem;
@@ -267,17 +210,6 @@ div {
     pointer-events: none;
     z-index: 5;
   }
-
-  /* &.active label {
-    font-size: 1.2rem;
-    transform: translateX(1.25em) translateY(-0.1em);
-    font-weight: 400;
-    transition: all 150ms ease-in-out;
-  }
-
-  &.active input {
-    font-weight: 600;
-  } */
 
   small {
     margin-left: 1.55rem;

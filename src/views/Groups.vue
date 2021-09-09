@@ -59,7 +59,6 @@
                     </div>
                     <div>
                       <span class="groups-info__col">
-                        <!-- {{ group.dateOfAddition }} -->
                         {{ formatDateLocal(group.dateOfAddition) }}
                       </span>
                     </div>
@@ -139,39 +138,15 @@ import filterAvgImportance from '../helpers/filter/filterAvgImportance.js';
 
 export default {
   name: 'Groups',
-  /* components: {
-    GroupRow
-  }, */
   emits: ['open-nav', 'not-found'],
 
   beforeCreate() {
-    console.log('beforeCreate');
-
     this.$emit('not-found');
-  },
-
-  created() {
-    /* const groups = this.$store.getters['groups/groups'];
-    JSON.stringify(localStorage.setItem('to-do-app__groups', groups));
-    console.log('groups: ', groups);
-
-    const tasks = this.$store.getters['tasks/tasks'];
-    JSON.stringify(localStorage.setItem('to-do-app__tasks', tasks));
-    console.log('tasks: ', tasks);
-
-    const users = this.$store.getters['auth/getAllUsers'];
-    JSON.stringify(localStorage.setItem('to-do-app__users'), users);
-    console.log('users: ', users); */
-
-    // console.log('parse',));
-    console.log('selectedGroups: ', this.selectedGroups);
   },
 
   data() {
     return {
       //* для открытия форм
-      /* isSortFormOpen: false,
-      isFilterFormOpen: false */
       addedGroup: null,
       addInputData: null,
       query: null,
@@ -207,37 +182,22 @@ export default {
     truthySort() {
       const truthy = Object.entries(this.sortInfo).find((entry) => entry[1] === true);
 
-      console.log('truthy: ', truthy);
-
       return truthy;
     },
 
     selectedGroups() {
-      console.log(this.$store);
-      /* console.log('this.$store.getters[`groups/groups`]', this.$store.getters['groups/groups']);
-      return this.$store.getters['groups/groups']; */
       //* проверка на truthy value у sort
       const truthy = this.truthySort;
-
-      /* const selectedOnQueryAndFilters = this.$store.getters['groups/selectedGroups']({
-        query: this.query,
-        filterInfo: this.filterInfo,
-        isGroups: true
-      }); */
 
       // ============================
       //* новый вариант
       const allGroups = this.$store.getters['groups/groups'];
 
       let selectedGroups = selectOnQuery(allGroups, this.query);
-      console.log('selectedGroups: ', selectedGroups);
 
       selectedGroups = filterDateOfAddition(selectedGroups, this.filterInfo);
 
-      console.log('selectedGroups: ', selectedGroups);
-
       selectedGroups = filterAvgImportance(selectedGroups, this.filterInfo);
-      console.log('selectedGroups: ', selectedGroups);
 
       // ============================
 
@@ -252,10 +212,6 @@ export default {
 
       return sorted;
     }
-
-    /* bgClassColor() {
-      return
-    } */
   },
 
   methods: {
@@ -265,18 +221,12 @@ export default {
         this.error.wasShown = false;
         this.isLoading = true;
         const { userId } = this.$store.getters['auth/getCurUser'];
-        console.log('userId: ', userId);
 
         this.$store.dispatch('addToken');
         const resp = await this.axios.get(`${BASE_URL}/groups?userId=${userId}`);
-        console.log('resp: ', resp);
 
         if (resp.statusText === 'OK') {
-          console.log(resp.data);
           const { data } = resp;
-
-          /* const groups = data.filter((g) => g.id === +userId);
-          console.log('groups: ', groups); */
 
           this.$store.dispatch('groups/setGroups', data);
         } else {
@@ -299,24 +249,18 @@ export default {
     changeSortInfo(data) {
       this.resetSortInfo();
 
-      // console.log('data: ', data);
       const { id } = data;
-
-      // console.log('id: ', id);
 
       //* применяем миксин для измениения sortInfo
       this.sortInfo = changeSortInfo(id, this.sortInfo);
     },
     // todo метод для изменения filterInfo
     changeFilterInfo(data) {
-      console.log('data: ', data);
-
       this.filterInfo = data;
     },
 
     // todo обновляем поиск
     updateSearch(data) {
-      // console.log('data: ', data);
       this.query = data.data;
     },
 
@@ -328,15 +272,12 @@ export default {
 
     //* форматирование даты
     formatDateLocal(date) {
-      console.log('date: ', date);
-      console.log('this.selectedGroups', this.selectedGroups);
       return formatDate(date);
     },
 
     // todo добавление группы
     async submitAddGroup() {
       try {
-        console.log('this.addedGroup: ', this.addedGroup);
         if (!this.addedGroup) return;
 
         const groupToAdd = {
@@ -347,24 +288,15 @@ export default {
           dateOfAddition: new Date(Date.now()).toISOString(),
           userId: this.$store.getters['auth/getCurUser'].userId.toString()
         };
-        /* context.commit('addGroup', newData);
 
-      localStorage.setItem('to-do-app__groups', JSON.stringify(context.state.groups)); */
-
-        // const resp = await axios.post(`${BASE_URL}groups?id=${newData.userId}`, newData);
         this.$store.dispatch('addToken');
         const resp = await this.axios.post(`${BASE_URL}/groups`, groupToAdd);
-        console.log('resp: ', resp);
 
         if (resp.statusText === 'OK') {
           const res = resp.data;
-          console.log('res: ', res);
 
           this.$store.dispatch('groups/addGroup', res);
           this.clearInputAdd = true;
-
-          /* const groups = data.filter((g) => g.id === +userId);
-        console.log('groups: ', groups); */
         } else {
           throw new Error('Упс, что-то пошло не так 😞. Попробуйте повторить позже');
         }
@@ -383,8 +315,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// @use '@/scss/main.scss' as *;
-
 .groups {
   min-height: 100vh;
   @include mq(lg) {
@@ -408,12 +338,6 @@ export default {
   // .main-groups__menu-icon
 
   &__menu-icon {
-    /* font-size: 3.5rem;
-    font-weight: bold;
-    color: $accent;
-
-    border: none;
-    background: transparent; */
   }
 
   // .main-groups__title
@@ -448,57 +372,6 @@ export default {
   }
 }
 .filters {
-  /* max-width: 600px;
-
-  @include mq(sm) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  margin-bottom: 2.5em; */
-
-  // .filters__sort-wrapper
-
-  /* &__sort-wrapper {
-    display: flex;
-    align-items: center;
-  }
-
-  // .filters__sort
-
-  &__sort {
-    font-size: 1.4rem;
-    font-weight: 400;
-
-    display: inline-flex;
-    align-items: center;
-
-    border: 1px solid transparent;
-    background: transparent;
-
-    position: relative;
-
-    & > span {
-      display: block;
-      width: 100%;
-      height: 100%;
-      padding: 0.5em;
-    }
-
-    & span.icon {
-      margin-left: 0.5em;
-    }
-
-    &:focus {
-      outline-color: $accent-2;
-    }
-
-    &:hover {
-      border: 1px solid $accent-2;
-    }
-  } */
-
   // .filters__search
 
   &__search {
@@ -514,7 +387,6 @@ export default {
 
   padding-bottom: 3.5em;
   position: relative;
-  // max-width: 600px;
 
   &::before {
     @extend %tpl-hr;
@@ -587,9 +459,7 @@ export default {
   header {
     & div {
       justify-self: flex-start;
-      // justify-self: center;
       align-self: center;
-      // padding: 0.75em;
     }
 
     & span {
@@ -597,8 +467,6 @@ export default {
       font-weight: 600;
 
       color: $text-main;
-
-      // padding: 0.75em;
     }
   }
 

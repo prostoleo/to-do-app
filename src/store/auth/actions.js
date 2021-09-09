@@ -7,23 +7,6 @@ import router from '../../router/router.js';
 let timer = null;
 
 export default {
-  // eslint-disable-next-line no-unused-vars
-  async register(context, { jwt, createdAt, id }) {
-    console.log('register');
-    //* когда токен придет в негодность
-    /* const expiresIn = +AUTO_LOGOUT_SEC * 1000;
-    const expirationDate = Date.parse(createdAt) + expiresIn;
-
-    //* все нужное кладем в LS
-    localStorage.setItem('jwt', jwt);
-    localStorage.setItem('userId', id);
-    localStorage.setItem('tokenExpiration', expirationDate);
-
-    timer = setTimeout(() => {
-      context.dispatch('autoLogout');
-    }, expiresIn); */
-  },
-
   // eslint-disable-next-line object-curly-newline
   login(context, { jwt, username, id }) {
     //* когда токен придет в негодность
@@ -38,7 +21,6 @@ export default {
 
     context.commit('login', { username, jwt, id, tokenExpiration: expirationDate });
 
-    // console.log('timer: ', timer);
     timer = setTimeout(() => {
       context.dispatch('autoLogout');
     }, expiresIn);
@@ -51,12 +33,10 @@ export default {
     const tokenExpiration = localStorage.getItem('tokenExpiration');
 
     // eslint-disable-next-line object-curly-newline
-    console.log({ token, username, userId, tokenExpiration });
     // const groups = localStorage.getItem('groups');
     // const tasks = localStorage.getItem('tasks');
 
     const expiresIn = +tokenExpiration - Date.now();
-    console.log('expiresIn: ', expiresIn);
 
     if (expiresIn < 0) return;
 
@@ -76,7 +56,6 @@ export default {
   },
 
   logout(context) {
-    console.log('logout: ');
     context.commit('logout');
     localStorage.removeItem('jwt');
     localStorage.removeItem('username');

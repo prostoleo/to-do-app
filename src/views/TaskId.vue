@@ -1,6 +1,5 @@
 <template>
   <div class="taskId">
-    <!-- <TheNav></TheNav> -->
     <main class="main-taskId">
       <BaseContainer>
         <div class="main-taskId__content-wrapper">
@@ -45,7 +44,6 @@
               <div class="content__row">
                 <h3 class="content__row-title">Важность</h3>
                 <div class="content__row-title-block" :class="{ editable: !!isEditing }">
-                  <!-- :class="`bg-scale-10`" -->
                   <p id="importance" :contenteditable="isEditing" @blur="validateEdit($event)">
                     {{ importance }}
                   </p>
@@ -148,8 +146,6 @@
 </template>
 
 <script>
-// import store from '@/store';
-// import axios from 'axios';
 import formatDate from '../helpers/formatDate';
 import { BASE_URL } from '../helpers/config/config';
 
@@ -193,8 +189,6 @@ export default {
   },
 
   beforeCreate() {
-    console.log('beforeCreate');
-
     this.$emit('not-found');
   },
 
@@ -236,8 +230,6 @@ export default {
   methods: {
     showCounter(event) {
       const { target } = event;
-      console.log('target: ', target);
-
       this.lengthOfDescription = target.textContent.length;
     },
 
@@ -249,11 +241,8 @@ export default {
         this.isLoading = true;
 
         const paramId = this.$route.params.taskId;
-        /* const taskToLoad = store.getters['tasks/taskOnId'](paramId);
-      console.log('taskToLoad: ', taskToLoad); */
         this.$store.dispatch('addToken');
         resp = await this.axios.get(`${BASE_URL}/tasks/?taskId=${paramId}`);
-        console.log('resp: ', resp);
 
         if (resp.statusText === 'OK' && resp.data.length > 0) {
           const [task] = resp.data;
@@ -289,11 +278,7 @@ export default {
 
     async confirmDelete() {
       try {
-        const { taskId } = this.$route.params;
-
         const { groupId } = this.currentTask;
-
-        console.log({ taskId, groupId });
 
         await this.$store.dispatch('tasks/deleteTask', this.currentTask);
 
@@ -330,7 +315,6 @@ export default {
     },
 
     validateEdit(event) {
-      console.log('event.target: ', event.target);
       const { id } = event.target;
       const val = event.target.textContent.trim();
 
@@ -344,10 +328,6 @@ export default {
           }
           break;
         case this.editableFields[1]:
-          console.log('val: ', val);
-          console.log('typeof val: ', typeof val);
-          console.log('!this.validateImportance(val): ', !this.validateImportance(val));
-
           if (!this.validateImportance(val)) {
             this.editingValidation[this.editableFields[1]].isError = true;
             this.isEditingValid = false;
@@ -377,9 +357,7 @@ export default {
 
     denyEditing() {
       this.editableFields.forEach((field) => {
-        console.log('field: ', field);
         const el = document.getElementById(field);
-        // console.log('el: ', el);
 
         el.textContent = this.currentTask[field];
       });
@@ -389,21 +367,14 @@ export default {
 
     async updateTask() {
       try {
-        console.log('update task!');
         const taskToUpdate = { ...this.currentTask };
 
         this.editableFields.forEach((field) => {
-          console.log('field: ', field);
           const el = document.getElementById(field);
-          // console.log('el: ', el);
-
-          // el.textContent = this.currentTask[field];
           taskToUpdate[field] = el.textContent;
         });
 
         this.endEditing();
-
-        console.log('taskToUpdate: ', taskToUpdate);
 
         await this.$store.dispatch('tasks/updateTask', taskToUpdate);
       } catch (error) {
@@ -422,7 +393,6 @@ export default {
     },
 
     formatDateLocal(data) {
-      // console.log('data: ', data);
       return formatDate(data);
     },
 
@@ -436,10 +406,8 @@ export default {
           ...task,
           done: status
         });
-        console.log('resp: ', resp);
 
         if (resp.statusText === 'OK') {
-          console.log('this.currentTask: ', this.currentTask);
           this.$store.dispatch('tasks/toggleDoneStatus', {
             task: this.currentTask,
             status
@@ -451,51 +419,6 @@ export default {
       this.currentTask.done = !this.currentTask.done;
     }
   }
-
-  /* async beforeRouteEnter(to, _, next) {
-    // ...
-    console.log('to: ', to);
-    const paramId = to.params.taskId;
-    console.log('paramId: ', paramId);
-    // console.log('route: ', route);
-    // console.log('router: ', router);
-    console.log('store: ', store);
-
-    // const taskToLoad = store.getters['tasks/taskOnId'](paramId);
-    // console.log('taskToLoad: ', taskToLoad);
-    const resp = await axios.get(`${BASE_URL}tasks/?taskId=${paramId}`);
-    console.log('resp: ', resp);
-
-    const taskToLoad = resp.data;
-    console.log('taskToLoad: ', taskToLoad);
-
-    if (resp.statusText === 'OK') {
-      next((vm) => {
-        console.log('vm: ', vm);
-        // eslint-disable-next-line no-param-reassign
-        vm.currentTask = taskToLoad;
-      });
-    } else {
-      console.log(' task load not found ');
-      // ! работает
-      // next('/not-found');
-
-      // ! работает - 2 вар
-      next({ path: '/not-found', name: 'NotFound', params: { notFound: 'not-found' } });
-    }
-
-    // if (!taskToLoad) {
-    //   console.log(' task load not found ');
-    //   // ! работает
-    //   // next('/not-found');
-
-    //   // ! работает - 2 вар
-    //   next({ path: '/not-found', name: 'NotFound', params: { notFound: 'not-found' } });
-    // }
-
-    // this.currentTask = taskToLoad;
-    // next();
-  } */
 };
 </script>
 
@@ -651,16 +574,6 @@ export default {
   }
 }
 .controls {
-  /* width: 40%;
-  min-width: 25rem;
-  display: grid;
-  grid-template-columns: repeat(2, auto);
-
-  gap: 0 min(50px, 5%); */
-
-  // width: 50vw;
-  // min-width: 25rem;
-  // max-width: 50rem;
   width: 100%;
   max-width: 15rem;
   display: grid;

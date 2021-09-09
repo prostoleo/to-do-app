@@ -34,11 +34,8 @@ export default createStore({
     },
     addToken(context) {
       const { jwt, tokenExpiration } = context.getters['auth/getCurUser'];
-      console.log('jwt: ', jwt);
-      // console.log('tokenExpiration: ', tokenExpiration);
 
       const expiresIn = +tokenExpiration - +Date.now();
-      console.log('expiresIn: ', expiresIn);
 
       if (jwt && expiresIn > 0) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;

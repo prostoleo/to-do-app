@@ -14,8 +14,6 @@
 
 <script>
 export default {
-  // emits: ['close-nav', 'open-nav'],
-
   data() {
     return {
       navIsOpen: false,
@@ -28,28 +26,13 @@ export default {
     this.$store.dispatch('auth/tryLogin');
   },
 
-  created() {
-    // console.log(this.$route);
-    /* localStorage.setItem(
-      'to-do-app__users',
-      JSON.stringify(this.$store.getters['auth/getAllUSers'])
-    ); */
-    /* localStorage.setItem('to-do-app__groups', JSON.stringify(this.$store.getters['groups/groups']));
-
-    localStorage.setItem('to-do-app__tasks', JSON.stringify(this.$store.getters['tasks/tasks'])); */
-  },
-
   computed: {
     didAutoLogout() {
       return this.$store.getters['auth/didAutoLogout'];
     },
-    /* isNotFound() {
-      return this.$route.name;
-    }, */
 
     navIsOpened() {
       if (window.innerWidth >= 900) {
-        // console.log('window.innerWidth: ', window.innerWidth);
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.navIsOpen = true;
         return this.navIsOpen;
@@ -58,23 +41,6 @@ export default {
       return this.navIsOpen;
     }
   },
-
-  /* watch: {
-    didAutoLogout(curValue, oldValue) {
-      if (curValue && curValue !== oldValue) {
-        this.$router.replace('/auth');
-      }
-    }
-  }, */
-
-  /* watch: {
-    navIsOpen() {
-      if (window.innerWidth >= 900) {
-        console.log('window.innerWidt: ', window.innerWidt);
-        this.navIsOpen = true;
-      }
-    }
-  }, */
 
   methods: {
     setHideNav(data = false) {
@@ -85,7 +51,6 @@ export default {
       this.navIsOpen = true;
     },
     closeNav() {
-      console.log('close from App');
       this.navIsOpen = false;
     }
   }
@@ -93,9 +58,6 @@ export default {
 </script>
 
 <style lang="scss">
-// @use 'scss/main.scss' as *;
-// @use 'font-icon/iconsfont.css' as *;
-// $scale-1: green;
 //* импортиурем иконочный шрифт
 @import url('font-icon/iconsfont.css');
 
@@ -119,11 +81,11 @@ body.lock {
     align-items: stretch;
 
     & > *:first-of-type {
-      flex: 1 1 25%;
+      flex: 1 0 25%;
     }
 
     & > *:last-of-type {
-      flex: 1 1 70%;
+      flex: 1 0 70%;
     }
   }
 }

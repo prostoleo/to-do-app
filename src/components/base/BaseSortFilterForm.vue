@@ -171,10 +171,7 @@ export default {
   methods: {
     // todo метод для изменения сортировки
     changeSort(event) {
-      // console.log('event.target: ', event.target);
-
       const targetId = event.target.id;
-      console.log('targetId: ', targetId);
       const form = event.target.closest('.sort');
 
       const inputs = form.querySelectorAll('input');
@@ -195,18 +192,15 @@ export default {
 
     changeFilter(event) {
       const targetId = event.target.id;
-      console.log('targetId: ', targetId);
 
       const form = event.target.closest('form');
       const inputs = form.querySelectorAll('input');
 
       // checkbox
       const inputsCheckbox = form.querySelectorAll('input[type="checkbox"]');
-      console.log('inputsCheckbox: ', inputsCheckbox);
 
       const curInput = document.getElementById(targetId);
       const curInputChecked = curInput.checked;
-      console.log('curInputChecked: ', curInputChecked);
 
       if (curInput.type === 'checkbox') {
         // eslint-disable-next-line no-return-assign
@@ -220,7 +214,6 @@ export default {
       const formData = {};
 
       inputs.forEach((input) => {
-        // console.log('input: ', input);
         const { id } = input;
 
         // todo превращает id в prop
@@ -232,7 +225,6 @@ export default {
           formData[propName] = input.value;
         }
       });
-      console.log('formData: ', formData);
 
       this.$emit('change-filter', formData);
     }
