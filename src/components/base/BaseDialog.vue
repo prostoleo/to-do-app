@@ -95,10 +95,10 @@ export default {
 
       const tl = gsap.timeline();
 
-      tl.to(
+      tl.from(
         backdropEl,
         {
-          opacity: 0,
+          opacity: 1,
           duration: 0.15
         },
         '+= 0.75'
