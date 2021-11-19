@@ -39,6 +39,7 @@ export default createStore({
 
       if (jwt && expiresIn > 0) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`;
+        axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
       } else {
         axios.defaults.headers.common['Authorization'] = null;
       }
