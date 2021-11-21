@@ -356,7 +356,10 @@ export default {
           password: this.inputData.password
         });
 
+        // console.log('res - loginUser: ', res);
+
         if (res.statusText === 'OK') {
+          // console.log('OK: ');
           await this.$store.dispatch('auth/login', {
             jwt: res.data.jwt,
             username: res.data.user.username,
@@ -365,6 +368,8 @@ export default {
           });
           this.isLoading = false;
           this.$router.replace('/groups');
+          // console.log('this.$router: ', this.$router);
+          // this.$router.push('/groups');
         }
       } catch (error) {
         console.warn(`💣💣💣 ${error}`);

@@ -1,5 +1,5 @@
 // import axios from 'axios';
-// import { AUTO_LOGOUT_SEC } from '../../helpers/config/config';
+import { AUTO_LOGOUT_SEC } from '../../helpers/config/config';
 // eslint-disable-next-line import/no-cycle
 import router from '../../router/router.js';
 
@@ -9,10 +9,11 @@ let timer = null;
 export default {
   // eslint-disable-next-line object-curly-newline
   login(context, { jwt, username, id }) {
+    // console.log({ jwt, username, id });
     //* когда токен придет в негодность
-    // const expiresIn = +AUTO_LOGOUT_SEC * 1000;
-    const expiresIn = +process.env.AUTO_LOGOUT_SEC * 1000;
-    const expirationDate = Date.now() + expiresIn;
+    const expiresIn = +AUTO_LOGOUT_SEC * 1000;
+    // const expiresIn = +process.env.AUTO_LOGOUT_SEC * 1000;
+    const expirationDate = +Date.now() + expiresIn;
 
     //* все нужное кладем в LS
     localStorage.setItem('jwt', jwt);
