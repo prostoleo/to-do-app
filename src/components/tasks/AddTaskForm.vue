@@ -393,7 +393,7 @@ export default {
     selectValue() {
       this.groupTitle.value = this.$refs.select.value;
 
-      this.validateDate({
+      this.validateData({
         data: this.groupTitle.value,
         id: this.$refs.select.id
       });
