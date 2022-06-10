@@ -23,12 +23,19 @@
     -->
     <div class="input-row" v-if="isGroupNeeded">
       <label for="select">Название группы</label>
-      <select id="select" @change="selectValue" ref="select" :value="groupsNames[0].title">
+      <select
+        id="select"
+        @change="selectValue, updateData(null, $event)"
+        ref="select"
+        v-model="groupTitle.value"
+        :value="groupsNames[0].title"
+        style="max-width: 35rem;"
+      >
         <option v-for="groupName in groupsNames" :key="groupName.id" :value="groupName.title">{{
           groupName.title
         }}</option>
       </select>
-      <small v-if="groupTitleIsError">{{ groupTitleError }}</small>
+      <small v-if="groupTitle.isError">{{ groupTitleError.message }}</small>
     </div>
 
     <!-- required -->
@@ -167,11 +174,15 @@ export default {
       };
     },
     groupTitleError() {
+      // if (this.groupTitle.isError) {
       return {
         // isError: this.groupTitleIsError,
         isError: this.groupTitle.isError,
         message: 'Пожалуйста, введите название уже существующей группы дел'
       };
+      // }
+
+      // return false;
     },
     dateOfEndingError() {
       return {
@@ -211,7 +222,12 @@ export default {
     },
 
     groupIdOfActiveGroupTitle() {
-      const group = this.groupsNames.find((g) => g.title === this.groupTitle);
+      console.log('this.groupsNames: ', this.groupsNames);
+      const group = this.groupsNames.find((g) => {
+        console.log('g: ', g);
+        console.log('this.groupTitle.value: ', this.groupTitle.value);
+        return g.title === this.groupTitle.value;
+      });
 
       return group?.id;
     }
@@ -245,6 +261,7 @@ export default {
         id: event.target.id,
         data: event.target.value
       };
+      debugger;
 
       const refOfTarget = data.id;
 
@@ -259,6 +276,12 @@ export default {
           this.dateOfEnding.touched = true;
           this.dateOfEnding.value = data.data;
           break;
+        case 'select':
+          debugger;
+          this.groupTitle.touched = true;
+          this.groupTitle.value = data.data;
+          break;
+
         case 'input-timeOfEnding':
         case 'input-time':
           this.timeOfEnding.touched = true;
@@ -413,6 +436,9 @@ export default {
     submitForm() {
       if (this.totalError) return;
 
+      console.log('this.$route.params.id: ', this.$route.params.id);
+      console.log('this.groupIdOfActiveGroupTitle: ', this.groupIdOfActiveGroupTitle);
+      // debugger;
       // todo формируем данные для добавления
       const dataToSubmit = {
         groupId: this.$route.params.id ?? this.groupIdOfActiveGroupTitle,
